@@ -1,83 +1,23 @@
-import pyautogui
 import random
+import pyautogui
 import tkinter as tk
 import os
-from tkinter import messagebox
 from PIL import Image, ImageTk
-import pystray
-from pystray import MenuItem as item
-import threading
-import time
+from pystray import MenuItem as item, Icon
+import keyboard
+from pynput import keyboard
 import pyglet
+import traceback
+import webbrowser
 
-EVENTS = { # eventNumber: [[actionOrderToBeCompleted], [PossibleNextEventNumbers]]
-    # Left events
-    0: [[1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 4, 4, 4, 4, 1, 1, 1, 1, 2, 2], [0, 1, 2, 3, 5, 8, 9, 10, 11, 13, 16, 17, 18]], # idle 1
-    1: [[2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1], [0, 1, 2, 3, 5, 8, 9, 10, 11, 13, 16, 17, 18]], # idle 2
-    2: [[8, 8, 8], [0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 15, 16, 17, 18]], # walk 1
-    3: [[9, 9, 9], [0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 15, 16, 17, 18]], # walk 2
-    4: [[3], [0, 1, 2, 3, 8, 9]], # jump
-    5: [[6, 6, 6], [0, 1, 5, 7, 8, 9, 13, 15, 16, 17, 5, 5, 5, 18, 20]], # sleep
-    6: [[7], [0, 1, 4, 7, 7, 7, 7, 8, 9, 12]], # touch
-    7: [[0], [0, 1, 4, 5, 6, 8, 9, 12, 13, 14,0, 1,0, 1]], # goosebumps
-    # Right events
-    8: [[11, 11, 11, 11, 12, 12, 12, 12, 11, 11, 14, 14, 14, 14, 11, 11, 11, 11, 12, 12], [0, 1, 2, 3, 5, 8, 9, 10, 11, 13, 16, 17, 18]], # idle 1 R
-    9: [[12, 12, 12, 12, 12, 12, 11, 11, 11, 11, 15, 15, 15, 15, 15, 15, 15, 11, 11, 11], [0, 1, 2, 3, 5, 8, 9, 10, 11, 13, 16, 17, 18]], # idle 2 R 
-    10: [[18, 18, 18], [0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 15, 16, 17, 18]], # walk 1 R
-    11: [[19, 19, 19], [0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 15, 16, 17, 18]], # walk 2 R
-    12: [[13], [0, 1, 10, 11, 8, 9]], # jump R
-    13: [[16, 16, 16], [0, 1, 5, 7, 8, 9, 13, 15, 16, 17, 16, 16, 16, 18, 20]], # sleep R
-    14: [[17], [0, 1, 4, 8, 9, 12, 15, 15, 15, 15]], # touch R
-    15: [[10], [0, 1, 4, 5, 6, 8, 9, 12, 13, 14]], # goosebumps R
-    # Extra events
-    16: [[1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 1, 1, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 1, 1, 1, 1, 11, 11, 11, 11, 12, 12, 12, 12, 12], [0, 1, 8, 9, 5, 17, 18, 19, 20]], # idle 3
-    17: [[2, 2, 2, 2, 2, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 11, 11, 11, 11, 11, 11, 14, 14, 14, 14, 14, 14, 14, 12, 12, 11, 11, 11], [0, 1, 8, 9, 5, 16, 18, 19, 20]], # idle 4
-    18: [[12, 12, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16], [0, 1, 8, 9]], # sleep long
-    19: [[8, 8, 19, 19, 9, 9, 18, 18], [0, 1, 8, 9, 16, 17, 18, 20]], # walk there
-    20: [[3, 0, 10], [16, 17, 18, 19]], # jump and goosebumps
-    21: [[20], [21]], # falling
-    22: [[7], [23,24]], # stay put
-    23: [[4], [23,24]], # stay put continue
-    24: [[2], [24]], # stay put continue
-    25: [[6], [25]], # long sleep
-}
+from config import *
 
-HELP_BOOK = """
-DektopCat Commands
-
---help / -h : see the commands
---worklad [-list / -run workloadID / -create workloadID / -edit workloadID / -delete workloadID] : setting about workloads
---sleep : set the long sleep mode for Non-Toothless
---menu : see the cookbook
---tray : send Non-Toothless to taskbar tray
---config : see the configurations
-""" 
-
-PREVIEW = """
-0: L_goosebumps.gif,  len 16
-1: L_idle.gif,  len 10
-2: L_idle2.gif,  len 11
-3: L_jump.gif,  len 10
-4: L_licking.gif,  len 13
-5: L_licking2.gif,  len 14
-6: L_sleep.gif,  len 11
-7: L_touch.gif,  len 11
-8: L_walk.gif,  len 10
-9: L_walk2.gif,  len 11
-"""
-
-CURRENT_PATH = f"{os.getcwd()}\\"
-GIFS_PATH = CURRENT_PATH+'desktop-cat\\media\\gifs'
-FALLING_GIF_PATH = CURRENT_PATH+'desktop-cat\\media\\gifs_others\\falling.gif'
-COMMAND_BG_PATH = CURRENT_PATH+'desktop-cat\\media\\messagebox.png'
-TRAY_ICON_PATH = CURRENT_PATH+'desktop-cat\\media\\tray-icon.png'
-FONT_PATH = CURRENT_PATH+'desktop-cat\\media\\pixelmix.ttf'
-
-INITIAL_X = 1400
-INITIAL_Y = 922
+EXAMPLE_WORKLOADS = ['Workload_1', 'Workload_2', 'Workload_3']
 
 class DesktopCat():
     def __init__(self):
+        # self.shortcut_cp = keyboard.GlobalHotKeys({'<ctrl>+<space>': self.open_cp})
+        # self.shortcut_cp.start()
         self.animation_running = True
         self.falling = False
         self.long_sleep = False
@@ -117,6 +57,13 @@ class DesktopCat():
         if self.error == 0:
             self.setup_window()
             self.start_animation()
+            
+    def reset_cycle(self, events = [0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18], event_cycle=True):
+        if event_cycle:
+            self.current_event_cycle = random.choice(events)
+        self.current_event_cycle_index = 0
+        self.cycle = 0
+        self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
    
 
     def load_images(self):
@@ -168,6 +115,7 @@ class DesktopCat():
             self.window.after(100, self.update)
 
     def setup_window(self):
+        self.window.title("DesktopCat")
         self.window.config(highlightbackground='black')
         self.label.pack()
         self.window.overrideredirect(True)
@@ -216,10 +164,7 @@ class DesktopCat():
             if not self.falling:
                 self.falling = True
                 self.long_sleep = False
-                self.current_event_cycle = 21
-                self.current_event_cycle_index = 0
-                self.cycle = 0
-                self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
+                self.reset_cycle([21])
             if abs(self.y-INITIAL_Y) >= 20:
                 self.y += 20
             else: self.y += abs(self.y-INITIAL_Y)                
@@ -233,9 +178,7 @@ class DesktopCat():
                 self.set_animations_cp()
             else:
                 self.current_event_cycle = random.choice([7,14,15, 0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18]) # [0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18] [7,14,15]
-            self.current_event_cycle_index = 0
-            self.cycle = 0
-            self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
+            self.reset_cycle(event_cycle=False)
             self.falling = False
             self.y = INITIAL_Y
             
@@ -281,7 +224,7 @@ class DesktopCat():
             self.command_prompt.after(0, self.command_prompt.deiconify)        
         if self.icon_created:
             self.icon_created = False
-            self.icon.stop()        
+            self.icon.stop()
 
     def hide_window(self, event):
         print('hide_window')
@@ -291,7 +234,8 @@ class DesktopCat():
 
     def exit_application(self):
         print('exit_application')
-        self.icon.stop()
+        if self.icon_created:
+            self.icon.stop()
         if self.command_prompt != None:
             self.command_prompt.destroy()
         self.window.quit()
@@ -300,22 +244,54 @@ class DesktopCat():
         print('create_tray_icon')
         icon_image = Image.open(self.tray_path)
         menu = (item('Show', lambda: self.show_window(), default=True), item('Exit', self.exit_application))
-        self.icon = pystray.Icon("DesktopCat", icon_image, "DesktopCat", menu)
+        self.icon = Icon("DesktopCat", icon_image, "DesktopCat", menu)
         self.icon_created = True
         self.icon.run()
+        
+    # def focus_window(self):
+    #     try:
+    #         window_pos = pyautogui.getWindowsWithTitle(self.window.title())[0].left, pyautogui.getWindowsWithTitle(self.window.title())[0].top
+    #         old_mouse_pos = pyautogui.position()
+    #         pyautogui.click(window_pos)
+    #         pyautogui.moveTo(old_mouse_pos)
+    #         self.command_entry.focus_set()
+    #     except IndexError:
+    #         print("Window not found")
 
-    def open_close_cp(self, event):
-        if not self.command_created:
-            print('open cp')
-            self.set_animations_cp()
-            self.command_prompt.deiconify()
-            self.command_created = True
-            self.pos_cp()
-        elif self.command_prompt != None:
+    def open_close_cp(self, close=False, event=None):
+        if close and self.command_prompt != None and not self.icon_created and self.command_created:
             print('close cp')
-            self.reset_animations_cp()
+            self.reset_cycle([22,23,24])
             self.command_prompt.withdraw()
             self.command_created = False
+        else:
+            if not self.command_created and not self.icon_created:
+                print('open cp')
+                self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18]) 
+                self.command_prompt.deiconify()
+                self.pos_cp()
+                self.command_created = True
+                self.command_entry.focus_set()
+            elif self.command_prompt != None and not self.icon_created:
+                print('close cp')
+                self.reset_cycle([22,23,24])
+                self.command_prompt.withdraw()
+                self.command_created = False
+                
+    # def open_cp(self, event=None):
+    #     if not self.command_created and not self.icon_created:
+    #         self.command_entry.delete("1.0", "end")
+    #         print('open cp')
+    #         self.set_animations_cp()
+    #         self.command_prompt.deiconify()
+    #         self.pos_cp()
+    #         self.command_created = True
+    #         self.focus_window()
+    #     elif self.command_prompt != None and not self.icon_created:
+    #         print('close cp')
+    #         self.reset_animations_cp()
+    #         self.command_prompt.withdraw()
+    #         self.command_created = False
 
     def create_cp(self):
         command_bg_image = Image.open(self.menu_bg_image_path)
@@ -332,6 +308,8 @@ class DesktopCat():
         self.command_prompt.wm_attributes('-transparentcolor', 'black')
         self.command_prompt.wm_attributes('-topmost', 1)
         
+        self.command_prompt.bind('<Escape>', lambda event: self.open_close_cp(close=True))
+        
         # Text widget to get user input with double row height
         entry_font = ("pixelmix", 10)
         # entry_font = ("Minecraftia", 11)
@@ -347,72 +325,126 @@ class DesktopCat():
         try:
             self.command_canvas.create_image(0, 0, anchor="nw", image=self.command_bg_photo)
         except Exception as e:
-            print(e)
+            tb_info = traceback.extract_tb(e.__traceback__)
+            row_number = tb_info[-1].lineno
+            print(f"Exception at {row_number}: {e}")
         self.pos_cp()
         self.command_prompt.withdraw()
             
     def pos_cp(self):
-        self.command_prompt.geometry(f'{self.command_bg_image_width}x{self.command_bg_image_height}+' + str(self.x-295) + '+' + str(self.y-110))
-    
-    def set_animations_cp(self):
-        self.current_event_cycle = random.choice([22,23,24])
-        self.current_event_cycle_index = 0
-        self.cycle = 0
-        self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
-    
-    def reset_animations_cp(self):
-        self.current_event_cycle = random.choice([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
-        self.current_event_cycle_index = 0
-        self.cycle = 0
-        self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]        
+        self.command_prompt.geometry(f'{self.command_bg_image_width}x{self.command_bg_image_height}+' + str(self.x-295) + '+' + str(self.y-110))  
 
     def on_enter_pressed(self, event):
         message = self.command_entry.get("1.0", "end-1c")  # Get all text from the widget
         self.command_entry.delete("1.0", "end")  # Delete all text from the widget
         message = message.strip()
-        if message.startswith('--'):
-            self.parser(message.split())
+        if message.startswith(PREFIX):
+            self.parser(message[1:].split())
         else:
             print(message)
     
     def parser(self, message):
-        if message[0] == '--workload' or message[0] == '--w':
-            if message[1] == '-list' or message[1] == '-l':
-                print('Workload List\n 1- WorkloadVscode\n 2- ChromeOthers\n 3- Project2\n')
-            if message[1] == '-run' or message[1] == '-r':
-                if message[2] != None:
-                    print(f'Workload {message[2]} running...\n')
-                else: print('Missing arguments: WorkloadName!\n')
-            if message[1] == '-edit' or message[1] == '-e':
-                if message[2] != None:
-                    print(f'Workload {message[2]} settings showing...\n')
-                else: print('Missing arguments: WorkloadName!\n')
-            if message[1] == '-create' or message[1] == '-c':
-                editMode = False
-                if message[2] == '-edit' or message[2] == '-e':
-                    editMode = True
-                    if message[3] != None:
-                        print(f'New Workload Creating... See the edit settings for Workload {message[3]}\n')
-                    else: print('Missing arguments: WorkloadName!\n')
-                elif message[3] != None:
-                    print(f'New Workload Creating... See the edit settings for Workload {message[3]}\n')
-                else: print('Missing arguments: WorkloadName!\n')
-                
-        elif message[0] == '--sleep' or message[0] == '--s':
-            self.long_sleep = not self.long_sleep
-            print(f'Good Night Non-Toothless... Long Sleep {self.long_sleep}\n')
-            
-        elif message[0] == '--tray' or message[0] == '--t':
-            print(f'Cat Hidden\n')
-            
-        elif message[0] == '--config' or message[0] == '--c':
-            print(f'Config settings are shown...\n')
-            
-        elif message[0] == '--help' or message[0] == '--h':
-            print(HELP_BOOK)          
-                                  
-        else: print('Unknown error about arguments!')
+        if len(message) > 0:
+            if message[0] == '*':
+                self.open_close_cp(close=True)
+            if message[0] == 'h' or message[0] == 'help':
+                self.help()               
+            elif message[0] == 'workload' or message[0] == 'w':
+                next = self.get_next(message, message[0])
+                if self.check_error(next, extra_error_info=f"*w requires an argument."):
+                    match next:
+                        case 'l' | 'list': self.workload_list()
+                        case 'c' | 'create' | 'r' | 'run' | 'e' | 'edit' | 'd' | 'delete' | 'ce' | 'create-edit':
+                            after_next = self.get_next(message, next)
+                            if self.check_error(after_next, extra_error_info=f"*w {next} requires a Workload Name."):
+                                self.workload_edit(after_next, next)
+                        case _ : self.check_error('error$99')
+            elif message[0] == 's' or message[0] == 'sleep':
+                self.sleep()
+            elif message[0] == 'tray':
+                self.tray()
+            elif message[0] == 'config':
+                self.config()
+                next = self.get_next(message, message[0])
+                if self.check_error(next):
+                    match next:
+                        case 'shortcut':
+                            after_next = self.get_next(message, next)
+                            if self.check_error(after_next, extra_error_info=f"Add your shortcut. (default ctrl+shift+a)"):
+                                self.shortcut(after_next)
+                        case _ : self.check_error('error$99')
+            elif message[0] == 'exit':
+                self.exit_application()                
+            else: self.google_search(message)
+        else: self.check_error('error$98')
+        
+    def google_search(self, query):
+        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(CHROME_PATH))
+        webbrowser.get('chrome').open(f"https://www.google.com/search?q={' '.join(query)}")
+        self.open_close_cp(close=True)
 
-       
+
+    def workload_list(self):
+        print(EXAMPLE_WORKLOADS)
+    def workload_edit(self, workload_name, operation):
+        print('edit')
+        match operation:
+            case 'c' | 'create': print(f'create {workload_name}')
+            case 'r' | 'run': print(f'run {workload_name}')
+            case 'e' | 'edit': print(f'edit {workload_name}')
+            case 'd' | 'delete': print(f'delete {workload_name}')
+            case 'ce' | 'create-edit': print(f'create with edit {workload_name}')
+            case _: print('error')
+
+    def sleep(self):
+        self.long_sleep = not self.long_sleep
+        print(f'Long Sleep {self.long_sleep}\n')
+    def tray(self):
+        self.hide_window()
+        print('tray')
+    def config(self):
+        print('config')
+    def shortcut(self, new_shortcut):
+        try:
+            self.bind_shortcut(self.open_cp, new_shortcut)
+        except Exception as e:
+            tb_info = traceback.extract_tb(e.__traceback__)
+            row_number = tb_info[-1].lineno
+            print(f"Shortcuts is not available | Exception at {row_number}: {e}")
+    def help(self):
+        print(HELP_BOOK())
+        
+    def check_error(self, expected_error, extra_error_info = ''):
+        if expected_error in list(ERROR_LIST.keys()):
+            print(f'\n{expected_error}: {ERROR_LIST[expected_error]}\n  {extra_error_info}\n  (See the Help Book with the command {PREFIX}h)')
+        else: return True
+
+    def get_next(self, message, word):
+        if len(message) > message.index(word)+1:
+            try:
+                return str(message[message.index(word)+1]) 
+            except:
+                return 'error$99'
+        return 'error$98'
+    
+    # def bind_shortcut(self, function, shortcut):
+    #     if len(shortcut)>0 and shortcut != None:  # Ensure the shortcut is not empty
+    #         if self.shortcut_cp != None:
+    #             self.shortcut_cp.stop()
+    #         self.shortcut_cp = keyboard.GlobalHotKeys({self.shortcut_keys(shortcut): function})
+    #         self.shortcut_cp.start()
+    #         print(f"Bound shortcut '{shortcut}' to {function.__name__}")
+    
+    # def shortcut_keys(self, shortcut):
+    #     shortcut_string = ''
+    #     shortcut = shortcut.split('+')
+    #     for key in shortcut:
+    #         if len(key) > 1:
+    #             shortcut_string += f"<{key}>+"
+    #         else:
+    #             shortcut_string += f"{key}+"
+    #     print(shortcut_string[:-1])
+    #     return shortcut_string[:-1] #*config shortcut space+a
+          
 if __name__ == '__main__':
     desktop_cat = DesktopCat()
