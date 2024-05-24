@@ -73,6 +73,9 @@ COMMAND_BG_PATH = CURRENT_PATH+'desktop-cat\\media\\messagebox.png'
 TRAY_ICON_PATH = CURRENT_PATH+'desktop-cat\\media\\tray-icon.png'
 FONT_PATH = CURRENT_PATH+'desktop-cat\\media\\pixelmix.ttf'
 
+INITIAL_X = 1400
+INITIAL_Y = 922
+
 class DesktopCat():
     def __init__(self):
         self.animation_running = True
@@ -80,8 +83,6 @@ class DesktopCat():
         self.long_sleep = False
         self.x = 1400
         self.y = 922
-        self.initial_x = 1400
-        self.initial_y = 922
         self.cycle = 0
         self.current_event_cycle = random.choice([0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18])
         self.current_event_cycle_index = 0
@@ -211,7 +212,7 @@ class DesktopCat():
         if not self.animation_running:
             return
         
-        if self.y < self.initial_y:
+        if self.y+40 < INITIAL_Y:
             if not self.falling:
                 self.falling = True
                 self.long_sleep = False
@@ -219,17 +220,24 @@ class DesktopCat():
                 self.current_event_cycle_index = 0
                 self.cycle = 0
                 self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
-            self.y += 20
-        elif self.y >= self.initial_y and self.falling:
+            if abs(self.y-INITIAL_Y) >= 20:
+                self.y += 20
+            else: self.y += abs(self.y-INITIAL_Y)                
+        elif self.y < INITIAL_Y:
+            self.falling = True
+            if abs(self.y-INITIAL_Y) >= 20:
+                self.y += 20
+            else: self.y += abs(self.y-INITIAL_Y)
+        elif abs(self.y-INITIAL_Y) <= 20 and self.falling:
             if self.command_created:
                 self.set_animations_cp()
             else:
-                self.current_event_cycle = random.choice([7,14,15])
+                self.current_event_cycle = random.choice([7,14,15, 0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18]) # [0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18] [7,14,15]
             self.current_event_cycle_index = 0
             self.cycle = 0
             self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
             self.falling = False
-            self.y = self.initial_y
+            self.y = INITIAL_Y
             
         frame = self.imageGif[self.images[self.event_number]][self.cycle]
         if self.event_number in [8, 9, 3]:
@@ -260,7 +268,7 @@ class DesktopCat():
             self.current_event_cycle_index = 0
         else:
             next_event_cycle = random.choice(self.EVENTS[self.current_event_cycle][1])
-            while (self.x < self.initial_x-100 or self.x > self.initial_x+100) and next_event_cycle == 19:
+            while (self.x < INITIAL_X-100 or self.x > INITIAL_X+100) and next_event_cycle == 19:
                 next_event_cycle = random.choice(self.EVENTS[self.current_event_cycle][1])                
             self.current_event_cycle = next_event_cycle
             self.current_event_cycle_index = 0
