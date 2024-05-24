@@ -166,7 +166,7 @@ class DesktopCat():
             else: self.y += abs(self.y-INITIAL_Y)
         elif abs(self.y-INITIAL_Y) <= 20 and self.falling:
             if self.command_created:
-                self.set_animations_cp()
+                self.reset_cycle([22,23,24])
             else:
                 self.current_event_cycle = random.choice([7,14,15, 0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18]) # [0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18] [7,14,15]
             self.reset_cycle(event_cycle=False)
@@ -242,20 +242,20 @@ class DesktopCat():
     def open_close_cp(self, close=False, event=None):
         if close and self.command_prompt != None and not self.icon_created and self.command_created:
             print('close cp')
-            self.reset_cycle([22,23,24])
+            self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
             self.command_prompt.withdraw()
             self.command_created = False
         else:
             if not self.command_created and not self.icon_created:
                 print('open cp')
-                self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18]) 
+                self.reset_cycle([22,23,24]) 
                 self.command_prompt.deiconify()
                 self.pos_cp()
                 self.command_created = True
                 self.command_entry.focus_set()
             elif self.command_prompt != None and not self.icon_created:
                 print('close cp')
-                self.reset_cycle([22,23,24])
+                self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
                 self.command_prompt.withdraw()
                 self.command_created = False
 
