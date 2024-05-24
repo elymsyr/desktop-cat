@@ -2,7 +2,7 @@
 # Desktop Cat
 
 <div align="center">
-  <img height="200" src="desktop-cat\other_media\licking.png"  />
+  <img height="200" src="desktop-cat\media\gifs\L_licking.gif"  />
 </div>
 
 The project is giving a little cat I called Non-Toothless which sits on your taskbar many functionalities. Currently It can only sits and can done some simple actions without any real function. You can check the [Roadmap](#roadmap) for the planned future of Non-Toothless. 
