@@ -1,14 +1,7 @@
-import random
-import pyautogui
+import random, webbrowser, traceback, pyglet, os
 import tkinter as tk
-import os
 from PIL import Image, ImageTk
 from pystray import MenuItem as item, Icon
-import keyboard
-from pynput import keyboard
-import pyglet
-import traceback
-import webbrowser
 
 from config import *
 
