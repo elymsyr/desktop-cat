@@ -16,8 +16,6 @@ EXAMPLE_WORKLOADS = ['Workload_1', 'Workload_2', 'Workload_3']
 
 class DesktopCat():
     def __init__(self):
-        # self.shortcut_cp = keyboard.GlobalHotKeys({'<ctrl>+<space>': self.open_cp})
-        # self.shortcut_cp.start()
         self.animation_running = True
         self.falling = False
         self.long_sleep = False
@@ -247,16 +245,6 @@ class DesktopCat():
         self.icon = Icon("DesktopCat", icon_image, "DesktopCat", menu)
         self.icon_created = True
         self.icon.run()
-        
-    # def focus_window(self):
-    #     try:
-    #         window_pos = pyautogui.getWindowsWithTitle(self.window.title())[0].left, pyautogui.getWindowsWithTitle(self.window.title())[0].top
-    #         old_mouse_pos = pyautogui.position()
-    #         pyautogui.click(window_pos)
-    #         pyautogui.moveTo(old_mouse_pos)
-    #         self.command_entry.focus_set()
-    #     except IndexError:
-    #         print("Window not found")
 
     def open_close_cp(self, close=False, event=None):
         if close and self.command_prompt != None and not self.icon_created and self.command_created:
@@ -277,21 +265,6 @@ class DesktopCat():
                 self.reset_cycle([22,23,24])
                 self.command_prompt.withdraw()
                 self.command_created = False
-                
-    # def open_cp(self, event=None):
-    #     if not self.command_created and not self.icon_created:
-    #         self.command_entry.delete("1.0", "end")
-    #         print('open cp')
-    #         self.set_animations_cp()
-    #         self.command_prompt.deiconify()
-    #         self.pos_cp()
-    #         self.command_created = True
-    #         self.focus_window()
-    #     elif self.command_prompt != None and not self.icon_created:
-    #         print('close cp')
-    #         self.reset_animations_cp()
-    #         self.command_prompt.withdraw()
-    #         self.command_created = False
 
     def create_cp(self):
         command_bg_image = Image.open(self.menu_bg_image_path)
@@ -383,7 +356,6 @@ class DesktopCat():
         webbrowser.get('chrome').open(f"https://www.google.com/search?q={' '.join(query)}")
         self.open_close_cp(close=True)
 
-
     def workload_list(self):
         print(EXAMPLE_WORKLOADS)
     def workload_edit(self, workload_name, operation):
@@ -426,25 +398,6 @@ class DesktopCat():
             except:
                 return 'error$99'
         return 'error$98'
-    
-    # def bind_shortcut(self, function, shortcut):
-    #     if len(shortcut)>0 and shortcut != None:  # Ensure the shortcut is not empty
-    #         if self.shortcut_cp != None:
-    #             self.shortcut_cp.stop()
-    #         self.shortcut_cp = keyboard.GlobalHotKeys({self.shortcut_keys(shortcut): function})
-    #         self.shortcut_cp.start()
-    #         print(f"Bound shortcut '{shortcut}' to {function.__name__}")
-    
-    # def shortcut_keys(self, shortcut):
-    #     shortcut_string = ''
-    #     shortcut = shortcut.split('+')
-    #     for key in shortcut:
-    #         if len(key) > 1:
-    #             shortcut_string += f"<{key}>+"
-    #         else:
-    #             shortcut_string += f"{key}+"
-    #     print(shortcut_string[:-1])
-    #     return shortcut_string[:-1] #*config shortcut space+a
           
 if __name__ == '__main__':
     desktop_cat = DesktopCat()
