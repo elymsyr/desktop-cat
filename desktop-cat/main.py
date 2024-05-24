@@ -3,7 +3,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from pystray import MenuItem as item, Icon
 
-from config import *
+from set import *
 
 EXAMPLE_WORKLOADS = ['Workload_1', 'Workload_2', 'Workload_3']
 

@@ -1,4 +1,4 @@
-import os
+import os,json
 
 EVENTS = { # eventNumber: [[actionOrderToBeCompleted], [PossibleNextEventNumbers]]
     # Left events
@@ -47,6 +47,16 @@ PREVIEW = """
 
 PREFIX = '*'
 
+# COMMANDS = {
+#     "help/h": "See the Help Book",
+#     "worklad/w": "Use with [list/l | run/r [Workload Name] | create/c [Workload Name] | edit/e [Workload Name] | delete/d [Workload Name]] to use the workload operations.",
+#     "sleep/s": "De/activate the long sleep mode for the cat.",
+#     "menu": "See the cookbook",
+#     "tray": "Send the cat to taskbar tray",
+#     "config": "See the configurations",
+#     "exit": "Exit program",
+# }
+
 COMMANDS = [
     (f"{PREFIX}help/h", "See the Help Book"),
     (f"{PREFIX}worklad/w", "Use with [list/l | run/r [Workload Name] | create/c [Workload Name] | edit/e [Workload Name] | delete/d [Workload Name]] to use the workload operations."),
@@ -83,3 +93,25 @@ ERROR_LIST = {
 }
 
 
+# data = {
+#     "events": EVENTS,
+#     "commands": COMMANDS,
+#     "paths": {
+#         "current_path": CURRENT_PATH,
+#         "gifs_path": GIFS_PATH,
+#         "falling_gif_path": FALLING_GIF_PATH,
+#         "command_bg_path": COMMAND_BG_PATH,
+#         "tray_icon_path": TRAY_ICON_PATH,
+#         "font_path": FONT_PATH,
+#         "chrome_path": CHROME_PATH
+#     },
+#     "initial_positions": {
+#         "initial_x": INITIAL_X,
+#         "initial_y": INITIAL_Y
+#     },
+#     "error_list": ERROR_LIST
+# }
+
+# # Write to a JSON file
+# with open('desktop-cat\config-test.json', 'w') as json_file:
+#     json.dump(data, json_file, indent=4)

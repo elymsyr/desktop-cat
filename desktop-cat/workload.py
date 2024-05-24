@@ -3,11 +3,33 @@ import os
 import sqlite3
 import shutil
 from urllib.parse import urlparse
+import json
 
 class Workload():
     def __init__(self):
         self.vscode = {}
         self.chrome = {}
+        
+    def save_workload(self, workload_name='exampleWorkload'):
+        with open('desktop-cat\config.json', 'r') as file:
+            data = json.load(file)
+            workload = data['workloads'][workload_name]
+            print(len(workload['chrome']))
+            print(len(workload['vscode']))
+            
+            # CHECK IF WORKLOAD EXISTS
+                # IF WORKLOAD NOT EXIST
+                    # CREATE NEW WORKLOAD FROM START
+                    # ASK THE USER FOR THE VSCODE PATH
+                # IF WORKLOAD EXISTS
+                    # CHECK IF VSCODE PROJECT IS SAME
+                        # IF NOT _ WRITE ON IT AND ASK THE USER FOR THE VSCODE PATH
+                        # IF IT IS _ CHECK IF PATH IS EXIST
+                            # IF NOT _ ASK THE USER FOR THE VSCODE PATH
+                            # ELSE DO NOTHING
+                # ASK THE USER FOR NUMBER OF CHROME TABS (DO IN THE COMMAND PROMPT WITHOUR ASKING LATER?)
+                        
+            
         
     def get_open_windows(self):
         selected = []
@@ -24,12 +46,12 @@ class Workload():
                 splitted = window.split(' - ')
                 if len(splitted) == 3:
                     if '(Workspace)' in splitted[1]:
-                        self.vscode[splitted[1].replace(' (Workspace)', '')] = [splitted[0], ""]
-                    else: self.vscode[splitted[1]] = [splitted[0], ""]
+                        self.vscode[splitted[1].replace(' (Workspace)', '')] = splitted[0]
+                    else: self.vscode[splitted[1]] = splitted[0]
                 elif len(splitted) == 2:
                     if '(Workspace)' in splitted[0]:
-                        self.vscode[splitted[0].replace(' (Workspace)', '')] = ['', ""]
-                    else: self.vscode[splitted[0]] = ['', ""]
+                        self.vscode[splitted[0].replace(' (Workspace)', '')] = ''
+                    else: self.vscode[splitted[0]] = ''
         
     def get_chrome_recently_visited_sites(self, max_sites, profile_name='Default'):
         # Chrome'un veritabanı dosyasının yolu
@@ -95,11 +117,12 @@ class Workload():
 workload = Workload()
 workload.findVSCode()
 workload.findChrome()
+workload.save_workload()
 
-print('Open VSCode:')
-for key, value in workload.vscode.items():
-    print(f'{key} : {value}')
+# print('Open VSCode:')
+# for key, value in workload.vscode.items():
+#     print(f'{key} : {value}')
 
-print('\nLast Chrome Tabs:')
-for key, value in workload.chrome.items():
-    print(f'{workload.format_string(key)} : {workload.get_main_link(value)}')
+# print('\nLast Chrome Tabs:')
+# for key, value in workload.chrome.items():
+#     print(f'{workload.format_string(key)} : {workload.get_main_link(value)}')
