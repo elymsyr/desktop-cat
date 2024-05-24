@@ -27,7 +27,7 @@ The main function is the 'Workload'. It is a system that saves the applications 
   <img height="200" src="desktop-cat\media\gifs_others\falling.gif"  />
 </div>
 
-A demo but without any functionalities can be used now. Download [demo0]() release and see the [Run Locally](#run-locally) section.
+A demo but without any functionalities can be used now. Download [demo0](https://github.com/elymsyr/desktop-cat/releases/tag/demo0) release and see the [Run Locally](#run-locally) section.
 
 ## Run Locally
 
@@ -35,7 +35,7 @@ python>3.11 works. python<=3.11 is not tested.
 
 See the requirements for [conda](desktop-cat\conda_requirements.txt) and [pip](desktop-cat\requirements.txt).
 
-You can download [demo0]() release or current repo.
+You can download [demo0](https://github.com/elymsyr/desktop-cat/releases/tag/demo0) release or current repo.
 
 Run [main.py](desktop-cat\main.py) file.
 
