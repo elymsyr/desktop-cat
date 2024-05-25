@@ -1,8 +1,7 @@
 {
     
-    "workload_data_test": {
-        "chrome": {},
-        "vscode": {}
+    "workload_data": {
+        "vscode": {"desktop-cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat"}
     },
 
     "workloads": {

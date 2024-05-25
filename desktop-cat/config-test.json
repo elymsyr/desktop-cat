@@ -1,28 +1,62 @@
 {
-    "commands": {
-        "help/h": "See the Help Book",
-        "worklad/w": "Use with [list/l | run/r [Workload Name] | create/c [Workload Name] | edit/e [Workload Name] | delete/d [Workload Name]] to use the workload operations.",
-        "sleep/s": "De/activate the long sleep mode for the cat.",
-        "menu": "See the cookbook",
-        "tray": "Send the cat to taskbar tray",
-        "config": "See the configurations",
-        "exit": "Exit program"
+    "workload_data": {
+        "vscode": {
+            "desktop-cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat"
+        }
     },
-    "paths": {
-        "current_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\",
-        "gifs_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\gifs",
-        "falling_gif_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\gifs_others\\falling.gif",
-        "command_bg_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\messagebox.png",
-        "tray_icon_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\tray-icon.png",
-        "font_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\pixelmix.ttf",
-        "chrome_path": "C:/Program Files/Google/Chrome/Application/chrome.exe"
+    "workloads": {
+        "exampleWorkload": {
+            "vscode": {
+                "desktop-cat": [
+                    "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat",
+                    "workload.py"
+                ]
+            },
+            "chrome": {
+                "ChatGPT": "https://chat.openai.com/",
+                "(234) YouTube": "https://www.youtube.com/",
+                "Selenium Interage Chrome existente": "https://chatgpt.com/c/44841942-f446-4664-b7a3-898e230851b8",
+                "precipitation humidity ne demek - Google Search": "https://www.google.com/search?q=precipitation+humidity+ne+demek&client=ms-android-xiaomi-rev1&sca_esv=26a26246cc8264db&sca_upv=1&sxsrf=ADLYWIIfqpr2RF1_30S3xYhoRjXgAlboUA%3A1716640445654&ei=vdpRZtDCJ528xc8Pgv-bKA&oq=precipitation+humidity+ne+demek&gs_lp=EhNtb2JpbGUtZ3dzLXdpei1zZXJwIh9wcmVjaXBpdGF0aW9uIGh1bWlkaXR5IG5lIGRlbWVrMggQABiABBiiBDIIEAAYgAQYogQyCBAAGIAEGKIEMggQABiABBiiBEizI1C2AVjWIXABeAGQAQGYAe0CoAHCIKoBBzAuOC43LjO4AQPIAQD4AQGYAg-gAuYZwgIEEAAYR8ICChAjGIAEGCcYigXCAggQABiABBjLAcICBRAAGIAEwgILEAAYgAQYkQIYigXCAgYQABgWGB7CAgsQABiABBiGAxiKBcICBRAhGKABwgIFECEYnwXCAgcQIRigARgKmAMAiAYBkAYIkgcHMS42LjYuMqAHu1Q&sclient=mobile-gws-wiz-serp",
+                "precipitation map - Google Search": "https://www.google.com/search?q=precipitation+map&oq=precipitation+&gs_lcrp=EgZjaHJvbWUqBwgEEAAYgAQyBggAEEUYOTIHCAEQABiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQABiABDIHCAYQABiABDIHCAcQABiABDIHCAgQABiABDIHCAkQABiABDIHCAoQABiABDIHCAsQABiABDIHCAwQABiABDIHCA0QABiABDIHCA4QABiABNIBCDg3NTdqMGo5qAIOsAIB&client=ms-android-xiaomi-rev1&sourceid=chrome-mobile&ie=UTF-8",
+                "hava durumu adana - Google Search": "https://www.google.com/search?q=hava+durumu+adana&oq=hava+durumu+adana+&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDI3NzVqMGo3qAIPsAIB&client=ms-android-xiaomi-rev1&sourceid=chrome-mobile&ie=UTF-8",
+                "wifi.gsb.gov.tr": "https://wifi.gsb.gov.tr/",
+                "Google Chrome Socket API in extensions - Stack Overflow": "https://stackoverflow.com/questions/13921970/google-chrome-socket-api-in-extensions",
+                "sockets - How to connect chrome web extension with localhost server? - Stack Overflow": "https://stackoverflow.com/questions/34970213/how-to-connect-chrome-web-extension-with-localhost-server",
+                "connect local server using chrome extension - Google Search": "https://www.google.com/search?q=connect+local+server+using+chrome+extension&oq=connect+local+server+using+chrome+e&gs_lcrp=EgZjaHJvbWUqBwgBECEYoAEyBggAEEUYOTIHCAEQIRigATIHCAIQIRigATIHCAMQIRigAdIBCDk4ODRqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
+            }
+        },
+        "exampleWorkload2": {
+            "chrome": {},
+            "vscode": {}
+        }
     },
-    "initial_positions": {
-        "initial_x": 1400,
-        "initial_y": 922
-    },
-    "error_list": {
-        "error$99": "Unknown argument",
-        "error$98": "Missing argument"
+    "config": {
+        "prefix": "*",
+        "commands": {
+            "help/h": "See the Help Book",
+            "worklad/w": "Use with [list/l | run/r [Workload Name] | create/c [Workload Name] | edit/e [Workload Name] | delete/d [Workload Name]] to use the workload operations.",
+            "sleep/s": "De/activate the long sleep mode for the cat.",
+            "menu": "See the cookbook",
+            "tray": "Send the cat to taskbar tray",
+            "config": "See the configurations",
+            "exit": "Exit program"
+        },
+        "paths": {
+            "current_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\",
+            "gifs_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\gifs",
+            "falling_gif_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\gifs_others\\falling.gif",
+            "command_bg_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\messagebox.png",
+            "tray_icon_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\tray-icon.png",
+            "font_path": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat\\media\\pixelmix.ttf",
+            "chrome_path": "C:/Program Files/Google/Chrome/Application/chrome.exe"
+        },
+        "initial_positions": {
+            "initial_x": 1400,
+            "initial_y": 922
+        },
+        "error_list": {
+            "error$99": "Unknown argument",
+            "error$98": "Missing argument"
+        }
     }
 }

@@ -10,27 +10,113 @@ class Workload():
         self.vscode = {}
         self.chrome = {}
         
-    def save_workload(self, workload_name='exampleWorkload'):
-        with open('desktop-cat\config.json', 'r') as file:
+    def save_workload(self, workload_name):
+        vscode_flag = False
+        new_vscode = {}
+        new_chrome = {}
+        new_data = {}
+        code_url = ''
+        data = None
+        with open(r'desktop-cat\config.json', 'r') as file:  # Use raw string to handle backslashes
             data = json.load(file)
-            workload = data['workloads'][workload_name]
-            print(len(workload['chrome']))
-            print(len(workload['vscode']))
-            
-            # CHECK IF WORKLOAD EXISTS
-                # IF WORKLOAD NOT EXIST
-                    # CREATE NEW WORKLOAD FROM START
-                    # ASK THE USER FOR THE VSCODE PATH
-                # IF WORKLOAD EXISTS
-                    # CHECK IF VSCODE PROJECT IS SAME
-                        # IF NOT _ WRITE ON IT AND ASK THE USER FOR THE VSCODE PATH
-                        # IF IT IS _ CHECK IF PATH IS EXIST
-                            # IF NOT _ ASK THE USER FOR THE VSCODE PATH
-                            # ELSE DO NOTHING
-                # ASK THE USER FOR NUMBER OF CHROME TABS (DO IN THE COMMAND PROMPT WITHOUR ASKING LATER?)
-                        
-            
+        vscode = workload.findVSCode()
+        chrome = workload.findChrome()
         
+        for key in list(vscode.keys()):  # Convert dict_keys to list
+            if key in data['workload_data']['vscode']:
+                code_url = data['workload_data']['vscode'][key]
+            else:
+                code_url_takin = input(f'Do you mind giving the path to your project {key}? (Leave empty to go on...)')
+                while (len(code_url_takin) > 0 and (code_url_takin.split('\\'))[-1] != key) :
+                    code_url_takin = input(f'Is this true? Let\'s try again: {code_url_takin} (Leaving it empty is an option but...)')
+                code_url = code_url_takin
+                if len(code_url) > 0:
+                    data['workload_data']['vscode'][key] = code_url
+            new_vscode[key] = [code_url, vscode[key]]
+        self.print_chrome(chrome, 10)
+        input_numbers = input('Specify the numbers (Example: \'1-5 *4 .10\') :\n  .n to add from 1 to n\n  n-m to add from n to m\n  n to add n\n  *n to exclude n\n  *n-m to exclude from n to m\nInput Waiting: ')
+        selected = self.process_input(input_numbers, chrome)
+        while not selected:
+            input_numbers = input('Please specify the numbers correctly:\n  .n to add from 1 to n\n  n-m to add from n to m\n  n to add n\n  *n to exclude n\n *n-m to exclude from n to m\nInput Waiting: ')
+            selected = self.process_input(input_numbers, chrome)
+        self.print_chrome(selected)                                
+        new_chrome = selected
+        data['workloads'][workload_name] = {"vscode": new_vscode,"chrome": new_chrome}
+            
+        with open('desktop-cat\config-test.json', 'w') as file:
+            json.dump(data, file, indent=4)
+            
+    def process_input(self, input_str, source_dict):
+        try:
+            new_dict = {}
+            include = []
+            exclude = []
+            # Create a copy of the dictionary keys
+            dict_keys = list(source_dict.keys())
+            
+            items = input_str.split(' ')
+            for n in range(len(items)):
+                items[n] = items[n].strip()
+                if '*' not in items[n]:
+                    if ('-' not in items[n] and items[n].startswith(".")):
+                        number = int(items[n].replace(".",""))-1
+                        order = [number,number]
+                    elif '-' not in items[n]:
+                        order = [1, int(items[n])]
+                    else:
+                        order = items[n].split('-')
+                    order = self.str_int(order)
+                    if order:
+                        if order[0]==order[1]:
+                            include.append(order[0])
+                        elif order[0]>order[1]:
+                            for n in range(order[1]-1, order[0]):
+                                include.append(n)
+                        else:
+                            for n in range(order[0]-1, order[1]):
+                                include.append(n)
+                elif items[n].startswith("*"):
+                    item = items[n].replace("*","")
+                    if '-' in item:
+                        order = item.split('-')
+                        order = self.str_int(order)
+                        if order:
+                            if order[0]==order[1]:
+                                exclude.append[order[0]]
+                            elif order[0]>order[1]:
+                                for n in range(order[1]-1, order[0]):
+                                    exclude.append(n)
+                            else:
+                                for n in range(order[0]-1, order[1]):
+                                    exclude.append(n)
+                    else: exclude.append(int(item)-1)
+            result = list(set([n for n in include if n not in exclude]))   
+            
+            for n in result:
+                new_dict[dict_keys[n]] = source_dict[dict_keys[n]]
+            return new_dict
+        except: return None
+    
+    def str_int(self, value):
+        for n in range(len(value)):
+            try:
+                value[n] = int(value[n])
+            except:
+                return False
+        return value
+            
+    def print_chrome(self, chrome, number = 0):
+        # Determine the maximum width needed for numbering
+        max_width = len(str(len(chrome)))
+        i = 0
+        for index, (key, value) in enumerate(chrome.items(), start=1):
+            # Format the string to fit within the remaining space
+            formatted_key = self.format_string(key[:30 - max_width - 2])  # Adjust for number and dot
+            print(f'{str(index).rjust(max_width)}. {formatted_key} : {workload.get_main_link(value)}')
+            i += 1
+            if number > 0 and i >= number:
+                break
+   
     def get_open_windows(self):
         selected = []
         windows = gw.getAllTitles()
@@ -40,18 +126,20 @@ class Workload():
         return selected
     
     def findVSCode(self):
+        vscode = {}
         selected = self.get_open_windows()
         for window in selected:
             if window.endswith('Visual Studio Code'):
                 splitted = window.split(' - ')
                 if len(splitted) == 3:
                     if '(Workspace)' in splitted[1]:
-                        self.vscode[splitted[1].replace(' (Workspace)', '')] = splitted[0]
-                    else: self.vscode[splitted[1]] = splitted[0]
+                        vscode[splitted[1].replace(' (Workspace)', '')] = splitted[0]
+                    else: vscode[splitted[1]] = splitted[0]
                 elif len(splitted) == 2:
                     if '(Workspace)' in splitted[0]:
-                        self.vscode[splitted[0].replace(' (Workspace)', '')] = ''
-                    else: self.vscode[splitted[0]] = ''
+                        vscode[splitted[0].replace(' (Workspace)', '')] = ''
+                    else: vscode[splitted[0]] = ''
+        return vscode
         
     def get_chrome_recently_visited_sites(self, max_sites, profile_name='Default'):
         # Chrome'un veritabanı dosyasının yolu
@@ -91,13 +179,15 @@ class Workload():
             print("Chrome veritabanı bulunamadı.")
         return recently_visited_sites        
 
-    def findChrome(self, max_sites = 20):
+    def findChrome(self, max_sites = 40):
+        chrome = {}
         recently_visited_sites = self.get_chrome_recently_visited_sites(max_sites*2)
         # print("Son Ziyaret Edilen Siteler:")
         # for site in recently_visited_sites:
         #     print(f"Başlık: {site['title']}\n  URL: {site['url']}") # , Ziyaret Zamanı: {site['visit_time']}
         for site in recently_visited_sites:
-            self.chrome[site['title']] = site['url']
+            chrome[site['title']] = site['url']
+        return chrome
 
     def get_main_link(self, url):
         parsed_url = urlparse(url)
@@ -112,17 +202,12 @@ class Workload():
         else:
             # Pad with spaces if shorter
             formatted_string = s.ljust(30)
-        return formatted_string    
+        return formatted_string
 
 workload = Workload()
-workload.findVSCode()
-workload.findChrome()
-workload.save_workload()
+
+workload.save_workload('exampleWorkload')
 
 # print('Open VSCode:')
 # for key, value in workload.vscode.items():
 #     print(f'{key} : {value}')
-
-# print('\nLast Chrome Tabs:')
-# for key, value in workload.chrome.items():
-#     print(f'{workload.format_string(key)} : {workload.get_main_link(value)}')
