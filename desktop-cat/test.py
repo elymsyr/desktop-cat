@@ -1,18 +1,21 @@
 import json
+import sys
 
-# Step 1: Read the JSON file
-with open('desktop-cat\config.json', 'r') as file:
-    data = json.load(file)
+def get_tabs():
+    tabs = []
+    for line in sys.stdin:
+        message = json.loads(line)
+        if message["action"] == "getTabs":
+            for tab in message["tabs"]:
+                tabs.append({"title": tab["title"], "url": tab["url"]})
+            break
+    return tabs
 
-print("Original Data:", data)
+def send_response(response):
+    sys.stdout.write(json.dumps(response))
+    sys.stdout.flush()
 
-# Step 2: Update the JSON data
-data['new_key'] = 'aa'
-# If it's a list, you can append a new item, for example:
-# data.append({"new_key": "new_value"})
-
-print("Updated Data:", data)
-
-# Step 3: Write the updated JSON data back to the file
-# with open('desktop-cat\config.json', 'w') as file:
-#     json.dump(data, file, indent=4)
+if __name__ == "__main__":
+    tabs = get_tabs()
+    response = {"tabs": tabs}
+    send_response(response)
