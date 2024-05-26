@@ -3,9 +3,11 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from pystray import MenuItem as item, Icon
 
+# from workbook import Workbook
 from set import *
 
 EXAMPLE_WORKLOADS = ['Workload_1', 'Workload_2', 'Workload_3']
+
 
 class DesktopCat():
     def __init__(self):
@@ -34,21 +36,66 @@ class DesktopCat():
         self.command_created = False
         self.message = None
         self.window = tk.Tk()
+        self.book = tk.Tk()
         self.label = tk.Label(self.window, bd=0, bg='black')
-        self.error = self.load_images() 
+        self.book_bg_image = None
+        self.book_bg_image_width = 0
+        self.book_bg_image_height = 0
+        self.book_bg_photo = None        
         self.command_prompt = tk.Toplevel()
         self.command_bg_photo = None
         self.command_canvas = None
         self.command_entry = None
+        self.book_photo = None
         self.command_bg_image_width = 0
         self.command_bg_image_height = 0
+        self.text_content = ""
         self.font_path = FONT_PATH
+        self.error = self.load_images() 
         pyglet.font.add_file(self.font_path)
+        self.create_book()
         self.create_cp()
         if self.error == 0:
             self.setup_window()
             self.start_animation()
             
+    def create_book(self):
+        # Create a book_canvas to display the background image
+        self.book_canvas = tk.Canvas(self.book, width=self.book_bg_image_width, height=self.book_bg_image_height, highlightthickness=0, bg='black')
+        self.book_canvas.pack(fill="both", expand=True)
+        
+
+        self.book.config(highlightbackground='black', )
+        self.book.overrideredirect(True)
+        self.book.wm_attributes('-transparentcolor', 'black')
+        self.book.wm_attributes('-topmost', 1)
+        
+        self.book_bg_image = Image.open(BOOKS_PATH + "\\book_07.png")
+        self.book_bg_photo = ImageTk.PhotoImage(self.book_bg_image)
+        self.book_bg_image_height = self.book_bg_image.height
+        self.book_bg_image_width = self.book_bg_image.width
+        
+        self.book_canvas.create_image(0, 0, anchor="nw", image=self.book_bg_photo)
+        # Add a frame to hold the text box
+        self.text_frame = tk.Frame(self.book, bg='black')
+        self.text_frame.place(relx=0.1, rely=0.1, relwidth=0.81, relheight=0.82)  # Adjust the position and size of the frame
+        # Add a text box to the frame
+        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=FONT, bg='#f2b888', fg='black')
+        self.text_box.pack(fill="both", expand=True)
+        self.text_box.config(border=0, highlightthickness=0, state=tk.DISABLED, padx=10, pady=10)
+        
+        self.book.withdraw()            
+
+    def pos_book(self):
+        self.book.geometry(f'{self.book_bg_image_width}x{self.book_bg_image_height}+' + str(self.x-295) + '+' + str(self.y-410)) # ?!
+
+    def write_text(self, text):
+        # Add text to the text box
+        self.text_box.config(state=tk.NORMAL)
+        self.text_box.insert(tk.END, text)
+        self.text_box.see(tk.END)  # Scroll to the end
+        self.text_box.config(state=tk.DISABLED)
+      
     def reset_cycle(self, events = [0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18], event_cycle=True):
         if event_cycle:
             self.current_event_cycle = random.choice(events)
@@ -77,6 +124,8 @@ class DesktopCat():
                 error = 1
         self.imageGif['falling'] = [tk.PhotoImage(file=self.fallingPath, format=f'gif -index {i}') for i in range(4)]
         self.images.append('falling')
+        
+        
         return error
     
     def on_drag_start(self, event):
@@ -90,7 +139,7 @@ class DesktopCat():
         self.animation_running = False
         deltax = event.x_root - self.drag_start_x
         new_x = self.initial_window_x + deltax
-        new_x = max(min(new_x, 1800), 1100)
+        new_x = max(min(new_x, 1800), 400)
         deltay = event.y_root - self.drag_start_y
         new_y = self.initial_window_y + deltay
         new_y = max(min(new_y, 922), 400)
@@ -192,7 +241,7 @@ class DesktopCat():
             next_event_cycle = 25
             self.current_event_cycle = next_event_cycle
             self.current_event_cycle_index = 0
-        elif self.x < 1200:
+        elif self.x < 500:
             next_event_cycle = random.choice([0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18, 10, 11])
             self.current_event_cycle = next_event_cycle
             self.current_event_cycle_index = 0            
@@ -202,7 +251,7 @@ class DesktopCat():
             self.current_event_cycle_index = 0
         else:
             next_event_cycle = random.choice(self.EVENTS[self.current_event_cycle][1])
-            while (self.x < INITIAL_X-100 or self.x > INITIAL_X+100) and next_event_cycle == 19:
+            while (self.x < INITIAL_X-500 or self.x > INITIAL_X+100) and next_event_cycle == 19:
                 next_event_cycle = random.choice(self.EVENTS[self.current_event_cycle][1])                
             self.current_event_cycle = next_event_cycle
             self.current_event_cycle_index = 0
@@ -240,22 +289,26 @@ class DesktopCat():
         self.icon.run()
 
     def open_close_cp(self, close=False, event=None):
+        self.book.pos_book(self.x-295, self.y-410)
         if close and self.command_prompt != None and not self.icon_created and self.command_created:
             print('close cp')
-            self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
+            if not self.long_sleep:
+                self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
             self.command_prompt.withdraw()
             self.command_created = False
         else:
             if not self.command_created and not self.icon_created:
                 print('open cp')
-                self.reset_cycle([22,23,24]) 
+                if not self.long_sleep:
+                    self.reset_cycle([22,23,24]) 
                 self.command_prompt.deiconify()
                 self.pos_cp()
                 self.command_created = True
                 self.command_entry.focus_set()
             elif self.command_prompt != None and not self.icon_created:
                 print('close cp')
-                self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
+                if not self.long_sleep:
+                    self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
                 self.command_prompt.withdraw()
                 self.command_created = False
 
@@ -275,13 +328,10 @@ class DesktopCat():
         self.command_prompt.wm_attributes('-topmost', 1)
         
         self.command_prompt.bind('<Escape>', lambda event: self.open_close_cp(close=True))
-        
-        # Text widget to get user input with double row height
-        entry_font = ("pixelmix", 10)
-        # entry_font = ("Minecraftia", 11)
+        # FONT = ("Minecraftia", 11)
         entry_width = 33  # Set the width of the command_entry widget
         entry_height = 1  # Set the height of the command_entry widget to 1-2 rows
-        self.command_entry = tk.Text(self.command_prompt, bg='#fff7f5', fg='#111111', font=entry_font, borderwidth=0, width=entry_width, height=entry_height, insertontime=0, cursor='arrow')
+        self.command_entry = tk.Text(self.command_prompt, bg='#fff7f5', fg='#111111', font=FONT, borderwidth=0, width=entry_width, height=entry_height, insertontime=0, cursor='arrow')
         self.command_entry.bind("<Return>", self.on_enter_pressed)
         # Center the command_entry widget with padding
         self.command_entry.place(relx=0.5, rely=0.5, anchor="center")
@@ -340,8 +390,9 @@ class DesktopCat():
                                 self.shortcut(after_next)
                         case _ : self.check_error('error$99')
             elif message[0] == 'exit':
-                self.exit_application()                
-            else: self.google_search(message)
+                self.exit_application()
+            elif message[0] == 'q':                
+                self.google_search(message)
         else: self.check_error('error$98')
         
     def google_search(self, query):
@@ -391,6 +442,7 @@ class DesktopCat():
             except:
                 return 'error$99'
         return 'error$98'
-          
+
+    
 if __name__ == '__main__':
     desktop_cat = DesktopCat()

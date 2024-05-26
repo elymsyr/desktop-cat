@@ -80,12 +80,14 @@ FALLING_GIF_PATH = CURRENT_PATH+'desktop-cat\\media\\gifs_others\\falling.gif'
 COMMAND_BG_PATH = CURRENT_PATH+'desktop-cat\\media\\messagebox.png'
 TRAY_ICON_PATH = CURRENT_PATH+'desktop-cat\\media\\tray-icon.png'
 FONT_PATH = CURRENT_PATH+'desktop-cat\\media\\pixelmix.ttf'
+BOOKS_PATH = "desktop-cat\\media\\books\\"
 
 CHROME_PATH = "C:/Program Files/Google/Chrome/Application/chrome.exe" 
 
 INITIAL_X = 1400
 INITIAL_Y = 922
 
+FONT = ("pixelmix", 10)
 
 ERROR_LIST = {
     'error$99': "Unknown argument",
