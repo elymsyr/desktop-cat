@@ -211,22 +211,13 @@ class Workload():
     def open_tab(self, query):
         webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(CHROME_PATH))
         webbrowser.get('chrome').open(query)
-        
-    def open_chrome(self, queries):
-        threads = []
-        for query in queries:
-            thread = threading.Thread(target=self.open_tab, args=(query,))
-            threads.append(thread)
-            thread.start()
-        for thread in threads:
-            thread.join()
     
     def run_workload(self, workload_name):
-        thread = threading.Thread(target=self.set_workload, args=(workload_name,))
+        thread = threading.Thread(target=self.ready_workload, args=(workload_name,))
         thread.start()
         thread.join()
             
-    def set_workload(self, worklaod_name):
+    def ready_workload(self, worklaod_name):
             data = None
             vscode = None
             chrome = None
@@ -239,8 +230,7 @@ class Workload():
             for key in vscode:
                 self.open_vscode(path=vscode[key][0])
             for key in chrome:
-                chrome_tabs.append(chrome[key])
-            self.open_chrome(chrome_tabs)
+                self.open_tab(chrome[key])
                 
 
 new = Workload()
