@@ -17,6 +17,7 @@
 
     "config":{
         "prefix": "*",
+        "book_image": "07",
         "commands": {
             "help/h": "See the Help Book",
             "worklad/w": "Use with [list/l | run/r [Workload Name] | create/c [Workload Name] | edit/e [Workload Name] | delete/d [Workload Name]] to use the workload operations.",

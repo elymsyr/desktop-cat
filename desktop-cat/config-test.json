@@ -8,26 +8,43 @@
         "exampleWorkload": {
             "vscode": {
                 "desktop-cat": [
+                    "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\",
+                    "workload.py"
+                ]
+            },
+            "chrome": {
+                "ChatGPT": "https://chatgpt.com/?oai-dm=1",
+                "python - Tkinter pyimage doesn't exist - Stack Overflow": "https://stackoverflow.com/questions/24274072/tkinter-pyimage-doesnt-exist",
+                "Piskel -": "https://www.piskelapp.com/p/create/sprite",
+                "pyimage doesn't exist - Google Search": "https://www.google.com/search?q=pyimage+doesnt+existx&oq=pyimage+doesnt+existx&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQABgKGIAEMgYIAhBFGEAyDQgDEAAYhgMYgAQYigUyDQgEEAAYhgMYgAQYigUyCggFEAAYgAQYogTSAQgzNjIwajBqOagCALACAQ&sourceid=chrome&ie=UTF-8",
+                "tk ScrolledText without scroolbar - Google Search": "https://www.google.com/search?q=tk+ScrolledText+without+scroolbar&oq=tk+ScrolledText+without+scroolbar&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChigAdIBCTEwMzcxajBqNKgCALACAA&sourceid=chrome&ie=UTF-8"
+            }
+        },
+        "exampleWorkload2": {
+            "vscode": {
+                "desktop-cat": [
                     "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat",
                     "workload.py"
                 ]
             },
             "chrome": {
-                "ChatGPT": "https://chat.openai.com/",
-                "(234) YouTube": "https://www.youtube.com/",
-                "Selenium Interage Chrome existente": "https://chatgpt.com/c/44841942-f446-4664-b7a3-898e230851b8",
-                "precipitation humidity ne demek - Google Search": "https://www.google.com/search?q=precipitation+humidity+ne+demek&client=ms-android-xiaomi-rev1&sca_esv=26a26246cc8264db&sca_upv=1&sxsrf=ADLYWIIfqpr2RF1_30S3xYhoRjXgAlboUA%3A1716640445654&ei=vdpRZtDCJ528xc8Pgv-bKA&oq=precipitation+humidity+ne+demek&gs_lp=EhNtb2JpbGUtZ3dzLXdpei1zZXJwIh9wcmVjaXBpdGF0aW9uIGh1bWlkaXR5IG5lIGRlbWVrMggQABiABBiiBDIIEAAYgAQYogQyCBAAGIAEGKIEMggQABiABBiiBEizI1C2AVjWIXABeAGQAQGYAe0CoAHCIKoBBzAuOC43LjO4AQPIAQD4AQGYAg-gAuYZwgIEEAAYR8ICChAjGIAEGCcYigXCAggQABiABBjLAcICBRAAGIAEwgILEAAYgAQYkQIYigXCAgYQABgWGB7CAgsQABiABBiGAxiKBcICBRAhGKABwgIFECEYnwXCAgcQIRigARgKmAMAiAYBkAYIkgcHMS42LjYuMqAHu1Q&sclient=mobile-gws-wiz-serp",
-                "precipitation map - Google Search": "https://www.google.com/search?q=precipitation+map&oq=precipitation+&gs_lcrp=EgZjaHJvbWUqBwgEEAAYgAQyBggAEEUYOTIHCAEQABiABDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIHCAUQABiABDIHCAYQABiABDIHCAcQABiABDIHCAgQABiABDIHCAkQABiABDIHCAoQABiABDIHCAsQABiABDIHCAwQABiABDIHCA0QABiABDIHCA4QABiABNIBCDg3NTdqMGo5qAIOsAIB&client=ms-android-xiaomi-rev1&sourceid=chrome-mobile&ie=UTF-8",
-                "hava durumu adana - Google Search": "https://www.google.com/search?q=hava+durumu+adana&oq=hava+durumu+adana+&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDI3NzVqMGo3qAIPsAIB&client=ms-android-xiaomi-rev1&sourceid=chrome-mobile&ie=UTF-8",
-                "wifi.gsb.gov.tr": "https://wifi.gsb.gov.tr/",
-                "Google Chrome Socket API in extensions - Stack Overflow": "https://stackoverflow.com/questions/13921970/google-chrome-socket-api-in-extensions",
-                "sockets - How to connect chrome web extension with localhost server? - Stack Overflow": "https://stackoverflow.com/questions/34970213/how-to-connect-chrome-web-extension-with-localhost-server",
-                "connect local server using chrome extension - Google Search": "https://www.google.com/search?q=connect+local+server+using+chrome+extension&oq=connect+local+server+using+chrome+e&gs_lcrp=EgZjaHJvbWUqBwgBECEYoAEyBggAEEUYOTIHCAEQIRigATIHCAIQIRigATIHCAMQIRigAdIBCDk4ODRqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
+                "tk ScrolledText without scroolbar - Google Search": "https://www.google.com/search?q=tk+ScrolledText+without+scroolbar&oq=tk+ScrolledText+without+scroolbar&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChigAdIBCTEwMzcxajBqNKgCALACAA&sourceid=chrome&ie=UTF-8"
             }
         },
-        "exampleWorkload2": {
-            "chrome": {},
-            "vscode": {}
+        "newnewnew": {
+            "vscode": {
+                "desktop-cat": [
+                    "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat",
+                    "workload.py"
+                ]
+            },
+            "chrome": {
+                "ChatGPT": "https://chatgpt.com/?oai-dm=1",
+                "python - Tkinter pyimage doesn't exist - Stack Overflow": "https://stackoverflow.com/questions/24274072/tkinter-pyimage-doesnt-exist",
+                "Piskel -": "https://www.piskelapp.com/p/create/sprite",
+                "tk ScrolledText without scroolbar - Google Search": "https://www.google.com/search?q=tk+ScrolledText+without+scroolbar&oq=tk+ScrolledText+without+scroolbar&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChigAdIBCTEwMzcxajBqNKgCALACAA&sourceid=chrome&ie=UTF-8",
+                "ScrolledText - ttkbootstrap": "https://ttkbootstrap.readthedocs.io/en/latest/api/scrolled/scrolledtext/"
+            }
         }
     },
     "config": {
