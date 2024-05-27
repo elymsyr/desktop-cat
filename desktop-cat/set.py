@@ -58,29 +58,29 @@ PREFIX = '*'
 # }
 
 COMMANDS = [
-    (f"{PREFIX}help/h", "See the Help Book"),
-    (f"{PREFIX}worklad/w", "Use with [list/l | run/r [Workload Name] | create/c [Workload Name] | edit/e [Workload Name] | delete/d [Workload Name]] to use the workload operations."),
-    (f"{PREFIX}sleep/s", "De/activate the long sleep mode for the cat."),
-    (f"{PREFIX}menu", "See the cookbook"),
-    (f"{PREFIX}tray", "Send the cat to taskbar tray"),
-    (f"{PREFIX}config", "See the configurations"),
-    (f"{PREFIX}exit", "Exit program"),
+    (f"\n{PREFIX}help/h", "See the Help Book"),
+    (f"\n{PREFIX}worklad/w", "Add h to see workload operations."),
+    (f"\n{PREFIX}sleep/s", "De/activate the long sleep mode for the cat."),
+    (f"\n{PREFIX}book/b", "See the book."),
+    (f"\n{PREFIX}tray", "Send the cat to taskbar tray or use double click!"),
+    (f"\n{PREFIX}config", "See the configurations."),
+    (f"\n{PREFIX}q", "Add your sentence after it to search on google."),
+    (f"\n{PREFIX}exit", "Exit program."),
 ]
 
 def HELP_BOOK():
-    string = "\n\nDektopCat Commands\n"
+    string = "\nDektopCat Commands\n"
     max_len = max(len(command[0]) for command in COMMANDS)
     for command in COMMANDS:
         string+=(f"{command[0].ljust(max_len)}   {command[1]}\n")
     return string
 
-CURRENT_PATH = f"{os.getcwd()}\\"
-GIFS_PATH = CURRENT_PATH+'desktop-cat\\media\\gifs'
-FALLING_GIF_PATH = CURRENT_PATH+'desktop-cat\\media\\gifs_others\\falling.gif'
-COMMAND_BG_PATH = CURRENT_PATH+'desktop-cat\\media\\messagebox.png'
-TRAY_ICON_PATH = CURRENT_PATH+'desktop-cat\\media\\tray-icon.png'
-FONT_PATH = CURRENT_PATH+'desktop-cat\\media\\pixelmix.ttf'
-BOOKS_PATH = "desktop-cat\\media\\books\\"
+GIFS_PATH = 'media\\gifs'
+FALLING_GIF_PATH = 'media\\gifs_others\\falling.gif'
+COMMAND_BG_PATH = 'media\\messagebox.png'
+TRAY_ICON_PATH = 'media\\tray-icon.png'
+FONT_PATH = 'media\\pixelmix.ttf'
+BOOKS_PATH =  "media\\books\\"
 
 CHROME_PATH = "C:/Program Files/Google/Chrome/Application/chrome.exe" 
 

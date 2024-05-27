@@ -1,18 +1,31 @@
-import random, webbrowser, traceback, pyglet, os
+import random, webbrowser, traceback, pyglet, os, sys
 import tkinter as tk
 from PIL import Image, ImageTk
 from time import sleep
 from pystray import MenuItem as item, Icon
 
-# from workbook import Workbook
 from set import *
 import workload
 
-EXAMPLE_WORKLOADS = ['Workload_1', 'Workload_2', 'Workload_3']
-
+# python -m PyInstaller --onedir 
+# --icon=media/tray-icon.ico
+# --add-data "media/gifs_others/falling.gif;images/"
+# --add-data "media/messagebox.png;images/"
+# --add-data "images/image.png;images/"
+# --add-data "media\pixelmix.ttf"
+# --add-data "media/tray-icon.png;images/"
+# --add-data "media/books/*.png:images/"
+# --add-data "media/gifs/*.gif:images/"
+# --add-data "media/gifs/*.gif:images/"
 
 class DesktopCat():
     def __init__(self):
+        self.tray_path = TRAY_ICON_PATH
+        self.impath = GIFS_PATH
+        self.fallingPath = FALLING_GIF_PATH
+        self.menu_bg_image_path = COMMAND_BG_PATH
+        self.font_path = FONT_PATH
+        self.book_path = BOOKS_PATH
         self.animation_running = True
         self.falling = False
         self.long_sleep = False
@@ -23,11 +36,7 @@ class DesktopCat():
         self.current_event_cycle_index = 0
         self.EVENTS = EVENTS
         self.event_number = self.EVENTS[self.current_event_cycle][0][0]
-        self.impath = GIFS_PATH
-        self.fallingPath = FALLING_GIF_PATH
-        self.menu_bg_image_path = COMMAND_BG_PATH
         self.fallingGif = []
-        self.tray_path = TRAY_ICON_PATH
         self.flyPNG = []
         self.imageGif = {}
         self.white = True
@@ -55,18 +64,26 @@ class DesktopCat():
         self.command_bg_image_height = 0
         self.text_content = ""
         self.wl = workload.Workload()
-        self.font_path = FONT_PATH
         self.error = self.load_images() 
         pyglet.font.add_file(self.font_path)
         self.create_book()
         self.create_cp()
+        self.open_close_book(True)
+        self.open_close_cp()
+        self.help()
+        self.write_text("Do not move the cat fast.\nThere is a bug :(\nRight click to cat!")
         if self.error == 0:
             self.setup_window()
             self.start_animation()
-            
+    
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_path, relative_path)            
+                
     def create_book(self):
         # Create a book_canvas to display the background image
-        self.book_bg_image = Image.open(BOOKS_PATH + "\\book_test.png")
+        self.book_bg_image = Image.open(self.book_path + "\\book_test.png")
         self.book_canvas = tk.Canvas(self.book, width=self.book_bg_image.width, height=self.book_bg_image.height, highlightthickness=0, bg='black')
         self.book_canvas.pack(fill="both", expand=True)
 
@@ -86,7 +103,7 @@ class DesktopCat():
         self.text_frame = tk.Frame(self.book_canvas, bg='black')
         self.text_frame.place(relx=0.093, rely=0.08, relwidth=0.81, relheight=0.85)  # Adjust the position and size of the frame
         # Add a text box to the frame
-        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=('Helvetica', 10), bg='#e8ebef', fg='black')
+        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=FONT, bg='#e8ebef', fg='#111111')
         self.text_box.pack(fill="both", expand=True)
         self.text_box.config(border=0, highlightthickness=0, state=tk.DISABLED)
         self.book.bind('<Escape>', lambda event: self.open_close_book(False))
@@ -290,10 +307,11 @@ class DesktopCat():
             self.icon_created = False
             self.icon.stop()
 
-    def hide_window(self, event):
+    def hide_window(self, event=None):
         print('hide_window')
         self.window.withdraw()
         self.command_prompt.withdraw()
+        self.open_close_book(False)
         self.create_tray_icon()
 
     def exit_application(self):
@@ -320,6 +338,7 @@ class DesktopCat():
                 self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
             self.command_prompt.withdraw()
             self.command_created = False
+            self.open_close_book(False)
         else:
             if not self.command_created and not self.icon_created:
                 print('open cp')
@@ -333,6 +352,7 @@ class DesktopCat():
                 print('close cp')
                 if not self.long_sleep:
                     self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
+                self.open_close_book(False)
                 self.command_prompt.withdraw()
                 self.command_created = False
 
@@ -375,6 +395,7 @@ class DesktopCat():
         self.command_prompt.geometry(f'{self.command_bg_image_width}x{self.command_bg_image_height}+' + str(self.x-295) + '+' + str(self.y-110))  
 
     def return_var(self):
+        self.open_close_book(True)
         self.window.wait_variable(self.var)
         input = self.var.get()
         self.var.set("")  # Reset self.var to an empty string
@@ -382,7 +403,7 @@ class DesktopCat():
     
     def check_error(self, expected_error, extra_error_info = ''):
         if expected_error in list(ERROR_LIST.keys()):
-            print(f'\n{expected_error}: {ERROR_LIST[expected_error]}\n  {extra_error_info}\n  (See the Help Book with the command {PREFIX}h)')
+            self.write_text(f'\n{expected_error}: {ERROR_LIST[expected_error]}\n  {extra_error_info}\n  (See the Help Book with the command {PREFIX}h)')
         else: return True
 
     def get_next(self, message, word):
@@ -416,6 +437,9 @@ class DesktopCat():
                 next = self.get_next(message, message[0])
                 if self.check_error(next, extra_error_info=f"*w requires an argument."):
                     match next:
+                        case 'h':
+                            self.open_close_book(True)
+                            self.write_text("Can be used with\n  list/l\n  run/r [Workload Name]\n  save/s [Workload Name]\n  edit/e [Workload Name]\n  delete/d [Workload Name]]")
                         case 'l' | 'list': self.workload_list()
                         case 's' | 'save' | 'r' | 'run' | 'e' | 'edit' | 'd' | 'delete':
                             after_next = self.get_next(message, next)
@@ -428,18 +452,12 @@ class DesktopCat():
                 self.tray()
             elif message[0] == 'config':
                 self.config()
-                next = self.get_next(message, message[0])
-                if self.check_error(next):
-                    match next:
-                        case 'shortcut':
-                            after_next = self.get_next(message, next)
-                            if self.check_error(after_next, extra_error_info=f"Add your shortcut. (default ctrl+shift+a)"):
-                                self.shortcut(after_next)
-                        case _ : self.check_error('error$99')
             elif message[0] == 'exit':
                 self.exit_application()
             elif message[0] == 'q':                
                 self.google_search(message)
+            elif message[0] == 'book' or message[0] == 'b':                
+                self.open_close_book(True)
         else: self.check_error('error$98')
         
     def google_search(self, query):
@@ -465,9 +483,9 @@ class DesktopCat():
         match operation:
             case 's' | 'save': self.save_workload(workload_name)
             case 'r' | 'run': self.wl.run_workload(workload_name)
-            case 'e' | 'edit': print(f'edit {workload_name}')
-            case 'd' | 'delete': print(f'delete {workload_name}')
-            case _: print('error')
+            case 'e' | 'edit': self.write_text("\nComing soon...\n")
+            case 'd' | 'delete': self.write_text("\nComing soon...\n")
+            case _: self.write_text('\n\nerror?')
 
     def save_workload(self, workload_name):
         new_vscode = {}
@@ -485,9 +503,13 @@ class DesktopCat():
             else:
                 self.write_text(f'\nEnter path to your project {key}...')
                 code_url_takin = self.return_var()
+                if code_url_takin == '*cancel':
+                    return
                 while (len(code_url_takin) > 0 and (code_url_takin.split('\\'))[-1] != key) :
                     self.write_text(f'\nLeaving it empty is an option but... maybe try again?')
                     code_url_takin = self.return_var()
+                    if code_url_takin == '*cancel':
+                        return                    
                 code_url = code_url_takin
                 if len(code_url) > 0:
                     data['workload_data']['vscode'][key] = code_url
@@ -499,10 +521,14 @@ class DesktopCat():
         self.write_text(self.wl.print_chrome(chrome, 10))
         self.write_text('\nChoose which tabs will be included...')
         input_numbers = self.return_var()
+        if input_numbers == '*cancel':
+            return        
         selected = self.wl.process_input(input_numbers, chrome)
         while not selected:
             self.write_text('\nPlease specify the numbers correctly:\n   .n to add from 1 to n\n   n-m to add from n to m   \n  n to add n\n   *n to exclude n\n   *n-m to exclude from n to m\nInput Waiting: \n')
             input_numbers = self.return_var()
+            if input_numbers == '*cancel':
+                return             
             selected = self.wl.process_input(input_numbers, chrome)
         self.write_text(self.wl.print_chrome(chrome, 10))                               
         new_chrome = selected
@@ -513,15 +539,14 @@ class DesktopCat():
        
     def sleep(self):
         self.long_sleep = not self.long_sleep
-        print(f'Long Sleep {self.long_sleep}\n')
+        self.write_text(f'Long Sleep {self.long_sleep}\n')
     
     def tray(self):
         self.hide_window()
-        print('tray')
    
     def config(self):
         self.open_close_book(True)
-        print('config')
+        self.write_text("\nComing soon...\n")
     
     def help(self):
         self.open_close_book(True)
