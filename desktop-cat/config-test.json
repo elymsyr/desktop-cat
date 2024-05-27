@@ -1,7 +1,7 @@
 {
     "workload_data": {
         "vscode": {
-            "desktop-cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat"
+            "desktop-cat": "desktop-cat"
         }
     },
     "workloads": {
@@ -44,6 +44,37 @@
                 "Piskel -": "https://www.piskelapp.com/p/create/sprite",
                 "tk ScrolledText without scroolbar - Google Search": "https://www.google.com/search?q=tk+ScrolledText+without+scroolbar&oq=tk+ScrolledText+without+scroolbar&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChigAdIBCTEwMzcxajBqNKgCALACAA&sourceid=chrome&ie=UTF-8",
                 "ScrolledText - ttkbootstrap": "https://ttkbootstrap.readthedocs.io/en/latest/api/scrolled/scrolledtext/"
+            }
+        },
+        "new": {
+            "vscode": {
+                "desktop-cat": [
+                    "desktop-cat",
+                    "workload.py"
+                ]
+            },
+            "chrome": {
+                "robot - Search - dafont.com": "https://www.dafont.com/search.php?q=robot"
+            }
+        },
+        "newhehe": {
+            "vscode": {
+                "desktop-cat": [
+                    "desktop-cat",
+                    "gui.py"
+                ]
+            },
+            "chrome": {
+                "code - Search - dafont.com": "https://www.dafont.com/search.php?q=code",
+                "robot - Search - dafont.com": "https://www.dafont.com/search.php?q=robot",
+                "DaFont - Download fonts": "https://www.dafont.com/",
+                "M | dafont.com": "https://www.dafont.com/alpha.php?lettre=m",
+                "fonts - Google Search": "https://www.google.com/search?q=fonts&oq=fonts+&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIMCAEQABhDGIAEGIoFMgwIAhAAGEMYgAQYigUyDAgDEAAYQxiABBiKBTIMCAQQABhDGIAEGIoFMgwIBRAAGEMYgAQYigUyDAgGEAAYQxiABBiKBTIHCAcQABiABDIHCAgQABiABDIHCAkQABiABNIBCDI0NTVqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
+                "Piskel -": "https://www.piskelapp.com/p/create/sprite",
+                "python - Making Tkinter wait untill button is pressed - Stack Overflow": "https://stackoverflow.com/questions/44790449/making-tkinter-wait-untill-button-is-pressed",
+                "tkinter wait until key pressed - Google Search": "https://www.google.com/search?q=tkinter+wait+until+key+pressed&oq=tkinter+wait+until+key+pressed&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yDQgCEAAYhgMYgAQYigUyDQgDEAAYhgMYgAQYigUyDQgEEAAYhgMYgAQYigUyDQgFEAAYhgMYgAQYigUyCggGEAAYgAQYogQyCggHEAAYgAQYogTSAQg3MDQ5ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
+                "ChatGPT": "https://chatgpt.com/?oai-dm=1",
+                "python - How do I get the Entry's value in tkinter? - Stack Overflow": "https://stackoverflow.com/questions/35662844/how-do-i-get-the-entrys-value-in-tkinter"
             }
         }
     },

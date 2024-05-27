@@ -11,40 +11,13 @@ class Workload():
     def __init__(self):
         self.vscode = {}
         self.chrome = {}
-        
-    def save_workload(self, workload_name):
+         
+    def get_data(self):
         new_vscode = {}
-        new_chrome = {}
-        code_url = ''
         data = None
         with open(r'desktop-cat\config-test.json', 'r') as file:  # Use raw string to handle backslashes
             data = json.load(file)
-        vscode = self.findVSCode()
-        chrome = self.findChrome()
-        
-        for key in list(vscode.keys()):  # Convert dict_keys to list
-            if key in data['workload_data']['vscode']:
-                code_url = data['workload_data']['vscode'][key]
-            else:
-                code_url_takin = input(f'Do you mind giving the path to your project {key}? (Leave empty to go on...)')
-                while (len(code_url_takin) > 0 and (code_url_takin.split('\\'))[-1] != key) :
-                    code_url_takin = input(f'Is this true? Let\'s try again: {code_url_takin} (Leaving it empty is an option but...)')
-                code_url = code_url_takin
-                if len(code_url) > 0:
-                    data['workload_data']['vscode'][key] = code_url
-            new_vscode[key] = [code_url, vscode[key]]
-        self.print_chrome(chrome, 10)
-        input_numbers = input('Specify the numbers (Example: \'1-5 *4 .10\') :\n  .n to add from 1 to n\n  n-m to add from n to m\n  n to add n\n  *n to exclude n\n  *n-m to exclude from n to m\nInput Waiting: ')
-        selected = self.process_input(input_numbers, chrome)
-        while not selected:
-            input_numbers = input('Please specify the numbers correctly:\n  .n to add from 1 to n\n  n-m to add from n to m\n  n to add n\n  *n to exclude n\n *n-m to exclude from n to m\nInput Waiting: ')
-            selected = self.process_input(input_numbers, chrome)
-        self.print_chrome(selected)                                
-        new_chrome = selected
-        data['workloads'][workload_name] = {"vscode": new_vscode,"chrome": new_chrome}
-            
-        with open('desktop-cat\config-test.json', 'w') as file:
-            json.dump(data, file, indent=4)
+        return data
             
     def process_input(self, input_str, source_dict):
         try:
@@ -106,16 +79,18 @@ class Workload():
         return value
             
     def print_chrome(self, chrome, number = 0):
+        string = '\n'
         # Determine the maximum width needed for numbering
         max_width = len(str(len(chrome)))
         i = 0
         for index, (key, value) in enumerate(chrome.items(), start=1):
             # Format the string to fit within the remaining space
             formatted_key = self.format_string(key[:30 - max_width - 2])  # Adjust for number and dot
-            print(f'{str(index).rjust(max_width)}. {formatted_key} : {self.get_main_link(value)}')
+            string += f'{str(index).rjust(max_width)}.{formatted_key} {self.get_main_link(value)}\n'
             i += 1
             if number > 0 and i >= number:
                 break
+        return string
    
     def get_open_windows(self):
         selected = []
@@ -233,5 +208,5 @@ class Workload():
                 self.open_tab(chrome[key])
                 
 
-new = Workload()
-new.run_workload('exampleWorkload')
+# new = Workload()
+# new.run_workload('exampleWorkload')

@@ -6,6 +6,7 @@ from pystray import MenuItem as item, Icon
 
 # from workbook import Workbook
 from set import *
+import workload
 
 EXAMPLE_WORKLOADS = ['Workload_1', 'Workload_2', 'Workload_3']
 
@@ -29,6 +30,7 @@ class DesktopCat():
         self.tray_path = TRAY_ICON_PATH
         self.flyPNG = []
         self.imageGif = {}
+        self.white = True
         self.images = []
         self.position = 0
         self.before_ms = 0
@@ -37,6 +39,7 @@ class DesktopCat():
         self.command_created = False
         self.message = None
         self.window = tk.Tk()
+        self.var = tk.StringVar()
         self.book = tk.Toplevel(self.window)
         self.label = tk.Label(self.window, bd=0, bg='black')
         self.book_bg_image = None
@@ -51,6 +54,7 @@ class DesktopCat():
         self.command_bg_image_width = 0
         self.command_bg_image_height = 0
         self.text_content = ""
+        self.wl = workload.Workload()
         self.font_path = FONT_PATH
         self.error = self.load_images() 
         pyglet.font.add_file(self.font_path)
@@ -62,7 +66,7 @@ class DesktopCat():
             
     def create_book(self):
         # Create a book_canvas to display the background image
-        self.book_bg_image = Image.open(BOOKS_PATH + "\\book_07.png")
+        self.book_bg_image = Image.open(BOOKS_PATH + "\\book_test.png")
         self.book_canvas = tk.Canvas(self.book, width=self.book_bg_image.width, height=self.book_bg_image.height, highlightthickness=0, bg='black')
         self.book_canvas.pack(fill="both", expand=True)
 
@@ -80,21 +84,29 @@ class DesktopCat():
             print(f"Exception at {row_number}: {e}")
         # Add a frame to hold the text box
         self.text_frame = tk.Frame(self.book_canvas, bg='black')
-        self.text_frame.place(relx=0.1, rely=0.1, relwidth=0.81, relheight=0.82)  # Adjust the position and size of the frame
+        self.text_frame.place(relx=0.093, rely=0.08, relwidth=0.81, relheight=0.85)  # Adjust the position and size of the frame
         # Add a text box to the frame
-        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=FONT, bg='#f2b888', fg='black')
+        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=('Helvetica', 10), bg='#e8ebef', fg='black')
         self.text_box.pack(fill="both", expand=True)
-        self.text_box.config(border=0, highlightthickness=0, state=tk.DISABLED, padx=10, pady=10)
+        self.text_box.config(border=0, highlightthickness=0, state=tk.DISABLED)
+        self.book.bind('<Escape>', lambda event: self.open_close_book(False))
+        self.book.bind('<Button-3>', lambda event: self.open_close_book(False))
         self.pos_book()
-        # self.book.withdraw()
+        self.open_close_book(False)
+        
+    def open_close_book(self, onoff):
+        if not onoff:
+            self.book.withdraw()
+        else:
+            self.book.deiconify()
 
     def pos_book(self):
-        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(self.x-274) + '+' + str(self.y-480)) # ?!
+        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(self.x-320) + '+' + str(self.y-620)) # ?!
 
     def write_text(self, text):
         # Add text to the text box
         self.text_box.config(state=tk.NORMAL)
-        self.insert_text(text)
+        # self.insert_text(text)
         self.text_box.insert(tk.END, text)
         self.text_box.see(tk.END)  # Scroll to the end
         self.text_box.config(state=tk.DISABLED)
@@ -362,14 +374,37 @@ class DesktopCat():
     def pos_cp(self):
         self.command_prompt.geometry(f'{self.command_bg_image_width}x{self.command_bg_image_height}+' + str(self.x-295) + '+' + str(self.y-110))  
 
+    def return_var(self):
+        self.window.wait_variable(self.var)
+        input = self.var.get()
+        self.var.set("")  # Reset self.var to an empty string
+        return input
+    
+    def check_error(self, expected_error, extra_error_info = ''):
+        if expected_error in list(ERROR_LIST.keys()):
+            print(f'\n{expected_error}: {ERROR_LIST[expected_error]}\n  {extra_error_info}\n  (See the Help Book with the command {PREFIX}h)')
+        else: return True
+
+    def get_next(self, message, word):
+        if len(message) > message.index(word)+1:
+            try:
+                return str(message[message.index(word)+1]) 
+            except:
+                return 'error$99'
+        return 'error$98'
+
     def on_enter_pressed(self, event):
         message = self.command_entry.get("1.0", "end-1c")  # Get all text from the widget
+        self.var.set(message)
         self.command_entry.delete("1.0", "end")  # Delete all text from the widget
         message = message.strip()
-        if message.startswith(PREFIX):
+        if message.startswith(PREFIX) and self.white:
+            self.white = False
             self.parser(message[1:].split())
+            self.white = True
         else:
             print(message)
+        return message
     
     def parser(self, message):
         if len(message) > 0:
@@ -382,7 +417,7 @@ class DesktopCat():
                 if self.check_error(next, extra_error_info=f"*w requires an argument."):
                     match next:
                         case 'l' | 'list': self.workload_list()
-                        case 'c' | 'create' | 'r' | 'run' | 'e' | 'edit' | 'd' | 'delete' | 'ce' | 'create-edit':
+                        case 's' | 'save' | 'r' | 'run' | 'e' | 'edit' | 'd' | 'delete':
                             after_next = self.get_next(message, next)
                             if self.check_error(after_next, extra_error_info=f"*w {next} requires a Workload Name."):
                                 self.workload_edit(after_next, next)
@@ -413,18 +448,69 @@ class DesktopCat():
         self.open_close_cp(close=True)
 
     def workload_list(self):
-        print(EXAMPLE_WORKLOADS)
+        self.open_close_book(True)
+        data = None
+        with open(r'desktop-cat\config-test.json', 'r') as file:
+            data = json.load(file)
+        i=0
+        if len(list(data['workloads'].keys())) > 0:
+            self.write_text(f"\nWorkloads:\n")
+            for workload in list(data['workloads'].keys()):
+                self.write_text(f"{i}- {workload}\n")
+                i+=1
+        else: self.write_text(f"\nNo workload founded...\n")
     
     def workload_edit(self, workload_name, operation):
-        print('edit')
+        self.open_close_book(True)
         match operation:
-            case 'c' | 'create': print(f'create {workload_name}')
-            case 'r' | 'run': print(f'run {workload_name}')
+            case 's' | 'save': self.save_workload(workload_name)
+            case 'r' | 'run': self.wl.run_workload(workload_name)
             case 'e' | 'edit': print(f'edit {workload_name}')
             case 'd' | 'delete': print(f'delete {workload_name}')
-            case 'ce' | 'create-edit': print(f'create with edit {workload_name}')
             case _: print('error')
 
+    def save_workload(self, workload_name):
+        new_vscode = {}
+        new_chrome = {}
+        code_url = ''
+        data = None
+        with open(r'desktop-cat\config-test.json', 'r') as file:  # Use raw string to handle backslashes
+            data = json.load(file)
+        vscode = self.wl.findVSCode()
+        chrome = self.wl.findChrome()
+        
+        for key in list(vscode.keys()):  # Convert dict_keys to list
+            if key in data['workload_data']['vscode']:
+                code_url = data['workload_data']['vscode'][key]
+            else:
+                self.write_text(f'\nEnter path to your project {key}...')
+                code_url_takin = self.return_var()
+                while (len(code_url_takin) > 0 and (code_url_takin.split('\\'))[-1] != key) :
+                    self.write_text(f'\nLeaving it empty is an option but... maybe try again?')
+                    code_url_takin = self.return_var()
+                code_url = code_url_takin
+                if len(code_url) > 0:
+                    data['workload_data']['vscode'][key] = code_url
+            new_vscode[key] = [code_url, vscode[key]]
+            
+        self.open_close_book(True)
+            
+        self.write_text('\nExample: \'1-5 *4 .10\' :\n   .n to add from 1 to n\n   n-m to add from n to m\n   n to add n\n   *n to exclude n\n   *n-m to exclude from n to m\n')
+        self.write_text(self.wl.print_chrome(chrome, 10))
+        self.write_text('\nChoose which tabs will be included...')
+        input_numbers = self.return_var()
+        selected = self.wl.process_input(input_numbers, chrome)
+        while not selected:
+            self.write_text('\nPlease specify the numbers correctly:\n   .n to add from 1 to n\n   n-m to add from n to m   \n  n to add n\n   *n to exclude n\n   *n-m to exclude from n to m\nInput Waiting: \n')
+            input_numbers = self.return_var()
+            selected = self.wl.process_input(input_numbers, chrome)
+        self.write_text(self.wl.print_chrome(chrome, 10))                               
+        new_chrome = selected
+        data['workloads'][workload_name] = {"vscode": new_vscode,"chrome": new_chrome}
+            
+        with open('desktop-cat\\config-test.json', 'w') as file:
+            json.dump(data, file, indent=4)
+       
     def sleep(self):
         self.long_sleep = not self.long_sleep
         print(f'Long Sleep {self.long_sleep}\n')
@@ -434,24 +520,14 @@ class DesktopCat():
         print('tray')
    
     def config(self):
+        self.open_close_book(True)
         print('config')
     
     def help(self):
-        print(HELP_BOOK())
-        
-    def check_error(self, expected_error, extra_error_info = ''):
-        if expected_error in list(ERROR_LIST.keys()):
-            print(f'\n{expected_error}: {ERROR_LIST[expected_error]}\n  {extra_error_info}\n  (See the Help Book with the command {PREFIX}h)')
-        else: return True
-
-    def get_next(self, message, word):
-        if len(message) > message.index(word)+1:
-            try:
-                return str(message[message.index(word)+1]) 
-            except:
-                return 'error$99'
-        return 'error$98'
-
+        self.open_close_book(True)
+        self.write_text("\n\n")
+        self.write_text(HELP_BOOK())
+        self.write_text("\n\n")
 
 if __name__ == '__main__':
     desktop_cat = DesktopCat()
