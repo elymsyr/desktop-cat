@@ -1,7 +1,7 @@
 {
     "workload_data": {
         "vscode": {
-            "desktop-cat": "Unknown-Path"
+            "desktop-cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat"
         }
     },
     "workloads": {
@@ -34,32 +34,23 @@
         "test": {
             "vscode": {
                 "desktop-cat": [
-                    "Unknown-Path",
+                    "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat",
                     "main.py"
                 ]
             },
-            "chrome": {
-            }
+            "chrome": {}
         }
     },
     "config": {
         "prefix": "*",
-        "commands": {
-            "help/h": "See the Help Book",
-            "worklad/w": "Use with [list/l | run/r [Workload Name] | create/c [Workload Name] | edit/e [Workload Name] | delete/d [Workload Name]] to use the workload operations.",
-            "sleep/s": "De/activate the long sleep mode for the cat.",
-            "menu": "See the cookbook",
-            "tray": "Send the cat to taskbar tray",
-            "config": "See the configurations",
-            "exit": "Exit program"
+        "chrome_settings": {
+            "chrome_path": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+            "chrome_profile_name": "Default",
+            "chrome_profile_path": "\\AppData\\Local\\Google\\Chrome\\User Data\\"
         },
-        "initial_positions": {
-            "initial_x": 1400,
-            "initial_y": 922
-        },
-        "error_list": {
-            "error$99": "Unknown argument",
-            "error$98": "Missing argument"
+        "fonts": {
+            "current_font_name": "pixelmix",
+            "default_font_size": 10
         }
     }
 }

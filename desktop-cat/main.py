@@ -1,14 +1,17 @@
-import random, webbrowser, traceback, pyglet, os, json
+import random, webbrowser, traceback, pyglet, os, json, subprocess
 import tkinter as tk
 from PIL import Image, ImageTk
 from time import sleep
 from pystray import MenuItem as item, Icon
-
+# for index, (key, value) in enumerate(chrome.items(), start=1):
 from set import *
 import workload
 
 class DesktopCat():
     def __init__(self):
+        self.font = ('pixelmix', 10)
+        self.chrome_path = "C:/Program Files/Google/Chrome/Application/chrome.exe"
+        self.prefix = "*"
         self.animation_running = True
         self.falling = False
         self.long_sleep = False
@@ -54,11 +57,22 @@ class DesktopCat():
         self.open_close_book(True)
         self.open_close_cp()
         self.help()
-        self.write_text("Do not move the cat fast.\nThere is a bug :(\nRight click to cat!")
+        self.write_text("\nDo not move the cat fast.\nThere is a bug :(\nRight click to cat!")
+        self.reload_config()
         if self.error == 0:
             self.setup_window()
-            self.start_animation()       
-                
+            self.start_animation()
+            
+    def reload_config(self):
+        try:
+            data = self.get_config()
+            self.prefix = data['config']['prefix']
+            self.chrome_path = data['config']['chrome_settings']['chrome_path']
+            self.font = (data['config']['fonts']['current_font_name'], data['config']['fonts']['default_font_size'])
+            self.wl.reload_config(data['config']['chrome_settings']['chrome_profile_path'], data['config']['chrome_settings']['chrome_profile_name'], self.chrome_path)
+            self.write_text("\nConfigurations reloaded...")
+        except: self.write_text("\nA problem occured during the data reload process :/")
+                    
     def create_book(self):
         # Create a book_canvas to display the background image
         self.book_bg_image = Image.open(BOOKS_PATH + "\\book_test.png")
@@ -81,7 +95,7 @@ class DesktopCat():
         self.text_frame = tk.Frame(self.book_canvas, bg='black')
         self.text_frame.place(relx=0.093, rely=0.08, relwidth=0.81, relheight=0.85)  # Adjust the position and size of the frame
         # Add a text box to the frame
-        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=FONT, bg='#e8ebef', fg='#111111')
+        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=self.font, bg='#e8ebef', fg='#111111')
         self.text_box.pack(fill="both", expand=True)
         self.text_box.config(border=0, highlightthickness=0, state=tk.DISABLED)
         self.book.bind('<Escape>', lambda event: self.open_close_book(False))
@@ -102,6 +116,7 @@ class DesktopCat():
         # Add text to the text box
         self.text_box.config(state=tk.NORMAL)
         # self.insert_text(text)
+        self.text_box.insert(tk.END, "\n")
         self.text_box.insert(tk.END, text)
         self.text_box.see(tk.END)  # Scroll to the end
         self.text_box.config(state=tk.DISABLED)
@@ -353,7 +368,7 @@ class DesktopCat():
         # FONT = ("Minecraftia", 11)
         entry_width = 33  # Set the width of the command_entry widget
         entry_height = 1  # Set the height of the command_entry widget to 1-2 rows
-        self.command_entry = tk.Text(self.command_prompt, bg='#fff7f5', fg='#111111', font=FONT, borderwidth=0, width=entry_width, height=entry_height, insertontime=0, cursor='arrow')
+        self.command_entry = tk.Text(self.command_prompt, bg='#fff7f5', fg='#111111', font=self.font, borderwidth=0, width=entry_width, height=entry_height, cursor='arrow')
         self.command_entry.bind("<Return>", self.on_enter_pressed)
         # Center the command_entry widget with padding
         self.command_entry.place(relx=0.5, rely=0.5, anchor="center")
@@ -368,7 +383,7 @@ class DesktopCat():
             print(f"Exception at {row_number}: {e}")
         self.pos_cp()
         self.command_prompt.withdraw()
-            
+    
     def pos_cp(self):
         self.command_prompt.geometry(f'{self.command_bg_image_width}x{self.command_bg_image_height}+' + str(self.x-295) + '+' + str(self.y-110))  
 
@@ -379,9 +394,9 @@ class DesktopCat():
         self.var.set("")  # Reset self.var to an empty string
         return input
     
-    def check_error(self, expected_error, extra_error_info = ''):
+    def check_error(self, expected_error, extra_error_info = '', write = True):
         if expected_error in list(ERROR_LIST.keys()):
-            self.write_text(f'\n{expected_error}: {ERROR_LIST[expected_error]}\n  {extra_error_info}\n  (See the Help Book with the command {PREFIX}h)')
+            if write: self.write_text(f'\n{expected_error}: {ERROR_LIST[expected_error]}\n  {extra_error_info}\n  (See the Help Book with the command {self.prefix}h)')
         else: return True
 
     def get_next(self, message, word):
@@ -397,7 +412,7 @@ class DesktopCat():
         self.var.set(message)
         self.command_entry.delete("1.0", "end")  # Delete all text from the widget
         message = message.strip()
-        if message.startswith(PREFIX) and self.white:
+        if message.startswith(self.prefix) and self.white:
             self.white = False
             self.parser(message[1:].split())
             self.white = True
@@ -429,7 +444,35 @@ class DesktopCat():
             elif message[0] == 'tray':
                 self.tray()
             elif message[0] == 'config':
-                self.config()
+                next = self.get_next(message, message[0])
+                if self.check_error(next, False):
+                    if next == 'h':
+                        next = self.get_next(message, next)
+                        if next in list(ERROR_LIST.keys()):
+                            self.get_config_help()
+                        elif self.check_error(next):
+                            data = self.get_config()
+                            values = []
+                            for key, value in data['config'].items():
+                                if isinstance(value, dict):
+                                    values.append(key)
+                            if next in values:
+                                self.get_subconfig_help(next)
+                            else: self.check_error('error$99')
+                    elif next == 'e':
+                        next = self.get_next(message, next)
+                        if next in list(ERROR_LIST.keys()):
+                            self.edit_config()
+                    elif next == 'r':
+                        next = self.get_next(message, next)
+                        if next in list(ERROR_LIST.keys()):
+                            self.reload_config()
+                else:
+                    self.get_config_help()
+                    
+                        
+                                            
+                    
             elif message[0] == 'exit':
                 self.exit_application()
             elif message[0] == 'q':                
@@ -439,9 +482,45 @@ class DesktopCat():
         else: self.check_error('error$98')
         
     def google_search(self, query):
-        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(CHROME_PATH))
+        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(self.chrome_path))
         webbrowser.get('chrome').open(f"https://www.google.com/search?q={' '.join(query)}")
         self.open_close_cp(close=True)
+        
+    def get_config(self):
+        with open(CONFIG_PATH, 'r') as file:
+            return json.load(file)
+        
+    def write_config(self, data):
+        with open(CONFIG_PATH, 'w') as file:
+            json.dump(data, file, indent=4)        
+        
+    def get_config_help(self):
+        data = self.get_config()
+        self.write_text(f"\nConfiguration commands: ")
+        self.write_text(f"{self.prefix}config e to edit.")
+        self.write_text(f"{self.prefix}config r to reload.\n")
+        self.write_text('Configs:')
+        for key, value in data['config'].items():
+            if isinstance(value, dict):
+                self.write_text(f"  {self.prefix}config h {key}")
+                for sub_key in list(data['config'][key]):
+                    self.write_text(f"    {sub_key}")
+            else: self.write_text(f"  {key} {value}")
+
+    def edit_config(self):
+        try:
+            subprocess.run(CONFIG_PATH, shell=True)
+        except Exception as e:
+            return str(e)
+        return ""        
+
+    def get_subconfig_help(self, main_key):
+        data = self.get_config()
+        self.write_text(f"\n{main_key}")
+        for key, value in data['config'][main_key].items():
+            self.write_text(f"\n{key}: {value}")
+            
+        return
 
     def workload_list(self):
         self.open_close_book(True)
@@ -450,13 +529,14 @@ class DesktopCat():
             data = json.load(file)
         i=0
         if len(list(data['workloads'].keys())) > 0:
-            self.write_text(f"\nWorkloads:\n")
+            self.write_text(f"\nWorkloads:")
             for workload in list(data['workloads'].keys()):
                 self.write_text(f"{i}- {workload}\n")
                 i+=1
         else: self.write_text(f"\nNo workload founded...\n")
     
     def workload_edit(self, workload_name, operation):
+        self.write_text(f"\nWrite {self.prefix}cancel to stop operation.")
         error = ""
         self.open_close_book(True)
         match operation:
@@ -485,11 +565,13 @@ class DesktopCat():
                 self.write_text(f'\nEnter path to your project {key}...')
                 code_url_takin = self.return_var()
                 if code_url_takin == '*cancel':
+                    self.write_text(f"\n\nOops...\n")
                     return
                 while (len(code_url_takin) > 0 and (code_url_takin.split('\\'))[-1] != key) :
                     self.write_text(f'\nLeaving it empty is an option but... maybe try again?')
                     code_url_takin = self.return_var()
                     if code_url_takin == '*cancel':
+                        self.write_text(f"\n\nOops...\n")
                         return                    
                 code_url = code_url_takin
                 if len(code_url) > 0:
@@ -503,12 +585,14 @@ class DesktopCat():
         self.write_text('\nChoose which tabs will be included...')
         input_numbers = self.return_var()
         if input_numbers == '*cancel':
+            self.write_text(f"\n\nOops...\n")
             return        
         selected = self.wl.process_input(input_numbers, chrome)
-        while not selected:
+        while selected == None:
             self.write_text('\nPlease specify the numbers correctly:\n   .n to add from 1 to n\n   n-m to add from n to m   \n  n to add n\n   *n to exclude n\n   *n-m to exclude from n to m\nInput Waiting: \n')
             input_numbers = self.return_var()
             if input_numbers == '*cancel':
+                self.write_text(f"\n\nOops...\n")
                 return             
             selected = self.wl.process_input(input_numbers, chrome)
         self.write_text(self.wl.print_chrome(chrome, 10))                               
@@ -517,24 +601,20 @@ class DesktopCat():
             
         with open(CONFIG_PATH, 'w') as file:
             json.dump(data, file, indent=4)
-        self.write_text(f"Workload {workload_name} saved.")
+        self.write_text(f"\nWorkload {workload_name} saved.")
        
     def sleep(self):
         self.long_sleep = not self.long_sleep
-        self.write_text(f'Long Sleep {self.long_sleep}\n')
+        self.write_text(f'\nLong Sleep {self.long_sleep}')
     
     def tray(self):
         self.hide_window()
-   
-    def config(self):
-        self.open_close_book(True)
-        self.write_text("\nComing soon...\n")
-    
+        self.write_text(f'\nHidded')
+        
     def help(self):
         self.open_close_book(True)
-        self.write_text("\n\n")
+        self.write_text("\n")
         self.write_text(HELP_BOOK())
-        self.write_text("\n\n")
 
 if __name__ == '__main__':
     desktop_cat = DesktopCat()

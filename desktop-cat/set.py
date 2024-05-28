@@ -45,27 +45,15 @@ PREVIEW = """
 9: L_walk2.gif,  len 11
 """
 
-PREFIX = '*'
-
-# COMMANDS = {
-#     "help/h": "See the Help Book",
-#     "worklad/w": "Use with [list/l | run/r [Workload Name] | create/c [Workload Name] | edit/e [Workload Name] | delete/d [Workload Name]] to use the workload operations.",
-#     "sleep/s": "De/activate the long sleep mode for the cat.",
-#     "menu": "See the cookbook",
-#     "tray": "Send the cat to taskbar tray",
-#     "config": "See the configurations",
-#     "exit": "Exit program",
-# }
-
 COMMANDS = [
-    (f"\n{PREFIX}help/h", "See the Help Book"),
-    (f"\n{PREFIX}worklad/w", "Add h to see workload operations."),
-    (f"\n{PREFIX}sleep/s", "De/activate the long sleep mode for the cat."),
-    (f"\n{PREFIX}book/b", "See the book."),
-    (f"\n{PREFIX}tray", "Send the cat to taskbar tray or use double click!"),
-    (f"\n{PREFIX}config", "See the configurations."),
-    (f"\n{PREFIX}q", "Add your sentence after it to search on google."),
-    (f"\n{PREFIX}exit", "Exit program."),
+    (f"\nhelp/h", "See commands."),
+    (f"\nworklad/w", "[h] to see workload operations."),
+    (f"\nsleep/s", "De/activate the long sleep mode for the cat."),
+    (f"\nbook/b", "See the book."),
+    (f"\ntray", "Send the cat to taskbar tray or use double click!"),
+    (f"\nconfig", "See the configurations or [e] to edit, [r] to reload."),
+    (f"\nq", "Add your sentence after it to search on google."),
+    (f"\nexit", "Exit program."),
 ]
 
 def HELP_BOOK():
@@ -88,12 +76,8 @@ FONT_PATH = 'media\\pixelmix.ttf'
 BOOKS_PATH =  "media\\books\\"
 CONFIG_PATH = "data\\config-test.json"
 
-CHROME_PATH = "C:/Program Files/Google/Chrome/Application/chrome.exe" 
-
 INITIAL_X = 1400
 INITIAL_Y = 922
-
-FONT = ("pixelmix", 10)
 
 ERROR_LIST = {
     'error$99': "Unknown argument",

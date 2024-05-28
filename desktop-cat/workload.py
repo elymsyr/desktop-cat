@@ -9,6 +9,9 @@ from set import *
 
 class Workload():
     def __init__(self):
+        self.chrome_profile_path = "\\AppData\\Local\\Google\\Chrome\\User Data\\"
+        self.profile_name = 'Default' 
+        self.chrome_path = "C:/Program Files/Google/Chrome/Application/chrome.exe"   
         self.vscode = {}
         self.chrome = {}
          
@@ -29,40 +32,41 @@ class Workload():
             
             items = input_str.split(' ')
             for n in range(len(items)):
-                items[n] = items[n].strip()
-                if '*' not in items[n]:
-                    if ('-' not in items[n] and items[n].startswith(".")):
-                        number = int(items[n].replace(".",""))-1
-                        order = [number,number]
-                    elif '-' not in items[n]:
-                        order = [1, int(items[n])]
-                    else:
-                        order = items[n].split('-')
-                    order = self.str_int(order)
-                    if order:
-                        if order[0]==order[1]:
-                            include.append(order[0])
-                        elif order[0]>order[1]:
-                            for n in range(order[1]-1, order[0]):
-                                include.append(n)
+                if n > 0:
+                    items[n] = items[n].strip()
+                    if '*' not in items[n]:
+                        if ('-' not in items[n] and items[n].startswith(".")):
+                            number = int(items[n].replace(".",""))-1
+                            order = [number,number]
+                        elif '-' not in items[n]:
+                            order = [1, int(items[n])]
                         else:
-                            for n in range(order[0]-1, order[1]):
-                                include.append(n)
-                elif items[n].startswith("*"):
-                    item = items[n].replace("*","")
-                    if '-' in item:
-                        order = item.split('-')
+                            order = items[n].split('-')
                         order = self.str_int(order)
                         if order:
                             if order[0]==order[1]:
-                                exclude.append[order[0]]
+                                include.append(order[0])
                             elif order[0]>order[1]:
                                 for n in range(order[1]-1, order[0]):
-                                    exclude.append(n)
+                                    include.append(n)
                             else:
                                 for n in range(order[0]-1, order[1]):
-                                    exclude.append(n)
-                    else: exclude.append(int(item)-1)
+                                    include.append(n)
+                    elif items[n].startswith("*"):
+                        item = items[n].replace("*","")
+                        if '-' in item:
+                            order = item.split('-')
+                            order = self.str_int(order)
+                            if order:
+                                if order[0]==order[1]:
+                                    exclude.append[order[0]]
+                                elif order[0]>order[1]:
+                                    for n in range(order[1]-1, order[0]):
+                                        exclude.append(n)
+                                else:
+                                    for n in range(order[0]-1, order[1]):
+                                        exclude.append(n)
+                        else: exclude.append(int(item)-1)
             result = list(set([n for n in include if n not in exclude]))   
             
             for n in result:
@@ -77,6 +81,11 @@ class Workload():
             except:
                 return False
         return value
+    
+    def reload_config(self, chrome_profile_path, profile_name, chrome_path):
+        self.chrome_profile_path = chrome_profile_path
+        self.profile_name = profile_name
+        self.chrome_path = chrome_path
             
     def print_chrome(self, chrome, number = 0):
         string = '\n'
@@ -116,9 +125,10 @@ class Workload():
                     else: vscode[splitted[0]] = ''
         return vscode
         
-    def get_chrome_recently_visited_sites(self, max_sites, profile_name='Default'):
+    def get_chrome_recently_visited_sites(self, max_sites):
         # Chrome'un veritabanı dosyasının yolu
-        profile_path = os.path.expanduser('~') + f'\\AppData\\Local\\Google\\Chrome\\User Data\\{profile_name}'
+        profile_path = os.path.expanduser('~') + f'{self.chrome_profile_path}{self.profile_name}'
+        print(profile_path)
         history_db = os.path.join(profile_path, 'History')
         history_db_copy = os.path.join(profile_path, 'History_copy')
         recently_visited_sites = []
@@ -188,7 +198,7 @@ class Workload():
         return ""
             
     def open_tab(self, query):
-        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(CHROME_PATH))
+        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(self.chrome_path))
         webbrowser.get('chrome').open(query)
     
     def run_workload(self, workload_name):

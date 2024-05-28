@@ -1,35 +1,43 @@
-import pychrome
+import json
 
-# Define a callback function to handle events
-def callback(message, **kwargs):
-    if message.get('method') == 'Network.requestWillBeSent':
-        request = message.get('params', {}).get('request', {})
-        print("Request URL:", request.get('url'))
+def modify_json_value(file_path, keys, new_value):
+    """
+    Modify a specific value in a JSON file.
 
-# Create a new instance of the Chrome class
-chrome = pychrome.Browser()
+    Args:
+    - file_path (str): Path to the JSON file.
+    - keys (list): List of keys representing the path to the value to modify.
+    - new_value: New value to set at the specified path.
 
-# Connect to the Chrome instance
-tab = chrome.new_tab()
+    Returns:
+    - bool: True if the modification was successful, False otherwise.
+    """
+    try:
+        # Open the JSON file for reading
+        with open(file_path, 'r') as file:
+            data = json.load(file)  # Load JSON data from the file
 
-# Enable network events so we can capture requests
-tab.start()
-tab.call_method('Network.enable')
+        # Navigate to the specified path and set the new value
+        temp = data
+        for key in keys[:-1]:
+            temp = temp[key]
+        temp[keys[-1]] = new_value
 
-# Set up the event listener
-tab.set_listener(callback)
+        # Write the modified data back to the JSON file
+        with open(file_path, 'w') as file:
+            json.dump(data, file, indent=4)
 
-# Navigate to a webpage (you can replace this URL with any other)
-tab.Page.navigate(url="https://www.example.com")
+        return True  # Modification applied successfully
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False  # Failed to apply modification
 
-# Wait for the page to load (you can implement a more sophisticated wait strategy if needed)
-tab.wait(5)
+# Example usage:
+file_path = "data.json"
+keys = ["config", "fonts", "current_font_size"]
+new_value = 20
 
-# Stop the tab (this will close the page)
-tab.stop()
-
-# Close the tab
-chrome.close_tab(tab)
-
-# Close the Chrome instance
-chrome.close_browser()
+if modify_json_value(file_path, keys, new_value):
+    print("Modification applied successfully.")
+else:
+    print("Failed to apply modification.")
