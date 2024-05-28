@@ -80,13 +80,13 @@ def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)     
 
-GIFS_PATH = resource_path('media\\gifs')
-FALLING_GIF_PATH = resource_path('media\\gifs_others\\falling.gif')
-COMMAND_BG_PATH = resource_path('media\\messagebox.png')
-TRAY_ICON_PATH = resource_path('media\\tray-icon.png')
-FONT_PATH = resource_path('media\\pixelmix.ttf')
-BOOKS_PATH = resource_path( "media\\books\\")
-CONFIG_PATH = resource_path("data\\config-test.json")
+GIFS_PATH = 'media\\gifs'
+FALLING_GIF_PATH = 'media\\gifs_others\\falling.gif'
+COMMAND_BG_PATH = 'media\\messagebox.png'
+TRAY_ICON_PATH = 'media\\tray-icon.png'
+FONT_PATH = 'media\\pixelmix.ttf'
+BOOKS_PATH =  "media\\books\\"
+CONFIG_PATH = "data\\config-test.json"
 
 CHROME_PATH = "C:/Program Files/Google/Chrome/Application/chrome.exe" 
 

@@ -26,9 +26,18 @@ data_files += find_data_files('media/gifs_others', 'media/gifs_others', ['.gif']
 data_files += find_data_files('data', 'data', ['.json'])
 
 setup(
-    windows=['main.py'],  # Specify the entry point script
+    zipfile = None,
+    windows = [{
+            "script":"main.py",
+            "icon_resources": [(1, "media/tray-icon.ico")],
+            "dest_base":"Dektop Cat",
+            "version": "demo",
+            "description": "This is a test version. Many functionalities are not active yet."
+            }],
     options={
         'py2exe': {
+            'bundle_files': 1,
+            'compressed': True,
             'includes': [
                 'tkinter',
                 "PIL",
