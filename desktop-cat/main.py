@@ -1,4 +1,4 @@
-import random, webbrowser, traceback, pyglet, os, sys
+import random, webbrowser, traceback, pyglet, os, json
 import tkinter as tk
 from PIL import Image, ImageTk
 from time import sleep
@@ -7,25 +7,8 @@ from pystray import MenuItem as item, Icon
 from set import *
 import workload
 
-# python -m PyInstaller --onedir 
-# --icon=media/tray-icon.ico
-# --add-data "media/gifs_others/falling.gif;images/"
-# --add-data "media/messagebox.png;images/"
-# --add-data "images/image.png;images/"
-# --add-data "media\pixelmix.ttf"
-# --add-data "media/tray-icon.png;images/"
-# --add-data "media/books/*.png:images/"
-# --add-data "media/gifs/*.gif:images/"
-# --add-data "media/gifs/*.gif:images/"
-
 class DesktopCat():
     def __init__(self):
-        self.tray_path = TRAY_ICON_PATH
-        self.impath = GIFS_PATH
-        self.fallingPath = FALLING_GIF_PATH
-        self.menu_bg_image_path = COMMAND_BG_PATH
-        self.font_path = FONT_PATH
-        self.book_path = BOOKS_PATH
         self.animation_running = True
         self.falling = False
         self.long_sleep = False
@@ -65,7 +48,7 @@ class DesktopCat():
         self.text_content = ""
         self.wl = workload.Workload()
         self.error = self.load_images() 
-        pyglet.font.add_file(self.font_path)
+        pyglet.font.add_file(FONT_PATH)
         self.create_book()
         self.create_cp()
         self.open_close_book(True)
@@ -74,16 +57,11 @@ class DesktopCat():
         self.write_text("Do not move the cat fast.\nThere is a bug :(\nRight click to cat!")
         if self.error == 0:
             self.setup_window()
-            self.start_animation()
-    
-    def resource_path(self, relative_path):
-        """ Get absolute path to resource, works for dev and for PyInstaller """
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-        return os.path.join(base_path, relative_path)            
+            self.start_animation()       
                 
     def create_book(self):
         # Create a book_canvas to display the background image
-        self.book_bg_image = Image.open(self.book_path + "\\book_test.png")
+        self.book_bg_image = Image.open(BOOKS_PATH + "\\book_test.png")
         self.book_canvas = tk.Canvas(self.book, width=self.book_bg_image.width, height=self.book_bg_image.height, highlightthickness=0, bg='black')
         self.book_canvas.pack(fill="both", expand=True)
 
@@ -144,7 +122,7 @@ class DesktopCat():
         self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
 
     def load_images(self):
-        self.images = os.listdir(self.impath)
+        self.images = os.listdir(GIFS_PATH)
         error = 0
         i = 0
         for image in self.images:
@@ -157,11 +135,11 @@ class DesktopCat():
                     defrange = 6
                 elif 'jump' in image:
                     defrange = 7
-                self.imageGif[image] = [tk.PhotoImage(file=os.path.join(self.impath, image), format=f'gif -index {i}') for i in range(defrange)]
+                self.imageGif[image] = [tk.PhotoImage(file=os.path.join(GIFS_PATH, image), format=f'gif -index {i}') for i in range(defrange)]
             except tk.TclError as e:
-                print(f"Error loading {os.path.join(self.impath, image)} : {e}")
+                print(f"Error loading {os.path.join(GIFS_PATH, image)} : {e}")
                 error = 1
-        self.imageGif['falling'] = [tk.PhotoImage(file=self.fallingPath, format=f'gif -index {i}') for i in range(4)]
+        self.imageGif['falling'] = [tk.PhotoImage(file=FALLING_GIF_PATH, format=f'gif -index {i}') for i in range(4)]
         self.images.append('falling')
         
         
@@ -324,7 +302,7 @@ class DesktopCat():
 
     def create_tray_icon(self):
         print('create_tray_icon')
-        icon_image = Image.open(self.tray_path)
+        icon_image = Image.open(TRAY_ICON_PATH)
         menu = (item('Show', lambda: self.show_window(), default=True), item('Exit', self.exit_application))
         self.icon = Icon("DesktopCat", icon_image, "DesktopCat", menu)
         self.icon_created = True
@@ -357,7 +335,7 @@ class DesktopCat():
                 self.command_created = False
 
     def create_cp(self):
-        command_bg_image = Image.open(self.menu_bg_image_path)
+        command_bg_image = Image.open(COMMAND_BG_PATH)
         self.command_bg_image_height = command_bg_image.height
         self.command_bg_image_width = command_bg_image.width
         # Create a command_canvas to display the background image
@@ -439,7 +417,7 @@ class DesktopCat():
                     match next:
                         case 'h':
                             self.open_close_book(True)
-                            self.write_text("Can be used with\n  list/l\n  run/r [Workload Name]\n  save/s [Workload Name]\n  edit/e [Workload Name]\n  delete/d [Workload Name]]")
+                            self.write_text("\n *w can be used with\n   list/l\n   run/r [Workload Name]\n   save/s [Workload Name]\n   edit/e [Workload Name]\n   delete/d [Workload Name]]")
                         case 'l' | 'list': self.workload_list()
                         case 's' | 'save' | 'r' | 'run' | 'e' | 'edit' | 'd' | 'delete':
                             after_next = self.get_next(message, next)
@@ -468,7 +446,7 @@ class DesktopCat():
     def workload_list(self):
         self.open_close_book(True)
         data = None
-        with open(r'desktop-cat\config-test.json', 'r') as file:
+        with open(CONFIG_PATH, 'r') as file:
             data = json.load(file)
         i=0
         if len(list(data['workloads'].keys())) > 0:
@@ -479,10 +457,13 @@ class DesktopCat():
         else: self.write_text(f"\nNo workload founded...\n")
     
     def workload_edit(self, workload_name, operation):
+        error = ""
         self.open_close_book(True)
         match operation:
             case 's' | 'save': self.save_workload(workload_name)
-            case 'r' | 'run': self.wl.run_workload(workload_name)
+            case 'r' | 'run': 
+                error = self.wl.run_workload(workload_name)
+                self.write_text(f"\n\n{error}")
             case 'e' | 'edit': self.write_text("\nComing soon...\n")
             case 'd' | 'delete': self.write_text("\nComing soon...\n")
             case _: self.write_text('\n\nerror?')
@@ -492,7 +473,7 @@ class DesktopCat():
         new_chrome = {}
         code_url = ''
         data = None
-        with open(r'desktop-cat\config-test.json', 'r') as file:  # Use raw string to handle backslashes
+        with open(CONFIG_PATH, 'r') as file:  # Use raw string to handle backslashes
             data = json.load(file)
         vscode = self.wl.findVSCode()
         chrome = self.wl.findChrome()
@@ -534,8 +515,9 @@ class DesktopCat():
         new_chrome = selected
         data['workloads'][workload_name] = {"vscode": new_vscode,"chrome": new_chrome}
             
-        with open('desktop-cat\\config-test.json', 'w') as file:
+        with open(CONFIG_PATH, 'w') as file:
             json.dump(data, file, indent=4)
+        self.write_text(f"Workload {workload_name} saved.")
        
     def sleep(self):
         self.long_sleep = not self.long_sleep

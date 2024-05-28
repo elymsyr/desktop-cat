@@ -1,6 +1,6 @@
 import pygetwindow as gw # type: ignore
 import os
-import sqlite3, subprocess, webbrowser, threading
+import sqlite3, subprocess, webbrowser, threading, queue
 import shutil
 from urllib.parse import urlparse
 import json
@@ -15,7 +15,7 @@ class Workload():
     def get_data(self):
         new_vscode = {}
         data = None
-        with open(r'desktop-cat\config-test.json', 'r') as file:  # Use raw string to handle backslashes
+        with open(CONFIG_PATH, 'r') as file:  # Use raw string to handle backslashes
             data = json.load(file)
         return data
             
@@ -180,32 +180,41 @@ class Workload():
         return formatted_string
     
     def open_vscode(self, path=None):
-        os.chdir(path)
-        subprocess.run(["code", "."], shell=True)
+        try:
+            os.chdir(path)
+            subprocess.run(["code", "."], shell=True)
+        except Exception as e:
+            return str(e)
+        return ""
             
     def open_tab(self, query):
         webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(CHROME_PATH))
         webbrowser.get('chrome').open(query)
     
     def run_workload(self, workload_name):
-        thread = threading.Thread(target=self.ready_workload, args=(workload_name,))
+        ready_queue = queue.Queue()
+        thread = threading.Thread(target=self.ready_workload, args=(workload_name,ready_queue))
         thread.start()
         thread.join()
+        return ready_queue.get()
             
-    def ready_workload(self, worklaod_name):
-            data = None
-            vscode = None
-            chrome = None
-            chrome_tabs = []
-            with open(r'desktop-cat\config-test.json', 'r') as file:
-                data = json.load(file)    
-            if worklaod_name in data["workloads"]:
-                vscode = data["workloads"][worklaod_name]["vscode"]
-                chrome = data["workloads"][worklaod_name]["chrome"]
+    def ready_workload(self, worklaod_name, queue):
+        data = None
+        vscode = None
+        chrome = None
+        error = ""
+        with open(CONFIG_PATH, 'r') as file:
+            data = json.load(file)    
+        if worklaod_name in data["workloads"]:
+            vscode = data["workloads"][worklaod_name]["vscode"]
+            chrome = data["workloads"][worklaod_name]["chrome"]
+        if vscode:
             for key in vscode:
-                self.open_vscode(path=vscode[key][0])
+                error = self.open_vscode(path=vscode[key][0])
+        if chrome:
             for key in chrome:
                 self.open_tab(chrome[key])
+        queue.put(error)
                 
 
 # new = Workload()
