@@ -199,6 +199,7 @@ class DesktopCat():
         self.window.bind("<ButtonPress-3>", self.open_close_cp)
         self.window.bind("<B1-Motion>", self.on_drag_motion)
         self.window.bind("<ButtonRelease-1>", self.on_drag_stop)
+        self.hide_window()
 
     def start_animation(self):
         self.window.after(1, self.update)
@@ -368,7 +369,7 @@ class DesktopCat():
         # FONT = ("Minecraftia", 11)
         entry_width = 33  # Set the width of the command_entry widget
         entry_height = 1  # Set the height of the command_entry widget to 1-2 rows
-        self.command_entry = tk.Text(self.command_prompt, bg='#fff7f5', fg='#111111', font=self.font, borderwidth=0, width=entry_width, height=entry_height, cursor='arrow')
+        self.command_entry = tk.Text(self.command_prompt, bg='#fff7f5', fg='#111100', font=self.font, borderwidth=0, width=entry_width, height=entry_height, cursor='arrow')
         self.command_entry.bind("<Return>", self.on_enter_pressed)
         # Center the command_entry widget with padding
         self.command_entry.place(relx=0.5, rely=0.5, anchor="center")
@@ -556,7 +557,8 @@ class DesktopCat():
         with open(CONFIG_PATH, 'r') as file:  # Use raw string to handle backslashes
             data = json.load(file)
         vscode = self.wl.findVSCode()
-        chrome = self.wl.findChrome()
+        # chrome = self.wl.findChrome()
+        chrome = self.wl.get_open_tabs_urls()
         
         for key in list(vscode.keys()):  # Convert dict_keys to list
             if key in data['workload_data']['vscode']:
@@ -580,24 +582,26 @@ class DesktopCat():
             
         self.open_close_book(True)
             
-        self.write_text('\nExample: \'1-5 *4 .10\' :\n   .n to add from 1 to n\n   n-m to add from n to m\n   n to add n\n   *n to exclude n\n   *n-m to exclude from n to m\n')
-        self.write_text(self.wl.print_chrome(chrome, 10))
-        self.write_text('\nChoose which tabs will be included...')
-        input_numbers = self.return_var()
-        if input_numbers == '*cancel':
-            self.write_text(f"\n\nOops...\n")
-            return        
-        selected = self.wl.process_input(input_numbers, chrome)
-        while selected == None:
-            self.write_text('\nPlease specify the numbers correctly:\n   .n to add from 1 to n\n   n-m to add from n to m   \n  n to add n\n   *n to exclude n\n   *n-m to exclude from n to m\nInput Waiting: \n')
-            input_numbers = self.return_var()
-            if input_numbers == '*cancel':
-                self.write_text(f"\n\nOops...\n")
-                return             
-            selected = self.wl.process_input(input_numbers, chrome)
-        self.write_text(self.wl.print_chrome(chrome, 10))                               
-        new_chrome = selected
-        data['workloads'][workload_name] = {"vscode": new_vscode,"chrome": new_chrome}
+        # self.write_text('\nExample: \'1-5 *4 .10\' :\n   .n to add from 1 to n\n   n-m to add from n to m\n   n to add n\n   *n to exclude n\n   *n-m to exclude from n to m\n')
+        # self.write_text(self.wl.print_chrome(chrome, 10))
+        # self.write_text('\nChoose which tabs will be included...')
+        # input_numbers = self.return_var()
+        # if input_numbers == '*cancel':
+        #     self.write_text(f"\n\nOops...\n")
+        #     return        
+        # selected = self.wl.process_input(input_numbers, chrome)
+        # while selected == None:
+        #     self.write_text('\nPlease specify the numbers correctly:\n   .n to add from 1 to n\n   n-m to add from n to m   \n  n to add n\n   *n to exclude n\n   *n-m to exclude from n to m\nInput Waiting: \n')
+        #     input_numbers = self.return_var()
+        #     if input_numbers == '*cancel':
+        #         self.write_text(f"\n\nOops...\n")
+        #         return             
+        #     selected = self.wl.process_input(input_numbers, chrome)
+        # self.write_text(self.wl.print_chrome(chrome, 10))                               
+        # new_chrome = selected
+        
+        # data['workloads'][workload_name] = {"vscode": new_vscode,"chrome": new_chrome}
+        data['workloads'][workload_name] = {"vscode": new_vscode,"chrome": chrome}
             
         with open(CONFIG_PATH, 'w') as file:
             json.dump(data, file, indent=4)

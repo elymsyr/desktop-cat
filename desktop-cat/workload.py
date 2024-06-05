@@ -4,6 +4,9 @@ import sqlite3, subprocess, webbrowser, threading, queue
 import shutil
 from urllib.parse import urlparse
 import json
+from pygetwindow import getAllTitles, getWindowsWithTitle
+from pyautogui import hotkey
+from pyperclip import paste
 
 from set import *
 
@@ -225,6 +228,48 @@ class Workload():
             for key in chrome:
                 self.open_tab(chrome[key])
         queue.put(error)
+        
+    def choose_windows(self):
+        windows = []
+        for window in getAllTitles():
+            if 'Google Chrome' in window:
+                windows.append(window)
+        return windows
+
+    def get_open_tabs_urls(self):
+        """
+        Check urls we got and control if the pasted strings are acceptable. Otherwise, break the while loop to avoid an infinit loop.
+        """
+        
+        tab_urls={}
+        tabs = []
+        windows = self.choose_windows()
+        for window in windows:
+            print(f"\nGetting from {window}...")
+            browsers = getWindowsWithTitle(window)
+            for browser in browsers:
+                print(browser)
+                browser.activate()
+                # sleep(.2)
+                hotkey('ctrl','tab')
+                check = 0
+                while True:
+                    browser.activate()
+                    hotkey('ctrl','l')
+                    hotkey('ctrl','c')
+                    tab_url = paste()
+                    if tab_url not in tabs: 
+                        tab_urls[self.get_main_link(tab_url)] = tab_url
+                        tabs.append(tab_url)
+                    else: check+=1
+                    if check >= 2:
+                        break
+                    browser.activate()
+                    hotkey('ctrl','tab')
+                    # sleep(.05)
+        # for tab in tab_urls:
+        #     print(tab)
+        return tab_urls
                 
 
 # new = Workload()

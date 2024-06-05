@@ -38,7 +38,15 @@
                     "main.py"
                 ]
             },
-            "chrome": {}
+            "chrome": {
+                "towardsdatascience.com": "https://towardsdatascience.com/building-a-serverless-chrome-extension-f684740e1ffc",
+                "www.google.com": "https://www.google.com/search?q=how+to+reach+open+tabs+on+chrome+using+python&oq=how+to+reach+open+tabs+on+chrome+using+python&gs_lcrp=EgZjaHJvbWUyCQgAEEUYORigATIHCAEQIRigATIHCAIQIRigATIHCAMQIRigATIGCAQQIRgV0gEINjM3NWowajmoAgCwAgE&sourceid=chrome&ie=UTF-8",
+                "www.youtube.com": "https://www.youtube.com/watch?v=XoW3m10DXos",
+                "stackoverflow.com": "https://stackoverflow.com/questions/62203415/attributeerror-module-pyautogui-has-no-attribute-write",
+                "chatgpt.com": "https://chatgpt.com/c/a70de732-e7b0-4bea-b45e-b31b33dfc99f",
+                "pyautogui.readthedocs.io": "https://pyautogui.readthedocs.io/en/latest/quickstart.html?highlight=past",
+                "wifi.gsb.gov.tr": "https://wifi.gsb.gov.tr/"
+            }
         }
     },
     "config": {

@@ -34,7 +34,7 @@ class Workbook():
         self.text_frame = tk.Frame(self.book_canvas, bg='black')
         self.text_frame.place(relx=0.1, rely=0.1, relwidth=0.81, relheight=0.82)  # Adjust the position and size of the frame
         # Add a text box to the frame
-        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=FONT, bg='#f2b888', fg='black')
+        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=('pixelmix', 10), bg='#f2b888', fg='black')
         self.text_box.pack(fill="both", expand=True)
         self.text_box.config(border=0, highlightthickness=0, state=tk.DISABLED, padx=10, pady=10)
         self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(1400) + '+' + str(400))
