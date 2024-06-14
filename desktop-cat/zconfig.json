@@ -1,0 +1,45 @@
+{
+    "config": {
+        "prefix": "*",
+        "paths": {
+            "chrome": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+            "gifs": "media\\gifs",
+            "falling_gif": "media\\gifs_others\\falling.gif",
+            "command_bg": "media\\messagebox.png",
+            "tray_ico": "media\\tray-icon.png",
+            "font": "media\\pixelmix.ttf",
+            "books_bg": "media\\books",
+            "config-json": "data\\config.json"
+        },
+        "fonts": {
+            "current_font_name": "pixelmix",
+            "default_font_size": 10
+        }
+    },
+    "workload_data": {
+        "vscode": {
+            "desktop-cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat"
+        }
+    },
+    "workloads": {
+        "test": {
+            "vscode": {
+                "desktop-cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat"
+            },
+            "chrome": {
+                "New Tab": ""
+            }
+        },
+        "test2": {
+            "vscode": {
+                "desktop-cat": ""
+            },
+            "chrome": {
+                "how to make a python function in a thread wait for an input from another function - Google Search": "https://www.google.com/search?q=how+to+make+a+python+function+in+a+thread+wait+for+an+input+from+another+function&oq=how+to+make+a+python+function+in+a+thread+wait+for+an+input+from+another+function&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTMzNTQ2ajBqNKgCALACAA&sourceid=chrome&ie=UTF-8",
+                "Last Actions": "https://wifi.gsb.gov.tr/",
+                "Google \u00c7eviri": "https://translate.google.com/?source=gtx&sl=en&tl=tr&op=translate",
+                "ChatGPT": "https://chatgpt.com/c/0a4c807d-fdd6-4d4c-9f2a-8a26d5d5e97d"
+            }
+        }
+    }
+}
