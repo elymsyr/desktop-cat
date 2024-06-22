@@ -470,10 +470,7 @@ class DesktopCat():
                             self.reload_config()
                 else:
                     self.get_config_help()
-                    
                         
-                                            
-                    
             elif message[0] == 'exit':
                 self.exit_application()
             elif message[0] == 'q':                

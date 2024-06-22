@@ -1,9 +1,8 @@
-import os
-import sqlite3, subprocess, webbrowser
+from os import chdir
+from webbrowser import register, BackgroundBrowser, get
+from subprocess import run
 from threading import Thread
-import shutil
-from urllib.parse import urlparse
-import json
+from json import load
 from pygetwindow import getAllTitles, getWindowsWithTitle
 from pyautogui import hotkey, getActiveWindowTitle
 from pyperclip import paste
@@ -109,8 +108,8 @@ class Workload():
         Raises:
             NotImplementedError: _description_
         """
-        os.chdir(path)
-        subprocess.run(["code", "."], shell=True)
+        chdir(path)
+        run(["code", "."], shell=True)
     
     def open_tab(self, query_list: list) -> None:
         """Opens a chrome tab
@@ -119,8 +118,8 @@ class Workload():
             query_list (_type_): Url.
         """
         for query in query_list:
-            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(self.chrome_path))
-            webbrowser.get('chrome').open(query)
+            register('chrome', None, BackgroundBrowser(self.chrome_path))
+            get('chrome').open(query)
     
     def run_workload(self, workload_name: str) -> None:
         """Runs the workload with the name workload_name in a thread.
@@ -146,7 +145,7 @@ class Workload():
         urls: list[str] = []
         threads: list[Thread] = []
         with open('zconfig.json', 'r') as file:
-            data = json.load(file)    
+            data = load(file)    
         if workload_name in data["workloads"]:
             vscode = data["workloads"][workload_name]["vscode"]
             chrome = data["workloads"][workload_name]["chrome"]

@@ -1,18 +1,14 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import traceback
-from threading import Thread
-
-from set import *
+from traceback import extract_tb
 from settings import functions
 
 class Workbook():
-    def __init__(self, book_name: str = 'book_07'):
-        self.book = tk.Tk()
+    def __init__(self, windows=tk.Tk, book_name: str = 'book_07'):
+        self.book = tk.Toplevel(windows)
         self.book_name: str = book_name
         self.book_bg_image: Image = None
         self.create_book()
-        self.book.mainloop()
         
     def create_bg(self) -> None:
         """Creates a book_canvas to display the background image.
@@ -43,11 +39,12 @@ class Workbook():
         try:
             self.book_canvas.create_image(0, 0, anchor="nw", image=self.book_bg_photo)
         except Exception as e:
-            tb_info = traceback.extract_tb(e.__traceback__)
+            tb_info = extract_tb(e.__traceback__)
             row_number = tb_info[-1].lineno
             print(f"Exception at {row_number}: {e}")
         self.text_frame = tk.Frame(self.book_canvas, bg='black')
         self.text_frame.place(relx=0.1, rely=0.1, relwidth=0.81, relheight=0.82)  # Adjust the position and size of the frame
+        # self.hide_book()
         self.set_book()
 
     def pos_book(self, x: int, y: int) -> None:
@@ -57,7 +54,7 @@ class Workbook():
             x (int)
             y (int)
         """
-        self.book.geometry(f'{self.book_bg_image_width}x{self.book_bg_image_height}+' + str(x-295) + '+' + str(y-110)) # ?!
+        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(x-295) + '+' + str(y-110)) # ?!
         
     def write_text(self, text: str) -> None:
         """Add text to book.
@@ -79,6 +76,3 @@ class Workbook():
         """Make book visible with deiconify().
         """
         self.book.deiconify()
-        
-new = Workbook()
-new.start_book()
