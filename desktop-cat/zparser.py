@@ -31,18 +31,12 @@ class Parser:
             ('b', 'book'): self.open_close_book
         }
         self.workload_commands: dict = {
-            "h": self.workload_help,
-            "help": self.workload_help,
-            "l": self.workload_list,
-            "list": self.workload_list,
-            "s": self.workload.save_workload,
-            "save": self.workload.save_workload,
-            "r": self.workload.run_workload,
-            "run": self.workload.run_workload,
-            "e": self.handle_config,
-            "edit": self.handle_config,
-            "d": self.workload_delete,
-            "delete": self.workload_delete
+            ('h', 'help'): self.workload_help,
+            ('l', 'list'): self.workload_list,
+            ('s', 'save'): self.workload.save_workload,
+            ('r', 'run'): self.workload.run_workload,
+            ('e', 'edit'): self.handle_config,
+            ('d', 'delete'): self.workload_delete
         }
         self.name_required_arguments: list = ["g", "workload", "w", "s","save","r","run","d","delete"]        
         self.workload_help_string = "*workload|w\n   help|h\n   list|l\n   run|r [Workload Name]\n   save|s [Workload Name]\n   edit|e [Workload Name]\n   delete|d [Workload Name]]"
