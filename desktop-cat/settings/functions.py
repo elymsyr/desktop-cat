@@ -4,27 +4,11 @@ from threading import Thread, current_thread
 
 class CommandException(Exception):
     def __init__(self, 
-                 exit:bool=False, 
-                 tray:bool=False, 
-                 help:bool=False, 
-                 hide_book:bool = False, 
-                 show_book:bool = False, 
-                 switch_book_vis:bool = False, 
-                 show_messagebox:bool = False, 
-                 switch_messagebox_vis:bool = False, 
-                 hide_messagebox: bool = False,
+                 *args,
                  string_to_book: str = None
                  ):
         self.string_to_book:str = string_to_book
-        self.tray:bool = tray
-        self.exit:bool = exit
-        self.help:bool = help
-        self.hide_book = hide_book
-        self.show_book = show_book
-        self.switch_book_vis = switch_book_vis
-        self.hide_messagebox = hide_messagebox
-        self.show_messagebox = show_messagebox
-        self.switch_messagebox_vis = switch_messagebox_vis
+        self.args: tuple = args
         
     
 
