@@ -2,14 +2,16 @@ from traceback import extract_tb
 import tkinter as tk
 from threading import Thread
 from PIL import Image, ImageTk
+from zanimations import CatAnimations
 
 from settings import functions
 
 class MessageBox():
-    def __init__(self, windows=tk.Tk):
+    def __init__(self, windows=tk.Tk, book=None):
         """Message Box window. Parser and command used here.
         """
         self.command_prompt: tk.Toplevel = tk.Toplevel(windows)
+        self.cat = CatAnimations(window=windows, book=book, messagebox=self)
         self.command_bg_image_height: int
         self.command_bg_image_width: int
         self.var: tk.StringVar = tk.StringVar()

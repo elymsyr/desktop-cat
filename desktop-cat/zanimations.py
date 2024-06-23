@@ -7,7 +7,6 @@ from PIL import Image
 from pystray import MenuItem as item, Icon
 from settings import functions
 from zworkbook import Workbook
-from zmessagebox import MessageBox
 from zworkload import Workload
 from zparser import Parser
 
@@ -47,7 +46,7 @@ EVENTS = { # eventNumber: [[actionOrderToBeCompleted], [PossibleNextEventNumbers
 }
 
 class CatAnimations():
-    def __init__(self, window: Tk = None, book: Workbook = None, messagebox: MessageBox = None):
+    def __init__(self, window: Tk = None, book: Workbook = None, messagebox = None):
         self.workload = Workload()
         self.animation_running = True
         self.falling = False

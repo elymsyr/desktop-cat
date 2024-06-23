@@ -12,12 +12,7 @@ class Cat():
     def __init__(self) -> None:
         self.window = Tk()
         self.book = Workbook(windows=self.window)
-        self.messageBox = MessageBox(windows=self.window)
-        self.cat = CatAnimations(window=self.window, book=self.book, messagebox=self.messageBox)
+        self.messageBox = MessageBox(windows=self.window, book=self.book)
 
-    def exception_handling(self):
-        while True:
-            
-            
 
 app = Cat()
