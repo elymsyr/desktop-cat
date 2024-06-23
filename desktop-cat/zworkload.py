@@ -10,13 +10,8 @@ from settings import functions
 
 class Workload():
     def __init__(self):
-        self.chrome_path: str = functions.find_key(path='config.paths.chrome')
-    
-    def refresh_data(self) -> None:
-        """Refreshes values from config.json data.
-        """
-        self.chrome_path: str = functions.find_key(path='config.paths.chrome')
-    
+        pass
+
     def get_open_windows(self, specify_name: str = None) -> list:
         """Finds currently open windows.
         
@@ -118,7 +113,7 @@ class Workload():
             query_list (_type_): Url.
         """
         for query in query_list:
-            register('chrome', None, BackgroundBrowser(self.chrome_path))
+            register('chrome', None, BackgroundBrowser(functions.find_key(path='config.paths.chrome')))
             get('chrome').open(query)
     
     def run_workload(self, workload_name: str) -> None:
@@ -132,7 +127,7 @@ class Workload():
         thread.join()
 
     def ready_workload(self, workload_name: str) -> None:
-        """Function that runs a workload to be used in the function run_worklaod.
+        """Function that runs a workload to be used in the function run_workload.
 
         Args:
             workload_name (str)
@@ -180,7 +175,7 @@ class Workload():
         Returns:
             dict: Function name, Docstring
         """
-        functions = ['run_workload', 'refresh_data'] + list_functions
+        functions = ['run_workload'] + list_functions
         methods = {k: v for k, v in Workload.__dict__.items() if callable(v)}
         {key: value.__doc__ for key, value in methods.items() if key in functions}
         return {key: value.__doc__ for key, value in methods.items() if key in functions}

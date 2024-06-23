@@ -9,6 +9,7 @@ from settings import functions
 from zworkbook import Workbook
 from zmessagebox import MessageBox
 from zworkload import Workload
+from zparser import Parser
 
 INITIAL_X = 1400
 INITIAL_Y = 922
@@ -45,8 +46,8 @@ EVENTS = { # eventNumber: [[actionOrderToBeCompleted], [PossibleNextEventNumbers
     25: [[6], [25]], # long sleep
 }
 
-class DesktopCat():
-    def __init__(self):
+class CatAnimations():
+    def __init__(self, window: Tk = None, book: Workbook = None, messagebox: MessageBox = None):
         self.workload = Workload()
         self.animation_running = True
         self.falling = False
@@ -61,17 +62,18 @@ class DesktopCat():
         self.EVENTS = EVENTS
         self.event_number = self.EVENTS[self.current_event_cycle][0][0]
         self.imageGif = {}
-        self.images = []
+        self.images: list = []
         self.icon = None
         self.icon_created = False
-        self.window = Tk()
+        self.window = window
         self.label = Label(self.window, bd=0, bg='black')
         self.var = StringVar()
+        self.command_parser = Parser()
         self.text_content = ""
         if self.load_images() :
             add_file(functions.find_key("config.paths.font"))
-            self.book = Workbook(windows=self.window)
-            self.messagebox = MessageBox(windows=self.window)
+            self.book = book
+            self.messagebox = messagebox
             # self.write_text("\nDo not move the cat fast.\nThere is a bug :(\nRight click to cat!")
             self.setup_window()
             self.start_animation()
@@ -272,7 +274,4 @@ class DesktopCat():
         menu = (item('Show', lambda: self.show_window(), default=True), item('Exit', self.exit_application))
         self.icon = Icon("DesktopCat", icon_image, "DesktopCat", menu)
         self.icon_created = True
-        self.icon.run()
-
-if __name__ == '__main__':
-    desktop_cat = DesktopCat()
+        self.icon.run()     

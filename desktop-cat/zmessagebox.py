@@ -1,16 +1,20 @@
 from traceback import extract_tb
 import tkinter as tk
+from threading import Thread
 from PIL import Image, ImageTk
 
 from settings import functions
 
 class MessageBox():
     def __init__(self, windows=tk.Tk):
-        self.command_prompt = tk.Toplevel(windows)
+        """Message Box window. Parser and command used here.
+        """
+        self.command_prompt: tk.Toplevel = tk.Toplevel(windows)
         self.command_bg_image_height: int
         self.command_bg_image_width: int
         self.var: tk.StringVar = tk.StringVar()
         self.command_bg_photo: ImageTk.PhotoImage = None
+        self.white: bool = True
         self.create_cp()
         
     def open_close_cp(self, open_close: bool = None, event=None) -> list:
@@ -40,9 +44,11 @@ class MessageBox():
             return [0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18]
 
     def create_cp(self) -> None:
-        command_bg_image = Image.open(functions.find_key("config.paths.command_bg"))
-        self.command_bg_image_height = command_bg_image.height
-        self.command_bg_image_width = command_bg_image.width
+        """Creates message box tkinter window.
+        """
+        command_bg_image: Image = Image.open(functions.find_key("config.paths.command_bg"))
+        self.command_bg_image_height: int = command_bg_image.height
+        self.command_bg_image_width: int = command_bg_image.width
         # Create a command_canvas to display the background image
         # 360 = self.command_bg_image.width // 180 = self.command_bg_image.height
         self.command_canvas = tk.Canvas(self.command_prompt, width=self.command_bg_image_width, height=self.command_bg_image_height, highlightthickness=0, bg='black')
@@ -74,6 +80,12 @@ class MessageBox():
         self.open_close_cp(open_close=False)
     
     def pos_cp(self, x: float, y: float) -> None:
+        """Respositions message box.
+
+        Args:
+            x (float): X position of the cat.
+            y (float): Y position of the cat.
+        """
         self.command_prompt.geometry(f'{self.command_bg_image_width}x{self.command_bg_image_height}+' + str(x-295) + '+' + str(y-110))  
 
     def on_enter_pressed(self, event) -> str:
@@ -84,12 +96,22 @@ class MessageBox():
         self.command_entry.delete("1.0", "end")  # Delete all text from the widget
         message = message.strip()
         if message.startswith(functions.find_key("config.prefix")) and self.white:
-            self.white = False # ??
-            self.parser(message[1:].split())
+            self.white = False
+            parser_thread = Thread(target=self.parser, args=(message[1:].split().append("$endOfMessage"),))
+            parser_thread.start()
+            parser_thread.join()
             self.white = True
+        elif not self.white:
+            # raise Exception("Parser is already working.")
+            print("Parser is already working.")
         else:
             print(message)
         return message
     
-    def parser(self, *aaa):
-        pass
+    def parser(self, message: list[str]):
+        """Takes the text from the message box and performs certain functions.
+
+        Args:
+            message (list[str])
+        """
+        return
