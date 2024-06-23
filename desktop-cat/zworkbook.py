@@ -54,7 +54,7 @@ class Workbook():
             x (int)
             y (int)
         """
-        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(x-295) + '+' + str(y-110)) # ?!
+        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(x) + '+' + str(y)) # ?!
         
     def write_text(self, text: str) -> None:
         """Add text to book.

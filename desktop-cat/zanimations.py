@@ -4,9 +4,11 @@ from pyglet.font import add_file
 from random import choice
 from tkinter import Tk, Label, StringVar, PhotoImage, TclError
 from PIL import Image
+from traceback import format_exc
 from pystray import MenuItem as item, Icon
 from settings import functions
 from zworkbook import Workbook
+from zmessagebox import MessageBox
 from zworkload import Workload
 from zparser import Parser
 
@@ -45,8 +47,8 @@ EVENTS = { # eventNumber: [[actionOrderToBeCompleted], [PossibleNextEventNumbers
     25: [[6], [25]], # long sleep
 }
 
-class CatAnimations():
-    def __init__(self, window: Tk = None, book: Workbook = None, messagebox = None):
+class DesktopCat():
+    def __init__(self):
         self.workload = Workload()
         self.animation_running = True
         self.falling = False
@@ -64,15 +66,15 @@ class CatAnimations():
         self.images: list = []
         self.icon = None
         self.icon_created = False
-        self.window = window
+        self.window = Tk()
         self.label = Label(self.window, bd=0, bg='black')
         self.var = StringVar()
         self.command_parser = Parser()
         self.text_content = ""
         if self.load_images() :
             add_file(functions.find_key("config.paths.font"))
-            self.book = book
-            self.messagebox = messagebox
+            self.book = Workbook(windows=self.window)
+            self.messagebox = MessageBox(windows=self.window, cat=self)
             # self.write_text("\nDo not move the cat fast.\nThere is a bug :(\nRight click to cat!")
             self.setup_window()
             self.start_animation()
@@ -273,4 +275,21 @@ class CatAnimations():
         menu = (item('Show', lambda: self.show_window(), default=True), item('Exit', self.exit_application))
         self.icon = Icon("DesktopCat", icon_image, "DesktopCat", menu)
         self.icon_created = True
-        self.icon.run()     
+        self.icon.run()
+        
+    def parser(self, message):
+        try: self.command_parser.parser(message=message)
+        except functions.CommandException as command_exception:
+            print(f"parser from CommandException:")
+            attributes = vars(command_exception)
+            for attribute, value in attributes.items():
+                print(f"    {attribute}: {value}")            
+        except Exception as exception:
+            exception_name = type(exception).__name__
+            exception_message = str(exception)
+            exception_traceback = format_exc()
+            print(f"Exception occurred: {exception_name}: {exception_message}")
+            print(f"Traceback:\n{exception_traceback}")
+            
+        
+cat = DesktopCat()

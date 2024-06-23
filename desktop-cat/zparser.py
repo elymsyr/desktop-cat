@@ -53,23 +53,23 @@ class Parser:
 
     def parser(self, message) -> str:
         if not message or len(message) == 0:
-            raise Exception("Message is not eligible.")
+            raise functions.CommandException(string_to_book="Message is not eligible.")
         command = message[0]
         if command in self.commands and command in self.name_required_arguments:
             return self.commands[command](message[1:])
         elif command in self.commands and not command in self.name_required_arguments:
             check_end = self.get_next(message=message, word=command)
             if check_end == END:
-                return self.workload_commands[command]()
-        raise Exception("Command is not found.")
+                return self.commands[command]()
+        raise functions.CommandException(string_to_book="Command is not found.")
 
     def get_next(self, message, word):
         if len(message) > message.index(word)+1:
             try:
                 return str(message[message.index(word)+1]) 
             except:
-                raise Exception("Unknown argument error.")
-        raise Exception("Missing argument error.")
+                raise functions.CommandException(string_to_book="Unknown argument error.")
+        raise functions.CommandException(string_to_book="Missing argument error.")
 
     def handle_workload(self, message) -> None:
         command = message[0]
@@ -79,13 +79,13 @@ class Parser:
                 check_end = self.get_next(message=message, word=message[1])
                 if check_end == END:
                     return self.workload_commands[command](next_word)
-                else: raise Exception("The number of argument is more than expected.")
+                else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
             else:
                 check_end = self.get_next(message=message, word=command)
                 if check_end == END:
                     return self.workload_commands[command]()
-                else: raise Exception("The number of argument is more than expected.")
-        raise Exception("Unknown workload command.")
+                else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
+        raise functions.CommandException(string_to_book="Unknown workload command.")
 
     def workload_help(self):
         raise functions.CommandException(string_to_book=self.workload_help_string, show_book=True)

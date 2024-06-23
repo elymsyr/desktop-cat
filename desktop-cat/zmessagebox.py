@@ -2,17 +2,16 @@ from traceback import extract_tb
 import tkinter as tk
 from threading import Thread
 from PIL import Image, ImageTk
-from zanimations import CatAnimations
 
 from settings import functions
 
 class MessageBox():
-    def __init__(self, windows=tk.Tk, book=None):
+    def __init__(self, windows=tk.Tk, cat=None):
         """Message Box window. Parser and command used here.
         """
         self.command_prompt: tk.Toplevel = tk.Toplevel(windows)
-        self.cat = CatAnimations(window=windows, book=book, messagebox=self)
         self.command_bg_image_height: int
+        self.cat = cat
         self.command_bg_image_width: int
         self.var: tk.StringVar = tk.StringVar()
         self.command_bg_photo: ImageTk.PhotoImage = None
@@ -99,7 +98,9 @@ class MessageBox():
         message = message.strip()
         if message.startswith(functions.find_key("config.prefix")) and self.white:
             self.white = False
-            parser_thread = Thread(target=self.parser, args=(message[1:].split().append("$endOfMessage"),))
+            message: list = message[1:].split()
+            message.append("$endOfMessage")
+            parser_thread = Thread(target=self.cat.parser, args=(message,))
             parser_thread.start()
             parser_thread.join()
             self.white = True
@@ -107,13 +108,5 @@ class MessageBox():
             # raise Exception("Parser is already working.")
             print("Parser is already working.")
         else:
-            print(message)
+            print(f"What {message} ?")
         return message
-    
-    def parser(self, message: list[str]):
-        """Takes the text from the message box and performs certain functions.
-
-        Args:
-            message (list[str])
-        """
-        return
