@@ -21,18 +21,14 @@ class Parser:
             ]
         self.commands: dict = {
             '*': self.open_close_messagebox,
-            'h': self.help,
-            'help': self.help,
-            'workload': self.handle_workload,
-            'w': self.handle_workload,
-            's': self.sleep,
-            'sleep': self.sleep,
+            ('h', 'help'): self.help,
+            ('w', 'workload'): self.handle_workload,
+            ('s', 'sleep'): self.sleep,
             'tray': self.tray,
             'config': self.handle_config,
             'exit': self.exit_application,
             'g': self.google_search,
-            'book': self.open_close_book,
-            'b': self.open_close_book
+            ('b', 'book'): self.open_close_book
         }
         self.workload_commands: dict = {
             "h": self.workload_help,
