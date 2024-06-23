@@ -20,24 +20,26 @@ class Parser:
             (f"\nexit", "Terminate cat.")
             ]
         self.commands: dict = {
-            '*': self.open_close_messagebox,
-            ('h', 'help'): self.help,
-            ('w', 'workload'): self.handle_workload,
-            ('s', 'sleep'): self.sleep,
-            'tray': self.tray,
-            'config': self.handle_config,
-            'exit': self.exit_application,
-            'g': self.google_search,
-            ('b', 'book'): self.open_close_book
+            '*': {'help': 'Toggle message box', 'func': self.open_close_messagebox},
+            ('h', 'help'): {'help': 'Show help', 'func': self.help},
+            ('w', 'workload'): {'help': 'Handle workload', 'func': self.handle_workload},
+            ('s', 'sleep'): {'help': 'De/activate sleep mode', 'func': self.sleep},
+            'tray': {'help': 'Toggle tray icon', 'func': self.tray},
+            'config': {'help': 'Handle configuration', 'func': self.handle_config},
+            'exit': {'help': 'Exit application', 'func': self.exit_application},
+            'g': {'help': 'Google search', 'func': self.google_search},
+            ('b', 'book'): {'help': 'Toggle book', 'func': self.open_close_book}
         }
+
         self.workload_commands: dict = {
-            ('h', 'help'): self.workload_help,
-            ('l', 'list'): self.workload_list,
-            ('s', 'save'): self.workload.save_workload,
-            ('r', 'run'): self.workload.run_workload,
-            ('e', 'edit'): self.handle_config,
-            ('d', 'delete'): self.workload_delete
+            ('h', 'help'): {'help': 'Show workload help', 'func': self.workload_help},
+            ('l', 'list'): {'help': 'List workloads', 'func': self.workload_list},
+            ('s', 'save'): {'help': 'Save workload', 'func': self.workload.save_workload},
+            ('r', 'run'): {'help': 'Run workload', 'func': self.workload.run_workload},
+            ('e', 'edit'): {'help': 'Edit configuration', 'func': self.handle_config},
+            ('d', 'delete'): {'help': 'Delete workload', 'func': self.workload_delete}
         }
+
         self.name_required_arguments: list = ["g", "workload", "w", "s","save","r","run","d","delete"]        
         self.workload_help_string = "*workload|w\n   help|h\n   list|l\n   run|r [Workload Name]\n   save|s [Workload Name]\n   edit|e [Workload Name]\n   delete|d [Workload Name]]"
 
@@ -45,13 +47,15 @@ class Parser:
         if not message or len(message) == 0:
             raise functions.CommandException(string_to_book="Message is not eligible.")
         command = message[0]
-        if command in self.commands and command in self.name_required_arguments:
-            return self.commands[command](message[1:])
-        elif command in self.commands and not command in self.name_required_arguments:
-            check_end = self.get_next(message=message, word=command)
-            if check_end == END:
-                return self.commands[command]()
-        raise functions.CommandException(string_to_book="Command is not found.")
+        for key in self.commands:
+            if command in key and command in self.name_required_arguments:
+                return self.commands[command]['func'](message[1:])
+            elif command in key and not command in self.name_required_arguments:
+                check_end = self.get_next(message=message, word=command)
+                if check_end == END:
+                    return self.commands[command]['func']()
+                else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
+            raise functions.CommandException(string_to_book="Command is not found.")
 
     def get_next(self, message, word):
         if len(message) > message.index(word)+1:
@@ -78,7 +82,7 @@ class Parser:
         raise functions.CommandException(string_to_book="Unknown workload command.")
 
     def workload_help(self):
-        raise functions.CommandException(string_to_book=self.workload_help_string, show_book=True)
+        raise functions.CommandException(string_to_book=self.generate_help_string(dict_to_str=self.workload_commands), show_book=True)
     
     def workload_delete(self,name:str):
         functions.delete_key(f"workloads.{name}")
@@ -101,11 +105,7 @@ class Parser:
         raise functions.CommandException(switch_messagebox_vis=True)
 
     def help(self):
-        string = "DektopCat Commands\n"
-        max_len = max(len(command[0]) for command in self.help_commands)
-        for command in self.help_commands:
-            string += (f"{command[0].ljust(max_len)}   {command[1]}\n")   
-        raise functions.CommandException(help=True, string_to_book=string)
+        raise functions.CommandException(help=True, string_to_book=self.generate_help_string(dict_to_str=self.commands))
 
     def sleep(self):
         raise functions.CommandException(sleep=True, hide_book=True, hide_messagebox=True)
@@ -126,3 +126,17 @@ class Parser:
                 i+=1
         else: string_to_book += f"\nNo workload founded...\n"
         raise functions.CommandException(show_book=True, string_to_book=string_to_book)
+
+    def generate_help_string(self,dict_to_str:dict) -> str:
+        help_strings = []
+        for key, command_info in dict_to_str.items():
+            if isinstance(key, tuple):
+                keys = '|'.join(key)
+            else:
+                keys = key
+            help_message = command_info['help']
+            help_strings.append(f"{keys}: {help_message}")
+        return '\n'.join(help_strings)
+    
+app = Parser()
+app.parser(f"*b {END}")
