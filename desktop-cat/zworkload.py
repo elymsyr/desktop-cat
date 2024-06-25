@@ -2,7 +2,6 @@ from os import chdir
 from webbrowser import register, BackgroundBrowser, get
 from subprocess import run
 from threading import Thread
-from json import load
 from pygetwindow import getAllTitles, getWindowsWithTitle
 from pyautogui import hotkey, getActiveWindowTitle
 from pyperclip import paste
@@ -133,14 +132,12 @@ class Workload():
             workload_name (str)
             queue (queue.Queue): Queue that catches errors.
         """
-        data: dict
+        data: dict = functions.get_data()
         vscode: dict
         chrome: dict
         error: str
         urls: list[str] = []
-        threads: list[Thread] = []
-        with open('zconfig.json', 'r') as file:
-            data = load(file)    
+        threads: list[Thread] = []  
         if workload_name in data["workloads"]:
             vscode = data["workloads"][workload_name]["vscode"]
             chrome = data["workloads"][workload_name]["chrome"]

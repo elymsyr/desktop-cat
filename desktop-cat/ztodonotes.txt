@@ -1,11 +1,11 @@
 To do:
 
-zparser.py - better exceptions and better parsing still needed !!
+1 - DONE zparser.py - better exceptions and better parsing still needed !!
 
-zanimations.py - parser is added. There must be functions to perform the actions such as hiding book etc.
+2 - FUNCTION DONE control if json file is unspoilt and exist. ask the user if unspoilt, create a new one if not exist.
 
-contol if json file is unspoilt and exist. ask the user if unspoilt, create a new one if not exist.
+3 - zanimations.py - parser is added. There must be functions to perform the actions such as hiding book etc.
 
-a better func&var naming may be required !!
+4 - a better func&var naming may be required !!
  
-docstrings still missing ??
+5 - docstrings still missing ??

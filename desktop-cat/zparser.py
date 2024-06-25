@@ -1,7 +1,6 @@
 import webbrowser
 from settings import functions
 from zworkload import Workload
-from json import load
 from subprocess import run
 from os.path import exists
 
@@ -146,7 +145,7 @@ class Parser:
         Raises:
             functions.CommandException: Returns "no_config_found" or "corrupted_config"         
         """
-        run("zconfig.json", shell=True)
+        run(functions.CONFIG_PATH, shell=True)
 
     def exit_application(self):
         """Terminates program.
@@ -220,10 +219,8 @@ class Parser:
         Raises:
             functions.CommandException: Returns "show_book" and a list of workloads as a string.
         """
-        data = None
-        string_to_book = ""
-        with open("zconfig.json", 'r') as file:
-            data = load(file)
+        data: dict = functions.get_data() 
+        string_to_book = "",
         i=0
         if len(list(data['workloads'].keys())) > 0:
             for workload in list(data['workloads'].keys()):

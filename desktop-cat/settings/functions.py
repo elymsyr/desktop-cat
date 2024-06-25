@@ -1,6 +1,9 @@
-import json
-from functools import reduce
-from threading import Thread, current_thread
+from json import load, dump
+from os.path import exists
+from json.decoder import JSONDecodeError
+
+CONFIG_PATH = "zconfig.json"
+BACKUP_CONFIG = 'zconfig_backup.json'
 
 class CommandException(Exception):
     def __init__(self, 
@@ -10,7 +13,17 @@ class CommandException(Exception):
         self.string_to_book:str = string_to_book
         self.args: tuple = args
         
-    
+def check_config_file() -> bool:
+    """Checks if configuration file exists and unspoilt.
+    """
+    if exists(CONFIG_PATH):
+        if has_all_keys_recursive(current_config=get_data(CONFIG_PATH), main_config=get_data(BACKUP_CONFIG)):
+            try: 
+                get_data()
+                return True
+            except JSONDecodeError as json_decode_error: 
+                return False
+    return False
 
 def find_key(path: str):
     """
@@ -71,22 +84,31 @@ def format_string(string: str, size: int=30) -> str:
         formatted_string = string.ljust(size)
     return formatted_string
 
-def get_data() -> dict:
+def get_data(path:str=CONFIG_PATH) -> dict:
     """Get config.json data as dictionary
 
     Returns:
         dict: Data
     """
-    data: dict
-    with open('zconfig.json', 'r') as file:
-        data = json.load(file)
-    return data
+    with open(path, 'r') as file:
+        return load(file)
 
-def set_data(data: dict) -> None:
+def set_data(data: dict, path:str=CONFIG_PATH) -> None:
     """Write data to config.json
 
     Args:
         data (dict): Data
     """
-    with open('zconfig.json', 'w') as file:
-        json.dump(data, file, indent=4)        
+    with open(path, 'w') as file:
+        dump(data, file, indent=4)
+        
+def has_all_keys_recursive(current_config: dict, main_config: dict) -> bool:
+    """
+    Check if current config has all the keys of the main config fie, recursively.
+    """
+    return (
+        set(current_config) == set(main_config) and
+        set(current_config['config']) == set(main_config['config']) and
+        set(current_config['config']['paths']) == set(main_config['config']['paths']) and
+        set(current_config['config']['fonts']) == set(main_config['config']['fonts'])
+    )        
