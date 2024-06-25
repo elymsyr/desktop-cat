@@ -67,7 +67,8 @@ class DesktopCat():
             "sleep": self.sleep,
             "tray": self.tray,
             "save_workload": self.save_workload
-        }        
+        }
+        self.introduction_text = f"Right-click to toggle messagebox. Enter {functions.find_key("config.prefix")}h or {functions.find_key("config.prefix")}help.\nDo not move the cat fast.\nThere is a bug :("
         self.long_sleep = False
         self.messagebox_vis: bool = False
         self.book_vis: bool = False
@@ -90,8 +91,8 @@ class DesktopCat():
         if self.load_images() :
             add_file(functions.find_key("config.paths.font"))
             self.book = Workbook(windows=self.window)
+            self.book.write_text(self.introduction_text)
             self.messagebox = MessageBox(windows=self.window, cat=self)
-            # self.write_text("\nDo not move the cat fast.\nThere is a bug :(\nRight click to cat!")
             self.setup_window()
             self.start_animation()
    
@@ -161,17 +162,17 @@ class DesktopCat():
         self.window.wm_attributes('-topmost', 1)
         self.window.bind("<Double-Button-1>", self.hide_window)
         self.window.bind("<ButtonPress-1>", self.on_drag_start)
-        self.window.bind("<ButtonPress-3>", self.messagebox_appear)
+        self.window.bind("<ButtonPress-3>", self.toggle_messagebox)
         self.window.bind("<B1-Motion>", self.on_drag_motion)
         self.window.bind("<ButtonRelease-1>", self.on_drag_stop)
         # self.hide_window()
 
-    def messagebox_appear(self, event=None):
+    def toggle_messagebox(self, event=None):
         if self.messagebox_vis:
-            self.reset_cycle(self.messagebox.open_close_cp(open_close=False))
+            self.reset_cycle(self.messagebox.open_close_messagebox(open_close=False))
             self.book.hide_book()
         else: 
-            self.reset_cycle(self.messagebox.open_close_cp(open_close=True))
+            self.reset_cycle(self.messagebox.open_close_messagebox(open_close=True))
             if self.book_vis:
                 self.book.show_book()
         self.messagebox_vis = not self.messagebox_vis
@@ -269,14 +270,14 @@ class DesktopCat():
         if self.icon_created:
             self.icon_created = False
             self.icon.stop()
-        if self.messagebox_vis: self.reset_cycle(self.messagebox.open_close_cp(open_close=self.messagebox_vis))
+        if self.messagebox_vis: self.reset_cycle(self.messagebox.open_close_messagebox(open_close=self.messagebox_vis))
 
     def hide_window(self, event=None):
         print('hide_window')
         self.window.withdraw()
         self.book.hide_book()
         self.book_vis = False
-        self.reset_cycle(self.messagebox.open_close_cp(open_close=False))
+        self.reset_cycle(self.messagebox.open_close_messagebox(open_close=False))
         self.create_tray_icon()
 
     def exit_application(self):
@@ -293,26 +294,28 @@ class DesktopCat():
         self.icon_created = True
         self.icon.run()
         
-    def parser(self, message): 
+    def parser(self, message):
+        string_to_book: str = None
+        args: list = []
         try: self.command_parser.parser(message=message)
         except Exception as exception:
-            exception_name = type(exception).__name__
-            exception_message = str(exception)
-            exception_traceback = format_exc()
-            print(f"Exception occurred: {exception_name}: {exception_message}")
-            print(f"Traceback:\n{exception_traceback}")
             if type(exception) == functions.CommandException:
                 print(f"\nparser from CommandException:\n")
-                self.perform_parser_actions(string_to_book=exception.string_to_book, args=list(exception.args))
+                string_to_book = exception.string_to_book 
+                args = list(exception.args)
+            else:
+                exception_name = type(exception).__name__
+                exception_message = str(exception)
+                exception_traceback = format_exc()
+                print(f"Exception occurred: {exception_name}: {exception_message}")
+                print(f"Traceback:\n{exception_traceback}")
+        self.perform_parser_actions(string_to_book=string_to_book, args=args)
                 
     def perform_parser_actions(self, string_to_book: str, args: list):
         if string_to_book:
-            self.string_to_book_action(string_to_book=string_to_book)
+            self.book.write_text(string_to_book)
         args_functions: list[function] = [self.parser_actions[command] for command in args if command in self.parser_actions]
         print(args_functions)
-
-    def string_to_book_action(self, string_to_book: str):
-        self.book.write_text(string_to_book)
 
     def action_not_found(self):
         pass

@@ -23,7 +23,7 @@ class Workbook():
         """
         font: str = functions.find_key(path='config.fonts.current_font_name')
         size: int = functions.find_key(path='config.fonts.default_font_size')
-        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=(font, size), bg='#f2b888', fg='black')
+        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=(font, size), bg='#f2b888', fg='#100000')
         self.text_box.pack(fill="both", expand=True)
         self.text_box.config(border=0, highlightthickness=0, state=tk.DISABLED, padx=10, pady=10)
         self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(1400) + '+' + str(400))        
@@ -61,10 +61,13 @@ class Workbook():
         Args:
             text (str): Text to be added.
         """
-        self.text_box.config(state=tk.NORMAL)
-        self.text_box.insert(tk.END, text)
-        self.text_box.see(tk.END)  # Scroll to the end
-        self.text_box.config(state=tk.DISABLED)
+        def update_text_box():
+            self.text_box.config(state=tk.NORMAL)
+            self.text_box.insert(tk.END, text)
+            self.text_box.see(tk.END)
+            self.text_box.config(state=tk.DISABLED)
+        
+        self.book.after(0, update_text_box)
 
     def hide_book(self) -> None:
         """Hides book with withdraw().

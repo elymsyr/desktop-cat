@@ -18,7 +18,7 @@ class MessageBox():
         self.white: bool = True
         self.create_cp()
         
-    def open_close_cp(self, open_close: bool = None, event=None) -> list:
+    def open_close_messagebox(self, open_close: bool = None, event=None) -> list:
         """Opens or hides message box. Returns a list of possible next animation cycles.
 
         Args:
@@ -61,11 +61,11 @@ class MessageBox():
         self.command_prompt.wm_attributes('-transparentcolor', 'black')
         self.command_prompt.wm_attributes('-topmost', 1)
         
-        self.command_prompt.bind('<Escape>', lambda event: self.open_close_cp(open_close=False))
+        self.command_prompt.bind('<Escape>', lambda event: self.open_close_messagebox(open_close=False))
         # FONT = ("Minecraftia", 11)
         entry_width = 33  # Set the width of the command_entry widget
         entry_height = 1  # Set the height of the command_entry widget to 1-2 rows
-        self.command_entry = tk.Text(self.command_prompt, bg='#fff7f5', fg='#111100', font=(functions.find_key("config.fonts.current_font_name"),functions.find_key("config.fonts.default_font_size")) , borderwidth=0, width=entry_width, height=entry_height, cursor='arrow')
+        self.command_entry = tk.Text(self.command_prompt, bg='#fff7f5', fg='#100000', font=(functions.find_key("config.fonts.current_font_name"),functions.find_key("config.fonts.default_font_size")) , borderwidth=0, width=entry_width, height=entry_height, cursor='arrow')
         self.command_entry.bind("<Return>", self.on_enter_pressed)
         # Center the command_entry widget with padding
         self.command_entry.place(relx=0.5, rely=0.5, anchor="center")
@@ -78,7 +78,6 @@ class MessageBox():
             tb_info = extract_tb(e.__traceback__)
             row_number = tb_info[-1].lineno
             print(f"Exception at {row_number}: {e}")
-        self.open_close_cp(open_close=False)
     
     def pos_cp(self, x: float, y: float) -> None:
         """Respositions message box.
@@ -100,13 +99,11 @@ class MessageBox():
             self.white = False
             message: list = message[1:].split()
             message.append("$endOfMessage")
-            parser_thread = Thread(target=self.cat.parser, args=(message,))
-            parser_thread.start()
-            parser_thread.join()
+            self.cat.parser(message)
             self.white = True
         elif not self.white:
-            # raise Exception("Parser is already working.")
-            print("Parser is already working.")
+            raise functions.CommandException(string_to_book="Parser is already working.")
         else:
-            print(f"What {message} ?")
+            raise functions.CommandException(string_to_book=f"uhm what... {message}...")
+        
         return message
