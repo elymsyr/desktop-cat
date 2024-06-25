@@ -69,7 +69,6 @@ class DesktopCat():
         self.icon_created = False
         self.window = Tk()
         self.label = Label(self.window, bd=0, bg='black')
-        self.var = StringVar()
         self.command_parser = Parser()
         self.text_content = ""
         if self.load_images() :

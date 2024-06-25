@@ -107,5 +107,11 @@ class MessageBox():
             self.cat.insert_text("Parser is already working.")
         else:
             self.cat.insert_text(f"uhm what... {message}...")
-        
         return message
+    
+    def return_var(self):
+        self.open_close_messagebox(True)
+        self.cat.window.wait_variable(self.var)
+        input = self.var.get()
+        self.var.set("")  # Reset self.var to an empty string
+        return input      
