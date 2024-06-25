@@ -79,6 +79,7 @@ class DesktopCat():
                 add_file(functions.find_key("config.paths.font"))
             self.book = Workbook(windows=self.window)
             self.parser_actions = {
+                "vscode_path_error": self.vscode_path_error,
                 "file_not_found": self.file_not_found,
                 "file_corrupted": self.file_corrupted,
                 "exit": self.exit,
@@ -299,6 +300,7 @@ class DesktopCat():
         
     def parser(self, message):
         string_to_book: str = None
+        workload_name: str = None
         file_error: bool = None
         args: list = []
         try: self.command_parser.parser(message=message)
@@ -315,9 +317,9 @@ class DesktopCat():
                 exception_traceback = format_exc()
                 print(f"Exception occurred: {exception_name}: {exception_message}")
                 print(f"Traceback:\n{exception_traceback}")
-        self.perform_parser_actions(string_to_book=string_to_book, file_error=file_error, args=args)
+        self.perform_parser_actions(string_to_book=string_to_book, file_error=file_error, args=args, workload_name=workload_name)
                 
-    def perform_parser_actions(self, string_to_book: str, file_error: bool, args: list):
+    def perform_parser_actions(self, string_to_book: str, args: list, file_error: bool=None, workload_name: str=None):
         if file_error:
             input : str = self.wait_input(f'{file_error} file error. Enter check or, reset or, else to continue...')
             match input.strip():
@@ -339,7 +341,11 @@ class DesktopCat():
                 self.insert_text(string_to_book)
             args_functions: list[function] = [self.parser_actions[command] for command in args if command in self.parser_actions]
             for args_function in args_functions:
-                args_function()
+                match args_function.__name__:
+                    case 'save_workload':
+                        args_function(workload_name)
+                    case _:
+                        args_function()
 
     def wait_input(self, message: str = None):
         if message: self.insert_text(message)
@@ -385,9 +391,14 @@ class DesktopCat():
         self.hide_window()
         self.insert_text('Hidded')
 
-    def save_workload(self):
-        # Template for save_workload action
-        pass
-        
+    def save_workload(self, workload_name: str):
+        vscode_urls = functions.find_key('workloads.workload_data.vscode')
+        print(vscode_urls)
 
-cat = DesktopCat()
+    def vscode_path_error(self, workload_name: str):
+        print('error vscode path', workload_name)
+        get_from_workload_data = functions.find_key('workloads.workload_data.vscode')
+        print(get_from_workload_data)
+
+if "__main__" == __name__:
+    cat = DesktopCat()

@@ -1,6 +1,7 @@
 from json import load, dump
 from os.path import exists
 from json.decoder import JSONDecodeError
+from threading import Thread, current_thread
 
 CONFIG_PATH = "zconfig.json"
 BACKUP_CONFIG = {
@@ -34,11 +35,13 @@ class CommandException(Exception):
     def __init__(self, 
                  *args,
                  string_to_book: str = None,
-                 file_error: str = None
+                 file_error: str = None,
+                 workload_name: str = None
                  ):
         self.string_to_book:str = string_to_book
         self.args: tuple = args
         self.file_error: str = file_error
+        self.workload_name: str = workload_name
 
 def find_key(path: str):
     """

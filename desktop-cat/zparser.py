@@ -255,10 +255,10 @@ class Parser:
             help_strings.append(f"{keys}: {help_message}")
         return '\n'.join(help_strings)
     
-    def save_workload(self):
+    def save_workload(self, workload_name:str):
         """
         Raises:
             functions.CommandException: Returns 'save_workload'
         """
-        raise functions.CommandException('save_workload')
+        raise functions.CommandException('save_workload', workload_name=workload_name)
     

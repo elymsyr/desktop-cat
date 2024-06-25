@@ -1,10 +1,11 @@
 from os import chdir
-from webbrowser import register, BackgroundBrowser, get
+from webbrowser import register, BackgroundBrowser, get, _tryorder
 from subprocess import run
 from threading import Thread
 from pygetwindow import getAllTitles, getWindowsWithTitle
 from pyautogui import hotkey, getActiveWindowTitle
 from pyperclip import paste
+from os.path import exists
 from settings import functions
 
 class Workload():
@@ -93,7 +94,7 @@ class Workload():
                     hotkey('ctrl','tab')
         return tab_urls
     
-    def open_vscode(self, path: str) -> None:
+    def open_vscode(self, path: str, workload_name: str) -> None:
         """Opens a folder on Vscode.
 
         Args:
@@ -102,18 +103,32 @@ class Workload():
         Raises:
             NotImplementedError: _description_
         """
-        chdir(path)
-        run(["code", "."], shell=True)
-    
+        try:
+            chdir(path)
+            run(["code", "."], shell=True)
+        except:
+            raise functions.CommandException('vscode_path_error', workload_name=workload_name)    
+
     def open_tab(self, query_list: list) -> None:
         """Opens a chrome tab
 
         Args:
             query_list (_type_): Url.
         """
+        chrome_path = functions.find_key("config.paths.chrome")
         for query in query_list:
-            register('chrome', None, BackgroundBrowser(functions.find_key(path='config.paths.chrome')))
             get('chrome').open(query)
+        register('chrome', None, BackgroundBrowser(chrome_path))
+        if exists(chrome_path):
+            get('chrome').open(f"https://www.google.com/search?q={' '.join(query[:-1])}")
+            for query in query_list:
+                get('chrome').open(query)        
+        else:
+            get(_tryorder[0]).open(f"https://www.google.com/search?q={' '.join(query[:-1])}")
+            for query in query_list:
+                get('chrome').open(query)            
+            raise functions.CommandException("check_chrome_path", "show_book")
+            
     
     def run_workload(self, workload_name: str) -> None:
         """Runs the workload with the name workload_name in a thread.
@@ -135,9 +150,9 @@ class Workload():
         data: dict = functions.get_data('workloads')
         if not data:
             raise functions.CommandException(file_error = 'workloads')
-        vscode: dict
-        chrome: dict
-        error: str
+        data = data['workloads']
+        vscode: dict = None
+        chrome: dict = None
         urls: list[str] = []
         threads: list[Thread] = []  
         if workload_name in data["workloads"]:
@@ -149,7 +164,7 @@ class Workload():
             threads.append(Thread(target=self.open_tab, args=(urls,)))
         if vscode:
             for project in vscode:
-                threads.append(Thread(target=self.open_vscode, args=(vscode[project],)))
+                threads.append(Thread(target=self.open_vscode, args=(vscode[project],workload_name,)))
         for work in threads:
             work.start()
         for work in threads:

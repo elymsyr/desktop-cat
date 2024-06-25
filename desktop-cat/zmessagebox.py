@@ -112,4 +112,4 @@ class MessageBox():
         self.command_prompt.wait_variable(self.var)
         input = self.var.get()
         self.var.set("")  # Reset self.var to an empty string
-        return input      
+        return input
