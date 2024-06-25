@@ -126,7 +126,6 @@ class DesktopCat():
         return True
     
     def on_drag_start(self, event):
-        print('on_drag_start')
         self.drag_start_x = event.x_root
         self.drag_start_y = event.y_root
         self.initial_window_x = self.window.winfo_x()
@@ -147,7 +146,6 @@ class DesktopCat():
         self.book.pos_book(self.x, self.y)
 
     def on_drag_stop(self, event):
-        print('on_drag_stop')
         if not self.animation_running:
             self.animation_running = True
             self.window.after(100, self.update)
@@ -263,7 +261,6 @@ class DesktopCat():
         return self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
 
     def show_window(self):
-        print('show_window')
         self.window.after(0, self.window.deiconify)
         if self.icon_created:
             self.icon_created = False
@@ -272,19 +269,16 @@ class DesktopCat():
         if self.messagebox_vis: self.reset_cycle(self.messagebox.open_close_messagebox(open_close=self.messagebox_vis))
 
     def hide_window(self, event=None):
-        print('hide_window')
         self.window.withdraw()
         self.reset_cycle(self.messagebox.open_close_messagebox(open_close=False))
         self.create_tray_icon()
 
     def exit_application(self):
-        print('exit_application')
         if self.icon_created:
             self.icon.stop()
         self.window.quit()
 
     def create_tray_icon(self):
-        print('create_tray_icon')
         icon_image = Image.open(functions.find_key("config.paths.tray_ico"))
         menu = (item('Show', lambda: self.show_window(), default=True), item('Exit', self.exit_application))
         self.icon = Icon("DesktopCat", icon_image, "DesktopCat", menu)
@@ -315,8 +309,10 @@ class DesktopCat():
         for functions in args_functions:
             functions()
         
-    def wait_input(self, message):
-        self.insert_text(message)
+    def wait_input(self, message: str = None):
+        if message: self.insert_text(message)
+        return self.messagebox.return_var()
+        
 
     def action_not_found(self):
         self.insert_text("I am confused?")
@@ -342,7 +338,7 @@ class DesktopCat():
         self.messagebox.open_close_messagebox(False)
 
     def check_chrome_path(self):
-        self.insert_text('There might be a problem with your chrome path.')
+        self.insert_text('There might be a problem with your chrome path.\'*config/*c\' to check it.')
 
     def switch_book_vis(self):
         if self.book_vis:
@@ -356,7 +352,6 @@ class DesktopCat():
 
     def sleep(self):
         self.long_sleep = not self.long_sleep
-        
         self.insert_text(f'Long Sleep {'On' if self.long_sleep else 'Off'}')
 
     def tray(self):

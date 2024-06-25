@@ -22,8 +22,13 @@ BACKUP_CONFIG = {
             }
         }
     }
-BACKUP_WORKLOADS = {"workload_data": {},"workloads": {}}
+BACKUP_WORKLOADS = {"workloads":{"workload_data": {},"workloads": {}}}
 WORKLOADS_PATH = 'zworkloads.json'
+
+BACKUPS:dict = {
+    'config': {'path': CONFIG_PATH, 'backup':BACKUP_CONFIG},
+    'workloads': {'path': WORKLOADS_PATH, 'backup':BACKUP_WORKLOADS}
+} 
 
 class CommandException(Exception):
     def __init__(self, 
@@ -39,9 +44,9 @@ def find_key(path: str):
     Returns None if the path does not exist.
     """
     keys = path.split('.')
-    current = get_data()
+    current = get_data(keys[0])
     try:
-        for key in keys:
+        for key in keys[:]:
             current = current[key]
         return current
     except (KeyError, TypeError):
@@ -53,7 +58,7 @@ def update_key(path: str, value: str | int | list | dict) -> None:
     If the path doesn't exist, it will be created.
     """
     keys = path.split('.')
-    new_dict = get_data().copy()
+    new_dict = get_data([keys[0]]).copy()
     current = new_dict
     for key in keys[:-1]:
         if key not in current:
@@ -67,7 +72,7 @@ def delete_key(path: str) -> None:
     Delete a key from the dictionary at the specified `path`.
     """
     keys = path.split('.')
-    new_dict = get_data(WORKLOADS_PATH).copy()
+    new_dict = get_data(keys[0]).copy()
     current = new_dict
     for key in keys[:-1]:
         if key not in current:
@@ -92,26 +97,21 @@ def format_string(string: str, size: int=30) -> str:
         formatted_string = string.ljust(size)
     return formatted_string
 
-def get_data(path:str=CONFIG_PATH) -> None | dict:
-    """Get config.json data as dictionary. Returns None if configuration file does not exists or not unspoilt
+def get_data(file: str = None) -> None | dict:
+    """Get config.json data as dictionary. Returns None if file does not exists or not unspoilt.
 
     Returns:
         dict: Data
     """
     data: dict
-    if exists(CONFIG_PATH):
+    if exists(BACKUPS[file]['path']):
         try:
-            with open(CONFIG_PATH, 'r') as file:
-                data = load(file)
-        except JSONDecodeError:
+            with open(BACKUPS[file]['path'], 'r') as dict_data:
+                data = load(dict_data)
+            if has_all_keys(current_config=data, main_config=BACKUPS[file]['backup'], file=file):
+                return data
+        except Exception:
             return None
-        if has_all_keys(current_config=data, main_config=BACKUP_CONFIG):
-            try:
-                with open(path, 'r') as file:
-                    return load(file)
-            except JSONDecodeError:
-                return None
-    return None
 
 def set_data(data: dict, path:str=CONFIG_PATH) -> None:
     """Write data to config.json
@@ -122,16 +122,17 @@ def set_data(data: dict, path:str=CONFIG_PATH) -> None:
     with open(path, 'w') as file:
         dump(data, file, indent=4)
         
-def has_all_keys(current_config: dict, main_config: dict) -> bool:
+def has_all_keys(current_config: dict, main_config: dict, file: str = 'config') -> bool:
     """
     Check if current config has all the keys of the main config fie, recursively.
     """
-    return (
+    if file == 'config': return (
         set(current_config) == set(main_config) and
         set(current_config['config']) == set(main_config['config']) and
         set(current_config['config']['paths']) == set(main_config['config']['paths']) and
         set(current_config['config']['fonts']) == set(main_config['config']['fonts'])
-    )        
+    )
+    elif file == 'workloads': return set(current_config) == set(main_config)
 
 
 def safe_get_data():

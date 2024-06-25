@@ -132,7 +132,7 @@ class Workload():
             workload_name (str)
             queue (queue.Queue): Queue that catches errors.
         """
-        data: dict = functions.get_data(functions.WORKLOADS_PATH)
+        data: dict = functions.get_workloads()
         if not data:
             raise functions.CommandException("workloads_file_error")
         vscode: dict
@@ -164,7 +164,7 @@ class Workload():
         """
         chrome: dict = self.find_chrome()
         workload = {'vscode': vscode, 'chrome': chrome}
-        data = functions.get_data(functions.WORKLOADS_PATH)
+        data = functions.get_workloads()
         if not data:
             raise functions.CommandException("workloads_file_error")        
         data['workloads'][workload_name] = workload

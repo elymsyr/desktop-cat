@@ -28,7 +28,6 @@ class MessageBox():
             list: List of possible next animation cycles.
         """
         if open_close:
-            print('open cp')
             self.command_prompt.deiconify()
             if not self.cat.long_sleep:
                 self.cat.reset_cycle([22,23,24])
@@ -36,7 +35,6 @@ class MessageBox():
             self.command_entry.focus_set()
             return [22,23,24]
         else:
-            print('close cp')
             self.command_prompt.withdraw()
             if not self.cat.long_sleep:
                 self.cat.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])

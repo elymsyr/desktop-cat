@@ -25,7 +25,7 @@ class Parser:
 
         self.workload_commands: dict = {
             ('h', 'help'): {'help': 'Show workload help', 'func': self.workload_help},
-            ('l', 'list'): {'help': 'List workloads', 'func': self.workload_list},
+            ('l', 'list'): {'help': 'List workloads', 'func': self.workloads_list},
             ('s', 'save'): {'help': 'Save workload', 'func': self.save_workload},
             ('r', 'run'): {'help': 'Run workload', 'func': self.workload.run_workload},
             ('e', 'edit'): {'help': 'Edit configuration', 'func': self.open_workloads_file},
@@ -217,22 +217,23 @@ class Parser:
         """
         raise functions.CommandException("tray", "hide_book", "hide_messagebox")
 
-    def workload_list(self):
+    def workloads_list(self):
         """List of workloads.
 
         Raises:
             functions.CommandException: Returns "show_book" and a list of workloads as a string.
         """
-        data: dict = functions.get_data(functions.WORKLOADS_PATH)
+        data: dict = functions.get_data('workloads')
+        data = data['workloads']['workloads']
         if not data:
             raise functions.CommandException("unknown_file_error")        
         string_to_book = "Workloads:\n"
         i=0
-        if len(list(data['workloads'].keys())) > 0:
-            for workload in list(data['workloads'].keys()):
+        if len(list(data.keys())) > 0:
+            for workload in list(data.keys()):
                 string_to_book += f"{i}- {workload}\n"
                 i+=1
-        else: string_to_book += f"\nNo workload founded...\n"
+        else: string_to_book += f"\nNo workload found...\n"
         raise functions.CommandException("show_book", string_to_book=string_to_book[:-1])
 
     def generate_help_string(self,dict_to_str:dict) -> str:
