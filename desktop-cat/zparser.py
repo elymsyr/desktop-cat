@@ -17,7 +17,7 @@ class Parser:
             ('w', 'workload'): {'help': 'Handle workload', 'func': self.handle_workload},
             ('s', 'sleep'): {'help': 'De/activate sleep mode', 'func': self.sleep},
             'tray': {'help': 'Toggle tray icon', 'func': self.tray},
-            'config': {'help': 'Handle configuration', 'func': self.handle_config},
+            'config': {'help': 'Handle configuration', 'func': self.open_config_file},
             'exit': {'help': 'Exit application', 'func': self.exit_application},
             'g': {'help': 'Google search', 'func': self.google_search},
             ('b', 'book'): {'help': 'Toggle book', 'func': self.open_close_book}
@@ -26,9 +26,9 @@ class Parser:
         self.workload_commands: dict = {
             ('h', 'help'): {'help': 'Show workload help', 'func': self.workload_help},
             ('l', 'list'): {'help': 'List workloads', 'func': self.workload_list},
-            ('s', 'save'): {'help': 'Save workload', 'func': self.save_new_workload},
+            ('s', 'save'): {'help': 'Save workload', 'func': self.save_workload},
             ('r', 'run'): {'help': 'Run workload', 'func': self.workload.run_workload},
-            ('e', 'edit'): {'help': 'Edit configuration', 'func': self.handle_config},
+            ('e', 'edit'): {'help': 'Edit configuration', 'func': self.open_workloads_file},
             ('d', 'delete'): {'help': 'Delete workload', 'func': self.workload_delete}
         }
 
@@ -49,11 +49,11 @@ class Parser:
         command = message[0]
         for key in self.commands:
             if command in key and command in self.name_required_arguments:
-                self.get_command_func(command, self.commands)(message[1:])
+                yield self.get_command_func(command, self.commands)(message[1:])
             elif command in key and not command in self.name_required_arguments:
                 check_end = self.get_next(message=message, word=command)
                 if check_end == END:
-                    self.get_command_func(command, self.commands)()
+                    yield self.get_command_func(command, self.commands)()
                 else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
         raise functions.CommandException(string_to_book="Command is not found.")
 
@@ -110,12 +110,12 @@ class Parser:
                     next_word = self.get_next(message=message, word=message[0])
                     check_end = self.get_next(message=message, word=message[1])
                     if check_end == END:
-                        self.get_command_func(command, self.workload_commands)(next_word)
+                        yield self.get_command_func(command, self.workload_commands)(next_word)
                     else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
                 else:
                     check_end = self.get_next(message=message, word=command)
                     if check_end == END:
-                        self.get_command_func(command, self.workload_commands)()
+                        yield self.get_command_func(command, self.workload_commands)()
                     else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
         raise functions.CommandException(string_to_book="Unknown or missing workload command.")
 
@@ -137,15 +137,28 @@ class Parser:
             functions.CommandException: Returns "no_workload_found"           
         """
         functions.delete_key(f"workloads.{name}")
-        # add if no workload found, raise commandexception
 
-    def handle_config(self):
+    def open_config_file(self):
         """Opens config.json.
         
         Raises:
             functions.CommandException: Returns "no_config_found" or "corrupted_config"         
         """
-        run(functions.CONFIG_PATH, shell=True)
+        try:
+            yield run(functions.CONFIG_PATH, shell=True)
+        except:
+            raise functions.CommandException('opening_file_error')
+        
+    def open_workloads_file(self):
+        """Opens config.json.
+        
+        Raises:
+            functions.CommandException: Returns "no_config_found" or "corrupted_config"         
+        """
+        try:
+            yield run(functions.WORKLOADS_PATH, shell=True)
+        except:
+            raise functions.CommandException('opening_file_error')
 
     def exit_application(self):
         """Terminates program.
@@ -248,5 +261,10 @@ class Parser:
             help_strings.append(f"{keys}: {help_message}")
         return '\n'.join(help_strings)
     
-    def save_new_workload(self):
-        raise Exception('Not Implemented Function.')
+    def save_workload(self):
+        """
+        Raises:
+            functions.CommandException: Returns 'save_workload'
+        """
+        raise functions.CommandException('save_workload')
+    
