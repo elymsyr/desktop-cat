@@ -33,10 +33,12 @@ BACKUPS:dict = {
 class CommandException(Exception):
     def __init__(self, 
                  *args,
-                 string_to_book: str = None
+                 string_to_book: str = None,
+                 file_error: str = None
                  ):
         self.string_to_book:str = string_to_book
         self.args: tuple = args
+        self.file_error: str = file_error
 
 def find_key(path: str):
     """
@@ -141,3 +143,9 @@ def safe_get_data():
         with open(CONFIG_PATH, 'w+') as file:
             dump(BACKUP_CONFIG, file, indent=4)
     return get_data()
+
+def reset_file(file: str):
+    with open(BACKUPS[file]['path'], 'w+') as dict_data:
+        dump(BACKUPS[file]['backup'], dict_data, indent=4)
+        
+reset_file('config')

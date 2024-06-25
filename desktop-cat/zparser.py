@@ -141,7 +141,7 @@ class Parser:
         try:
             return run(functions.CONFIG_PATH, shell=True)
         except:
-            raise functions.CommandException('unknown_file_error' 'config')
+            raise functions.CommandException(file_error = 'config')
         
     def open_workloads_file(self):
         """Opens config.json.
@@ -149,7 +149,7 @@ class Parser:
         try:
             return run(functions.WORKLOADS_PATH, shell=True)
         except:
-            raise functions.CommandException('unknown_file_error' 'workloads')
+            raise functions.CommandException(file_error = 'workloads')
 
     def exit_application(self):
         """Terminates program.
@@ -224,9 +224,9 @@ class Parser:
             functions.CommandException: Returns "show_book" and a list of workloads as a string.
         """
         data: dict = functions.get_data('workloads')
-        data = data['workloads']['workloads']
         if not data:
-            raise functions.CommandException("unknown_file_error", 'workloads')        
+            raise functions.CommandException(file_error = 'workloads')        
+        data = data['workloads']['workloads']
         string_to_book = "Workloads:\n"
         i=0
         if len(list(data.keys())) > 0:

@@ -109,7 +109,7 @@ class MessageBox():
     
     def return_var(self):
         self.open_close_messagebox(True)
-        self.cat.window.wait_variable(self.var)
+        self.command_prompt.wait_variable(self.var)
         input = self.var.get()
         self.var.set("")  # Reset self.var to an empty string
         return input      

@@ -71,13 +71,16 @@ class DesktopCat():
         self.label = Label(self.window, bd=0, bg='black')
         self.command_parser = Parser()
         self.text_content = ""
-        if self.load_images() :
-            add_file(functions.find_key("config.paths.font"))
+        if self.load_images():
+            try:
+                add_file(functions.find_key("config.paths.font"))
+            except:
+                functions.reset_file('config')
+                add_file(functions.find_key("config.paths.font"))
             self.book = Workbook(windows=self.window)
             self.parser_actions = {
                 "file_not_found": self.file_not_found,
                 "file_corrupted": self.file_corrupted,
-                "unknown_file_error": self.unknown_file_error,
                 "exit": self.exit,
                 "hide_book": self.book.hide_book,
                 "hide_messagebox": self.hide_messagebox,
@@ -103,8 +106,13 @@ class DesktopCat():
         self.event_number = self.EVENTS[self.current_event_cycle][0][self.current_event_cycle_index]
 
     def load_images(self):
-        gifs_path = functions.find_key("config.paths.gifs")
-        falling_gif = functions.find_key("config.paths.falling_gif")
+        try:
+            gifs_path = functions.find_key("config.paths.gifs")
+            falling_gif = functions.find_key("config.paths.falling_gif")
+        except:
+            functions.reset_file('config')
+            gifs_path = functions.find_key("config.paths.gifs")
+            falling_gif = functions.find_key("config.paths.falling_gif")
         self.images = listdir(gifs_path)
         i = 0
         for image in self.images:
@@ -279,7 +287,11 @@ class DesktopCat():
         self.window.quit()
 
     def create_tray_icon(self):
-        icon_image = Image.open(functions.find_key("config.paths.tray_ico"))
+        try:
+            icon_image = Image.open(functions.find_key("config.paths.tray_ico"))
+        except:
+            functions.reset_file('config')
+            icon_image = Image.open(functions.find_key("config.paths.tray_ico"))
         menu = (item('Show', lambda: self.show_window(), default=True), item('Exit', self.exit_application))
         self.icon = Icon("DesktopCat", icon_image, "DesktopCat", menu)
         self.icon_created = True
@@ -287,6 +299,7 @@ class DesktopCat():
         
     def parser(self, message):
         string_to_book: str = None
+        file_error: bool = None
         args: list = []
         try: self.command_parser.parser(message=message)
         except Exception as exception:
@@ -294,26 +307,43 @@ class DesktopCat():
                 print(f"\nparser from CommandException:\n")
                 string_to_book = exception.string_to_book 
                 args = list(exception.args)
-                print(f"  {string_to_book=}\n  {args=}")
+                file_error = exception.file_error
+                print(f"  {string_to_book=}\n  {file_error=}\n  {args=}")
             else:
                 exception_name = type(exception).__name__
                 exception_message = str(exception)
                 exception_traceback = format_exc()
                 print(f"Exception occurred: {exception_name}: {exception_message}")
                 print(f"Traceback:\n{exception_traceback}")
-        self.perform_parser_actions(string_to_book=string_to_book, args=args)
+        self.perform_parser_actions(string_to_book=string_to_book, file_error=file_error, args=args)
                 
-    def perform_parser_actions(self, string_to_book: str, args: list):
-        if string_to_book:
-            self.insert_text(string_to_book)
-        args_functions: list[function] = [self.parser_actions[command] for command in args if command in self.parser_actions]
-        for functions in args_functions:
-            functions()
-        
+    def perform_parser_actions(self, string_to_book: str, file_error: bool, args: list):
+        if file_error:
+            input : str = self.wait_input(f'{file_error} file error. Enter check or, reset or, else to continue...')
+            match input.strip():
+                case 'check':
+                    try:
+                        self.command_parser.open_workloads_file() if file_error == 'workloads' else self.command_parser.open_config_file()
+                    except functions.CommandException as exception:
+                        if exception.file_error:
+                            self.insert_text(f'File {file_error} can not be found. Resetting...')
+                            functions.reset_file(file_error)
+                            self.command_parser.open_workloads_file() if file_error == 'workloads' else self.command_parser.open_config_file()
+                case 'reset':
+                    functions.reset_file(file_error)
+                    self.insert_text(f'File {file_error} is reset.')
+                case _:
+                    self.insert_text('...')
+        else:
+            if string_to_book:
+                self.insert_text(string_to_book)
+            args_functions: list[function] = [self.parser_actions[command] for command in args if command in self.parser_actions]
+            for args_function in args_functions:
+                args_function()
+
     def wait_input(self, message: str = None):
         if message: self.insert_text(message)
         return self.messagebox.return_var()
-        
 
     def action_not_found(self):
         self.insert_text("I am confused?")
@@ -324,10 +354,6 @@ class DesktopCat():
 
     def file_corrupted(self):
         # Template for fie_corrupted action
-        pass
-
-    def unknown_file_error(self):
-        # Template for unknown_file_error action
         pass
 
     def exit(self):

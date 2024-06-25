@@ -134,7 +134,7 @@ class Workload():
         """
         data: dict = functions.get_data('workloads')
         if not data:
-            raise functions.CommandException("unknown_file_error", 'workloads')
+            raise functions.CommandException(file_error = 'workloads')
         vscode: dict
         chrome: dict
         error: str
@@ -166,7 +166,7 @@ class Workload():
         workload = {'vscode': vscode, 'chrome': chrome}
         data = functions.get_data('workloads')
         if not data:
-            raise functions.CommandException("unknown_file_error", 'workloads')
+            raise functions.CommandException(file_error = 'workloads')
         data['workloads'][workload_name] = workload
         functions.set_data(data, functions.WORKLOADS_PATH)
 
