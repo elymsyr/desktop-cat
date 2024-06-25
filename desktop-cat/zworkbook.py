@@ -63,7 +63,7 @@ class Workbook():
         """
         def update_text_box():
             self.text_box.config(state=tk.NORMAL)
-            self.text_box.insert(tk.END, text)
+            self.text_box.insert(tk.END, f"\n\n{text}")
             self.text_box.see(tk.END)
             self.text_box.config(state=tk.DISABLED)
         

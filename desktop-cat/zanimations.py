@@ -52,21 +52,6 @@ class DesktopCat():
         self.workload = Workload()
         self.animation_running = True
         self.falling = False
-        self.parser_actions = {
-            "file_not_found": self.file_not_found,
-            "fie_corrupted": self.file_corrupted,
-            "unknown_file_error": self.unknown_file_error,
-            "exit": self.exit,
-            "hide_book": self.book.hide_book,
-            "hide_messagebox": self.hide_messagebox,
-            "check_chrome_path": self.check_chrome_path,
-            "show_book": self.book.show_book,
-            "switch_book_vis": self.switch_book_vis,
-            "switch_messagebox_vis": self.switch_messagebox_vis,
-            "sleep": self.sleep,
-            "tray": self.tray,
-            "save_workload": self.save_workload
-        }
         self.introduction_text = f"Right-click to toggle messagebox. Enter {functions.find_key("config.prefix")}h or {functions.find_key("config.prefix")}help.\nDo not move the cat fast.\nThere is a bug :("
         self.long_sleep = False
         self.messagebox_vis: bool = True
@@ -90,6 +75,21 @@ class DesktopCat():
         if self.load_images() :
             add_file(functions.find_key("config.paths.font"))
             self.book = Workbook(windows=self.window)
+            self.parser_actions = {
+                "file_not_found": self.file_not_found,
+                "fie_corrupted": self.file_corrupted,
+                "unknown_file_error": self.unknown_file_error,
+                "exit": self.exit,
+                "hide_book": self.book.hide_book,
+                "hide_messagebox": self.hide_messagebox,
+                "check_chrome_path": self.check_chrome_path,
+                "show_book": self.book.show_book,
+                "switch_book_vis": self.switch_book_vis,
+                "switch_messagebox_vis": self.switch_messagebox_vis,
+                "sleep": self.sleep,
+                "tray": self.tray,
+                "save_workload": self.save_workload
+            }
             self.insert_text = self.book.write_text
             self.book.write_text(self.introduction_text)
             self.messagebox = MessageBox(windows=self.window, cat=self)
@@ -313,7 +313,8 @@ class DesktopCat():
         if string_to_book:
             self.insert_text(string_to_book)
         args_functions: list[function] = [self.parser_actions[command] for command in args if command in self.parser_actions]
-        print(args_functions)
+        for functions in args_functions:
+            functions()
         
     def wait_input(self, message):
         self.insert_text(message)

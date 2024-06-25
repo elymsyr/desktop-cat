@@ -32,7 +32,7 @@ class Parser:
             ('d', 'delete'): {'help': 'Delete workload', 'func': self.workload_delete}
         }
 
-        self.name_required_arguments: list = ["g", "workload", "w", "s","save","r","run","d","delete"]        
+        self.name_required_arguments: list = ["g", "workload", "w","save","r","run","d","delete"]        
         self.workload_help_string = "*workload|w\n   help|h\n   list|l\n   run|r [Workload Name]\n   save|s [Workload Name]\n   edit|e [Workload Name]\n   delete|d [Workload Name]]"
 
     def parser(self, message: list):
@@ -45,7 +45,7 @@ class Parser:
             functions.CommandException: Checks if the message and the arguments are eligable, or a command.  
         """
         if not message or len(message) == 1:
-            raise functions.CommandException(string_to_book="Message is not eligible.")
+            raise functions.CommandException("show_book", string_to_book="Message is not eligible.")
         command = message[0]
         for key in self.commands:
             if command in key and command in self.name_required_arguments:
@@ -54,8 +54,8 @@ class Parser:
                 check_end = self.get_next(message=message, word=command)
                 if check_end == END:
                     return self.get_command_func(command, self.commands)()
-                else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
-        raise functions.CommandException(string_to_book="Command is not found.")
+                else: raise functions.CommandException("show_book", string_to_book="The number of argument is more than expected.")
+        raise functions.CommandException("show_book", string_to_book="Command is not found.")
 
     def get_command_func(self, command_key: str, command_dict: dict):
         """Gets the dictionary and the key. Returns the correspounding function.
@@ -90,8 +90,8 @@ class Parser:
             try:
                 return str(message[message.index(word)+1]) 
             except:
-                raise functions.CommandException(string_to_book="Unknown argument error.")
-        raise functions.CommandException(string_to_book="Missing argument error.")
+                raise functions.CommandException("show_book", string_to_book="Unknown argument error.")
+        raise functions.CommandException("show_book", string_to_book="Missing argument error.")
 
     def handle_workload(self, message: list):
         """When a workload command tried to be perform, this functions continues the process.
@@ -111,13 +111,13 @@ class Parser:
                     check_end = self.get_next(message=message, word=message[1])
                     if check_end == END:
                         return self.get_command_func(command, self.workload_commands)(next_word)
-                    else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
+                    else: raise functions.CommandException("show_book", string_to_book="The number of argument is more than expected.")
                 else:
                     check_end = self.get_next(message=message, word=command)
                     if check_end == END:
                         return self.get_command_func(command, self.workload_commands)()
-                    else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
-        raise functions.CommandException(string_to_book="Unknown or missing workload command.")
+                    else: raise functions.CommandException("show_book", string_to_book="The number of argument is more than expected.")
+        raise functions.CommandException("show_book", string_to_book="Unknown or missing workload command.")
 
     def workload_help(self):
         """Workload Help
@@ -125,7 +125,7 @@ class Parser:
         Raises:
             functions.CommandException: Returns "show_book" and help string.
         """
-        raise functions.CommandException( "show_book", string_to_book=self.generate_help_string(dict_to_str=self.workload_commands))
+        raise functions.CommandException("show_book", string_to_book=f"Workload Commands:\n{self.generate_help_string(dict_to_str=self.workload_commands)}")
     
     def workload_delete(self, name:str):
         """Deletes target worklaod
@@ -199,7 +199,7 @@ class Parser:
         Raises:
             functions.CommandException: Returns help string
         """
-        raise functions.CommandException(string_to_book=self.generate_help_string(dict_to_str=self.commands))
+        raise functions.CommandException("show_book", string_to_book=f"Commands:\n{self.generate_help_string(dict_to_str=self.commands)}")
 
     def sleep(self):
         """Toggle long sleep mode.
@@ -226,14 +226,14 @@ class Parser:
         data: dict = functions.get_data(functions.WORKLOADS_PATH)
         if not data:
             raise functions.CommandException("unknown_file_error")        
-        string_to_book = ""
+        string_to_book = "Workloads:\n"
         i=0
         if len(list(data['workloads'].keys())) > 0:
             for workload in list(data['workloads'].keys()):
                 string_to_book += f"{i}- {workload}\n"
                 i+=1
         else: string_to_book += f"\nNo workload founded...\n"
-        raise functions.CommandException("show_book", string_to_book=string_to_book)
+        raise functions.CommandException("show_book", string_to_book=string_to_book[:-1])
 
     def generate_help_string(self,dict_to_str:dict) -> str:
         """Generates hel string of a target dict.

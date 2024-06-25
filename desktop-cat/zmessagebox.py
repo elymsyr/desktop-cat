@@ -104,8 +104,8 @@ class MessageBox():
             self.cat.parser(message)
             self.white = True
         elif not self.white:
-            raise functions.CommandException(string_to_book="Parser is already working.")
+            self.cat.insert_text("Parser is already working.")
         else:
-            raise functions.CommandException(string_to_book=f"uhm what... {message}...")
+            self.cat.insert_text(f"uhm what... {message}...")
         
         return message
