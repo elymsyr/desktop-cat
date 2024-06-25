@@ -141,7 +141,7 @@ class Parser:
         try:
             return run(functions.CONFIG_PATH, shell=True)
         except:
-            raise functions.CommandException('unknown_file_error')
+            raise functions.CommandException('unknown_file_error' 'config')
         
     def open_workloads_file(self):
         """Opens config.json.
@@ -149,7 +149,7 @@ class Parser:
         try:
             return run(functions.WORKLOADS_PATH, shell=True)
         except:
-            raise functions.CommandException('unknown_file_error')
+            raise functions.CommandException('unknown_file_error' 'workloads')
 
     def exit_application(self):
         """Terminates program.
@@ -226,7 +226,7 @@ class Parser:
         data: dict = functions.get_data('workloads')
         data = data['workloads']['workloads']
         if not data:
-            raise functions.CommandException("unknown_file_error")        
+            raise functions.CommandException("unknown_file_error", 'workloads')        
         string_to_book = "Workloads:\n"
         i=0
         if len(list(data.keys())) > 0:
@@ -237,7 +237,7 @@ class Parser:
         raise functions.CommandException("show_book", string_to_book=string_to_book[:-1])
 
     def generate_help_string(self,dict_to_str:dict) -> str:
-        """Generates hel string of a target dict.
+        """Generates help string of a target dict.
 
         Args:
             dict_to_str (dict): Target dict

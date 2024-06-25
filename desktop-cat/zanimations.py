@@ -76,7 +76,7 @@ class DesktopCat():
             self.book = Workbook(windows=self.window)
             self.parser_actions = {
                 "file_not_found": self.file_not_found,
-                "fie_corrupted": self.file_corrupted,
+                "file_corrupted": self.file_corrupted,
                 "unknown_file_error": self.unknown_file_error,
                 "exit": self.exit,
                 "hide_book": self.book.hide_book,
@@ -294,6 +294,7 @@ class DesktopCat():
                 print(f"\nparser from CommandException:\n")
                 string_to_book = exception.string_to_book 
                 args = list(exception.args)
+                print(f"  {string_to_book=}\n  {args=}")
             else:
                 exception_name = type(exception).__name__
                 exception_message = str(exception)
@@ -360,7 +361,7 @@ class DesktopCat():
 
     def save_workload(self):
         # Template for save_workload action
-        pass        
+        pass
         
 
 cat = DesktopCat()
