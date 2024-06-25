@@ -26,7 +26,7 @@ class Parser:
         self.workload_commands: dict = {
             ('h', 'help'): {'help': 'Show workload help', 'func': self.workload_help},
             ('l', 'list'): {'help': 'List workloads', 'func': self.workload_list},
-            ('s', 'save'): {'help': 'Save workload', 'func': self.workload.save_workload},
+            ('s', 'save'): {'help': 'Save workload', 'func': self.save_new_workload},
             ('r', 'run'): {'help': 'Run workload', 'func': self.workload.run_workload},
             ('e', 'edit'): {'help': 'Edit configuration', 'func': self.handle_config},
             ('d', 'delete'): {'help': 'Delete workload', 'func': self.workload_delete}
@@ -219,8 +219,8 @@ class Parser:
         Raises:
             functions.CommandException: Returns "show_book" and a list of workloads as a string.
         """
-        data: dict = functions.get_data() 
-        string_to_book = "",
+        data: dict = functions.get_data(functions.WORKLOADS_PATH) 
+        string_to_book = ""
         i=0
         if len(list(data['workloads'].keys())) > 0:
             for workload in list(data['workloads'].keys()):
@@ -247,3 +247,6 @@ class Parser:
             help_message = command_info['help']
             help_strings.append(f"{keys}: {help_message}")
         return '\n'.join(help_strings)
+    
+    def save_new_workload(self):
+        raise Exception('Not Implemented Function.')

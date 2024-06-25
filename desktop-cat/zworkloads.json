@@ -1,0 +1,28 @@
+{
+    "workload_data": {
+        "vscode": {
+            "desktop-cat": ""
+        }
+    },
+    "workloads": {
+        "test": {
+            "vscode": {
+                "desktop-cat": ""
+            },
+            "chrome": {
+                "New Tab": ""
+            }
+        },
+        "test2": {
+            "vscode": {
+                "desktop-cat": ""
+            },
+            "chrome": {
+                "how to make a python function in a thread wait for an input from another function - Google Search": "https://www.google.com/search?q=how+to+make+a+python+function+in+a+thread+wait+for+an+input+from+another+function&oq=how+to+make+a+python+function+in+a+thread+wait+for+an+input+from+another+function&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTMzNTQ2ajBqNKgCALACAA&sourceid=chrome&ie=UTF-8",
+                "Last Actions": "https://wifi.gsb.gov.tr/",
+                "Google Ceviri": "https://translate.google.com/",
+                "ChatGPT": "https://chatgpt.com/c/"
+            }
+        }
+    }
+}

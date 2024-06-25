@@ -3,7 +3,27 @@ from os.path import exists
 from json.decoder import JSONDecodeError
 
 CONFIG_PATH = "zconfig.json"
-BACKUP_CONFIG = 'zconfig_backup.json'
+BACKUP_CONFIG = {
+        "config": {
+            "prefix": "*",
+            "paths": {
+                "chrome": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+                "gifs": "media\\gifs",
+                "falling_gif": "media\\gifs_others\\falling.gif",
+                "command_bg": "media\\messagebox.png",
+                "tray_ico": "media\\tray-icon.png",
+                "font": "media\\pixelmix.ttf",
+                "books_bg": "media\\books",
+                "config-json": "data\\config.json"
+            },
+            "fonts": {
+                "current_font_name": "pixelmix",
+                "default_font_size": 10
+            }
+        }
+    }
+BACKUP_WORKLOADS = {"workload_data": {},"workloads": {}}
+WORKLOADS_PATH = 'zworkloads.json'
 
 class CommandException(Exception):
     def __init__(self, 
@@ -12,18 +32,6 @@ class CommandException(Exception):
                  ):
         self.string_to_book:str = string_to_book
         self.args: tuple = args
-        
-def check_config_file() -> bool:
-    """Checks if configuration file exists and unspoilt.
-    """
-    if exists(CONFIG_PATH):
-        if has_all_keys_recursive(current_config=get_data(CONFIG_PATH), main_config=get_data(BACKUP_CONFIG)):
-            try: 
-                get_data()
-                return True
-            except JSONDecodeError as json_decode_error: 
-                return False
-    return False
 
 def find_key(path: str):
     """
@@ -84,14 +92,26 @@ def format_string(string: str, size: int=30) -> str:
         formatted_string = string.ljust(size)
     return formatted_string
 
-def get_data(path:str=CONFIG_PATH) -> dict:
-    """Get config.json data as dictionary
+def get_data(path:str=CONFIG_PATH) -> None | dict:
+    """Get config.json data as dictionary. Returns None if configuration file does not exists or not unspoilt
 
     Returns:
         dict: Data
     """
-    with open(path, 'r') as file:
-        return load(file)
+    data: dict
+    if exists(CONFIG_PATH):
+        try:
+            with open(CONFIG_PATH, 'r') as file:
+                data = load(file)
+        except JSONDecodeError:
+            return None
+        if has_all_keys(current_config=data, main_config=BACKUP_CONFIG):
+            try:
+                with open(path, 'r') as file:
+                    return load(file)
+            except JSONDecodeError:
+                return None
+    return None
 
 def set_data(data: dict, path:str=CONFIG_PATH) -> None:
     """Write data to config.json
@@ -102,7 +122,7 @@ def set_data(data: dict, path:str=CONFIG_PATH) -> None:
     with open(path, 'w') as file:
         dump(data, file, indent=4)
         
-def has_all_keys_recursive(current_config: dict, main_config: dict) -> bool:
+def has_all_keys(current_config: dict, main_config: dict) -> bool:
     """
     Check if current config has all the keys of the main config fie, recursively.
     """
@@ -112,3 +132,11 @@ def has_all_keys_recursive(current_config: dict, main_config: dict) -> bool:
         set(current_config['config']['paths']) == set(main_config['config']['paths']) and
         set(current_config['config']['fonts']) == set(main_config['config']['fonts'])
     )        
+
+
+def safe_get_data():
+    data = get_data()
+    if not data:
+        with open(CONFIG_PATH, 'w+') as file:
+            dump(BACKUP_CONFIG, file, indent=4)
+    return get_data()

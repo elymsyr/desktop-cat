@@ -132,7 +132,7 @@ class Workload():
             workload_name (str)
             queue (queue.Queue): Queue that catches errors.
         """
-        data: dict = functions.get_data()
+        data: dict = functions.get_data(functions.WORKLOADS_PATH)
         vscode: dict
         chrome: dict
         error: str
@@ -162,9 +162,9 @@ class Workload():
         """
         chrome: dict = self.find_chrome()
         workload = {'vscode': vscode, 'chrome': chrome}
-        data = functions.get_data()
+        data = functions.get_data(functions.WORKLOADS_PATH)
         data['workloads'][workload_name] = workload
-        functions.set_data(data)
+        functions.set_data(data, functions.WORKLOADS_PATH)
 
     def help(self, list_functions: list = []) -> dict:
         """Returns a dictionary of lines about how to use workload class functions.
