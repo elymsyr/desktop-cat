@@ -132,33 +132,24 @@ class Parser:
 
         Args:
             name (str): Workload name.
-            
-        Raises:
-            functions.CommandException: Returns "no_workload_found"           
         """
         functions.delete_key(f"workloads.{name}")
 
     def open_config_file(self):
         """Opens config.json.
-        
-        Raises:
-            functions.CommandException: Returns "no_config_found" or "corrupted_config"         
         """
         try:
             return run(functions.CONFIG_PATH, shell=True)
         except:
-            raise functions.CommandException('opening_file_error')
+            raise functions.CommandException('unknown_file_error')
         
     def open_workloads_file(self):
         """Opens config.json.
-        
-        Raises:
-            functions.CommandException: Returns "no_config_found" or "corrupted_config"         
         """
         try:
             return run(functions.WORKLOADS_PATH, shell=True)
         except:
-            raise functions.CommandException('opening_file_error')
+            raise functions.CommandException('unknown_file_error')
 
     def exit_application(self):
         """Terminates program.
@@ -234,7 +225,7 @@ class Parser:
         """
         data: dict = functions.get_data(functions.WORKLOADS_PATH)
         if not data:
-            raise functions.CommandException("workloads_file_error")        
+            raise functions.CommandException("unknown_file_error")        
         string_to_book = ""
         i=0
         if len(list(data['workloads'].keys())) > 0:

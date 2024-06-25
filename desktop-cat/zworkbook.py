@@ -44,7 +44,6 @@ class Workbook():
             print(f"Exception at {row_number}: {e}")
         self.text_frame = tk.Frame(self.book_canvas, bg='black')
         self.text_frame.place(relx=0.1, rely=0.1, relwidth=0.81, relheight=0.82)  # Adjust the position and size of the frame
-        # self.hide_book()
         self.set_book()
 
     def pos_book(self, x: int, y: int) -> None:
@@ -54,7 +53,7 @@ class Workbook():
             x (int)
             y (int)
         """
-        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(x) + '+' + str(y)) # ?!
+        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(x-275) + '+' + str(y-505)) # ?!
         
     def write_text(self, text: str) -> None:
         """Add text to book.

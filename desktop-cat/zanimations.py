@@ -52,6 +52,22 @@ class DesktopCat():
         self.workload = Workload()
         self.animation_running = True
         self.falling = False
+        self.parser_actions = {
+            "file_not_found": self.file_not_found,
+            "fie_corrupted": self.fie_corrupted,
+            "unknown_file_error": self.unknown_file_error,
+            "exit": self.exit,
+            "hide_book": self.hide_book,
+            "hide_messagebox": self.hide_messagebox,
+            "check_chrome_path": self.check_chrome_path,
+            "show_book": self.show_book,
+            "switch_book_vis": self.switch_book_vis,
+            "switch_messagebox_vis": self.switch_messagebox_vis,
+            "help": self.help,
+            "sleep": self.sleep,
+            "tray": self.tray,
+            "save_workload": self.save_workload
+        }        
         self.long_sleep = False
         self.messagebox_vis: bool = False
         self.book_vis: bool = False
@@ -148,7 +164,7 @@ class DesktopCat():
         self.window.bind("<ButtonPress-3>", self.messagebox_appear)
         self.window.bind("<B1-Motion>", self.on_drag_motion)
         self.window.bind("<ButtonRelease-1>", self.on_drag_stop)
-        self.hide_window()
+        # self.hide_window()
 
     def messagebox_appear(self, event=None):
         if self.messagebox_vis:
@@ -286,7 +302,76 @@ class DesktopCat():
             print(f"Exception occurred: {exception_name}: {exception_message}")
             print(f"Traceback:\n{exception_traceback}")
             if type(exception) == functions.CommandException:
-                print(f"parser from CommandException:")
-                print(f"{exception.string_to_book=}\n{list(exception.args)}")
+                print(f"\nparser from CommandException:\n")
+                self.perform_parser_actions(string_to_book=exception.string_to_book, args=list(exception.args))
+                
+    def perform_parser_actions(self, string_to_book: str, args: list):
+        if string_to_book:
+            self.string_to_book_action(string_to_book=string_to_book)
+        args_functions: list[function] = [self.parser_actions[command] for command in args if command in self.parser_actions]
+        print(args_functions)
+
+    def string_to_book_action(self, string_to_book: str):
+        self.book.write_text(string_to_book)
+
+    def action_not_found(self):
+        pass
+        
+    def file_not_found(self):
+        # Template for file_not_found action
+        pass
+
+    def fie_corrupted(self):
+        # Template for fie_corrupted action
+        pass
+
+    def unknown_file_error(self):
+        # Template for unknown_file_error action
+        pass
+
+    def exit(self):
+        # Template for exit action
+        pass
+
+    def hide_book(self):
+        # Template for hide_book action
+        pass
+
+    def hide_messagebox(self):
+        # Template for hide_messagebox action
+        pass
+
+    def check_chrome_path(self):
+        # Template for check_chrome_path action
+        pass
+
+    def show_book(self):
+        # Template for show_book action
+        pass
+
+    def switch_book_vis(self):
+        # Template for switch_book_vis action
+        pass
+
+    def switch_messagebox_vis(self):
+        # Template for switch_messagebox_vis action
+        pass
+
+    def help(self):
+        # Template for help action
+        pass
+
+    def sleep(self):
+        # Template for sleep action
+        pass
+
+    def tray(self):
+        # Template for tray action
+        pass
+
+    def save_workload(self):
+        # Template for save_workload action
+        pass        
+        
 
 cat = DesktopCat()

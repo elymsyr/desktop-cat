@@ -67,7 +67,7 @@ def delete_key(path: str) -> None:
     Delete a key from the dictionary at the specified `path`.
     """
     keys = path.split('.')
-    new_dict = get_data().copy()
+    new_dict = get_data(WORKLOADS_PATH).copy()
     current = new_dict
     for key in keys[:-1]:
         if key not in current:
