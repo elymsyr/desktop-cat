@@ -353,8 +353,7 @@ class DesktopCat():
         self.book_vis = not self.book_vis
 
     def switch_messagebox_vis(self):
-        # Template for switch_messagebox_vis action
-        pass
+        self.messagebox.open_close_messagebox(not self.messagebox_vis)
 
     def sleep(self):
         self.long_sleep = not self.long_sleep
