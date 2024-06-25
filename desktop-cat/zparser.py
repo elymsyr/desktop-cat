@@ -197,9 +197,9 @@ class Parser:
         """Help
 
         Raises:
-            functions.CommandException: Returns "help" and help string
+            functions.CommandException: Returns help string
         """
-        raise functions.CommandException("help", string_to_book=self.generate_help_string(dict_to_str=self.commands))
+        raise functions.CommandException(string_to_book=self.generate_help_string(dict_to_str=self.commands))
 
     def sleep(self):
         """Toggle long sleep mode.

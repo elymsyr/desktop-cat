@@ -603,7 +603,7 @@ class DesktopCat():
         with open(CONFIG_PATH, 'w') as file:
             json.dump(data, file, indent=4)
         self.write_text(f"\nWorkload {workload_name} saved.")
-       
+
     def sleep(self):
         self.long_sleep = not self.long_sleep
         self.write_text(f'\nLong Sleep {self.long_sleep}')

@@ -57,13 +57,12 @@ class DesktopCat():
             "fie_corrupted": self.file_corrupted,
             "unknown_file_error": self.unknown_file_error,
             "exit": self.exit,
-            "hide_book": self.hide_book,
+            "hide_book": self.book.hide_book,
             "hide_messagebox": self.hide_messagebox,
             "check_chrome_path": self.check_chrome_path,
-            "show_book": self.show_book,
+            "show_book": self.book.show_book,
             "switch_book_vis": self.switch_book_vis,
             "switch_messagebox_vis": self.switch_messagebox_vis,
-            "help": self.help,
             "sleep": self.sleep,
             "tray": self.tray,
             "save_workload": self.save_workload
@@ -315,6 +314,9 @@ class DesktopCat():
             self.insert_text(string_to_book)
         args_functions: list[function] = [self.parser_actions[command] for command in args if command in self.parser_actions]
         print(args_functions)
+        
+    def wait_input(self, message):
+        self.insert_text(message)
 
     def action_not_found(self):
         self.insert_text("I am confused?")
@@ -332,44 +334,35 @@ class DesktopCat():
         pass
 
     def exit(self):
-        # Template for exit action
-        pass
-
-    def hide_book(self):
-        # Template for hide_book action
-        pass
+        if self.icon_created:
+            self.icon.stop()
+        self.window.quit()
 
     def hide_messagebox(self):
-        # Template for hide_messagebox action
-        pass
+        self.messagebox.open_close_messagebox(False)
 
     def check_chrome_path(self):
-        # Template for check_chrome_path action
-        pass
-
-    def show_book(self):
-        # Template for show_book action
-        pass
+        self.insert_text('There might be a problem with your chrome path.')
 
     def switch_book_vis(self):
-        # Template for switch_book_vis action
-        pass
+        if self.book_vis:
+            self.book.hide_book()
+        else:
+            self.book.show_book()
+        self.book_vis = not self.book_vis
 
     def switch_messagebox_vis(self):
         # Template for switch_messagebox_vis action
         pass
 
-    def help(self):
-        # Template for help action
-        pass
-
     def sleep(self):
-        # Template for sleep action
-        pass
+        self.long_sleep = not self.long_sleep
+        
+        self.insert_text(f'Long Sleep {'On' if self.long_sleep else 'Off'}')
 
     def tray(self):
-        # Template for tray action
-        pass
+        self.hide_window()
+        self.insert_text('Hidded')
 
     def save_workload(self):
         # Template for save_workload action
