@@ -279,22 +279,14 @@ class DesktopCat():
         
     def parser(self, message): 
         try: self.command_parser.parser(message=message)
-        except functions.CommandException as command_exception:
-            print(f"parser from CommandException:")
-            attributes = vars(command_exception)
-            for attribute, value in attributes.items():
-                print(f"    {attribute}: {value}")
-                exception_name = type(command_exception).__name__
-                exception_message = str(command_exception)
-                exception_traceback = format_exc()
-                print(f"Exception occurred: {exception_name}: {exception_message}")
-                print(f"Traceback:\n{exception_traceback}")                
         except Exception as exception:
             exception_name = type(exception).__name__
             exception_message = str(exception)
             exception_traceback = format_exc()
             print(f"Exception occurred: {exception_name}: {exception_message}")
             print(f"Traceback:\n{exception_traceback}")
-            
-        
+            if type(exception) == functions.CommandException:
+                print(f"parser from CommandException:")
+                print(f"{exception.string_to_book=}\n{list(exception.args)}")
+
 cat = DesktopCat()

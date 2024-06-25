@@ -49,11 +49,11 @@ class Parser:
         command = message[0]
         for key in self.commands:
             if command in key and command in self.name_required_arguments:
-                yield self.get_command_func(command, self.commands)(message[1:])
+                return self.get_command_func(command, self.commands)(message[1:])
             elif command in key and not command in self.name_required_arguments:
                 check_end = self.get_next(message=message, word=command)
                 if check_end == END:
-                    yield self.get_command_func(command, self.commands)()
+                    return self.get_command_func(command, self.commands)()
                 else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
         raise functions.CommandException(string_to_book="Command is not found.")
 
@@ -110,12 +110,12 @@ class Parser:
                     next_word = self.get_next(message=message, word=message[0])
                     check_end = self.get_next(message=message, word=message[1])
                     if check_end == END:
-                        yield self.get_command_func(command, self.workload_commands)(next_word)
+                        return self.get_command_func(command, self.workload_commands)(next_word)
                     else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
                 else:
                     check_end = self.get_next(message=message, word=command)
                     if check_end == END:
-                        yield self.get_command_func(command, self.workload_commands)()
+                        return self.get_command_func(command, self.workload_commands)()
                     else: raise functions.CommandException(string_to_book="The number of argument is more than expected.")
         raise functions.CommandException(string_to_book="Unknown or missing workload command.")
 
@@ -145,7 +145,7 @@ class Parser:
             functions.CommandException: Returns "no_config_found" or "corrupted_config"         
         """
         try:
-            yield run(functions.CONFIG_PATH, shell=True)
+            return run(functions.CONFIG_PATH, shell=True)
         except:
             raise functions.CommandException('opening_file_error')
         
@@ -156,7 +156,7 @@ class Parser:
             functions.CommandException: Returns "no_config_found" or "corrupted_config"         
         """
         try:
-            yield run(functions.WORKLOADS_PATH, shell=True)
+            return run(functions.WORKLOADS_PATH, shell=True)
         except:
             raise functions.CommandException('opening_file_error')
 
@@ -232,7 +232,9 @@ class Parser:
         Raises:
             functions.CommandException: Returns "show_book" and a list of workloads as a string.
         """
-        data: dict = functions.get_data(functions.WORKLOADS_PATH) 
+        data: dict = functions.get_data(functions.WORKLOADS_PATH)
+        if not data:
+            raise functions.CommandException("workloads_file_error")        
         string_to_book = ""
         i=0
         if len(list(data['workloads'].keys())) > 0:
