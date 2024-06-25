@@ -18,7 +18,7 @@ class MessageBox():
         self.white: bool = True
         self.create_cp()
         
-    def open_close_messagebox(self, open_close: bool = None, event=None) -> list:
+    def open_close_messagebox(self, open_close: bool = None, esc=False, event=None) -> list:
         """Opens or hides message box. Returns a list of possible next animation cycles.
 
         Args:
@@ -27,21 +27,23 @@ class MessageBox():
         Returns:
             list: List of possible next animation cycles.
         """
-        # if not self.command_created and not self.icon_created:
         if open_close:
             print('open cp')
             self.command_prompt.deiconify()
-            # self.pos_cp()
+            if not self.cat.long_sleep:
+                self.cat.reset_cycle([22,23,24])
+            self.cat.messagebox_vis = True
             self.command_entry.focus_set()
-            # if not self.long_sleep:
-            #     self.reset_cycle([22,23,24])
             return [22,23,24]
         else:
             print('close cp')
-            # self.open_close_book(False)
             self.command_prompt.withdraw()
-            # if not self.long_sleep:
-            #     self.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
+            if not self.cat.long_sleep:
+                self.cat.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
+            self.cat.messagebox_vis = False
+            self.cat.book.hide_book()
+            if esc:
+                self.cat.book_vis = False
             return [0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18]
 
     def create_cp(self) -> None:
@@ -61,7 +63,7 @@ class MessageBox():
         self.command_prompt.wm_attributes('-transparentcolor', 'black')
         self.command_prompt.wm_attributes('-topmost', 1)
         
-        self.command_prompt.bind('<Escape>', lambda event: self.open_close_messagebox(open_close=False))
+        self.command_prompt.bind('<Escape>', lambda event: self.open_close_messagebox(open_close=False, esc=True))
         # FONT = ("Minecraftia", 11)
         entry_width = 33  # Set the width of the command_entry widget
         entry_height = 1  # Set the height of the command_entry widget to 1-2 rows

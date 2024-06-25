@@ -54,7 +54,7 @@ class DesktopCat():
         self.falling = False
         self.parser_actions = {
             "file_not_found": self.file_not_found,
-            "fie_corrupted": self.fie_corrupted,
+            "fie_corrupted": self.file_corrupted,
             "unknown_file_error": self.unknown_file_error,
             "exit": self.exit,
             "hide_book": self.hide_book,
@@ -70,8 +70,8 @@ class DesktopCat():
         }
         self.introduction_text = f"Right-click to toggle messagebox. Enter {functions.find_key("config.prefix")}h or {functions.find_key("config.prefix")}help.\nDo not move the cat fast.\nThere is a bug :("
         self.long_sleep = False
-        self.messagebox_vis: bool = False
-        self.book_vis: bool = False
+        self.messagebox_vis: bool = True
+        self.book_vis: bool = True
         self.x = 1400
         self.y = 922
         self.cycle = 0
@@ -91,6 +91,7 @@ class DesktopCat():
         if self.load_images() :
             add_file(functions.find_key("config.paths.font"))
             self.book = Workbook(windows=self.window)
+            self.insert_text = self.book.write_text
             self.book.write_text(self.introduction_text)
             self.messagebox = MessageBox(windows=self.window, cat=self)
             self.setup_window()
@@ -145,7 +146,7 @@ class DesktopCat():
         self.x = new_x
         self.y = new_y
         self.messagebox.pos_cp(self.x, self.y)
-        self.book.pos_book(self.x, self.y)       
+        self.book.pos_book(self.x, self.y)
 
     def on_drag_stop(self, event):
         print('on_drag_stop')
@@ -175,7 +176,6 @@ class DesktopCat():
             self.reset_cycle(self.messagebox.open_close_messagebox(open_close=True))
             if self.book_vis:
                 self.book.show_book()
-        self.messagebox_vis = not self.messagebox_vis
         
     def start_animation(self):
         self.window.after(1, self.update)
@@ -270,13 +270,12 @@ class DesktopCat():
         if self.icon_created:
             self.icon_created = False
             self.icon.stop()
+        if self.book_vis: self.book.show_book()
         if self.messagebox_vis: self.reset_cycle(self.messagebox.open_close_messagebox(open_close=self.messagebox_vis))
 
     def hide_window(self, event=None):
         print('hide_window')
         self.window.withdraw()
-        self.book.hide_book()
-        self.book_vis = False
         self.reset_cycle(self.messagebox.open_close_messagebox(open_close=False))
         self.create_tray_icon()
 
@@ -313,18 +312,18 @@ class DesktopCat():
                 
     def perform_parser_actions(self, string_to_book: str, args: list):
         if string_to_book:
-            self.book.write_text(string_to_book)
+            self.insert_text(string_to_book)
         args_functions: list[function] = [self.parser_actions[command] for command in args if command in self.parser_actions]
         print(args_functions)
 
     def action_not_found(self):
-        pass
+        self.insert_text("I am confused?")
         
     def file_not_found(self):
         # Template for file_not_found action
         pass
 
-    def fie_corrupted(self):
+    def file_corrupted(self):
         # Template for fie_corrupted action
         pass
 
