@@ -13,12 +13,7 @@ The main function is the 'Workload'. It is a system that saves the applications 
 
 - [x]  A function will be created to select actions in some situations where the next event is chosen specifically
 - [x]  Quick search on Google with the preline *
- - A little problems here (To Do):
-  - Write Docstrint to worbook and messagebox scripts.
-  - Create parser.py.
-  - Create a working parser.
-  - Solve error handling.
-  - Create a notification system and add a couple of examples such as (!), (?). 
+- [ ]  A notification system will be added. 
 - [ ]  Workload Saver (Main Function)
 - [ ]  CPU/GPU usage warning
 - [ ]  Emotion detector
