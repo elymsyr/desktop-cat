@@ -20,6 +20,9 @@ BACKUP_CONFIG = {
             "fonts": {
                 "current_font_name": "pixelmix",
                 "default_font_size": 10
+            },
+            "backgrounds": {
+                "book_bg": "book_07"
             }
         }
     }

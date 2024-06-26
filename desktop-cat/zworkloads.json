@@ -24,17 +24,6 @@
                     "Google Ceviri": "https://translate.google.com/",
                     "ChatGPT": "https://chatgpt.com/c/"
                 }
-            },
-            "new": {
-                "vscode": {
-                    "desktop-cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat"
-                },
-                "chrome": {
-                    "Dizipal Var Bunlar 2.Sezon 5.B\u00f6l\u00fcm izle": "https://dizipal808.com/bolum/var-bunlar-2x5",
-                    "browser.activate() is not working if browser is minimized - Google Search": "https://www.google.com/search?q=browser.activate()+is+not+working+if+browser+is+minimized&oq=browser.activate()+is+not+working+if+browser+is+minimized&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIHCAEQIRigAdIBCDIxMTVqMGo0qAIAsAIA&sourceid=chrome&ie=UTF-8",
-                    "Google \u00c7eviri": "https://translate.google.com/?source=gtx&sl=tr&tl=en&op=translate",
-                    "ChatGPT": "https://chatgpt.com/c/fa4a7ac3-57d2-45a5-af56-f97318313c6f"
-                }
             }
         }
     }

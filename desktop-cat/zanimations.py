@@ -354,14 +354,6 @@ class DesktopCat():
 
     def action_not_found(self):
         self.insert_text("I am confused?")
-        
-    def file_not_found(self):
-        # Template for file_not_found action
-        pass
-
-    def file_corrupted(self):
-        # Template for fie_corrupted action
-        pass
 
     def exit(self):
         if self.icon_created:
