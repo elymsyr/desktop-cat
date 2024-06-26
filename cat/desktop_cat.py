@@ -52,7 +52,7 @@ class DesktopCat():
         self.workload = Workload()
         self.animation_running = True
         self.falling = False
-        self.introduction_text = f"Right-click to toggle messagebox. Enter {functions.find_key("config.prefix")}h or {functions.find_key("config.prefix")}help.\nDo not move the cat fast.\nThere is a bug :("
+        self.introduction_text = f"Right-click to toggle messagebox. Enter {functions.find_key('config.prefix')}h or {functions.find_key('config.prefix')}help.\nDo not move the cat fast.\nThere is a bug :("
         self.long_sleep = False
         self.messagebox_vis: bool = True
         self.book_vis: bool = True
@@ -375,7 +375,7 @@ class DesktopCat():
 
     def sleep(self):
         self.long_sleep = not self.long_sleep
-        self.insert_text(f'Long Sleep {'On' if self.long_sleep else 'Off'}')
+        self.insert_text(f"Long Sleep {'On' if self.long_sleep else 'Off'}")
 
     def tray(self):
         self.hide_window()
