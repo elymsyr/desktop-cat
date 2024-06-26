@@ -79,7 +79,6 @@ class DesktopCat():
                 add_file(functions.find_key("config.paths.font"))
             self.book = Workbook(windows=self.window)
             self.parser_actions = {
-                "vscode_path_error": self.vscode_path_error,
                 "file_not_found": self.file_not_found,
                 "file_corrupted": self.file_corrupted,
                 "exit": self.exit,

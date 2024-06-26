@@ -2,7 +2,7 @@ from os import chdir
 from webbrowser import register, BackgroundBrowser, get, _tryorder
 from subprocess import run
 from threading import Thread
-from pygetwindow import getAllTitles, getWindowsWithTitle
+from pygetwindow import getAllTitles, getWindowsWithTitle, Win32Window
 from pyautogui import hotkey, getActiveWindowTitle
 from pyperclip import paste
 from os.path import exists
@@ -74,7 +74,7 @@ class Workload():
         tabs = []
         windows = self.get_open_windows(specify_name='Google Chrome')
         for window in windows:
-            browsers = getWindowsWithTitle(window)
+            browsers:list[Win32Window] = getWindowsWithTitle(window)
             for browser in browsers:
                 browser.activate()
                 hotkey('ctrl','tab')
