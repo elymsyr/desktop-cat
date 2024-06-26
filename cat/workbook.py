@@ -4,10 +4,15 @@ from traceback import extract_tb
 from settings import functions
 
 class Workbook():
-    def __init__(self, windows=tk.Tk, book_name: str = 'book_07'):
+    def __init__(self, windows=tk.Tk, book_name: str = 'book_main'):
         self.book = tk.Toplevel(windows)
         self.book_name: str = book_name
         self.book_bg_image: Image = None
+        self.books_color : dict[str, str] = {
+            'book_main': {'bg':'#fcefe4','fg': '#100000'},
+            'dark': {'bg': '#212121','fg': '#ffffff'},
+            'none': {'bg': '#fcefe4','fg': '#100000'}
+        }
         self.create_book()
         
     def create_bg(self) -> None:
@@ -23,27 +28,34 @@ class Workbook():
         """
         font: str = functions.find_key(path='config.fonts.current_font_name')
         size: int = functions.find_key(path='config.fonts.default_font_size')
-        self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=(font, size), bg='#f2b888', fg='#100000')
+        if self.book_name != 'none' or self.book_name != 'dark':
+            self.text_box = tk.Text(self.text_frame, wrap=tk.WORD, font=(font, size), bg=self.books_color[self.book_name]['bg'], fg=self.books_color[self.book_name]['fg'])
+        else:
+            self.text_box = tk.Text(self.book, wrap=tk.WORD, font=(font, size), bg=self.books_color[self.book_name]['bg'], fg=self.books_color[self.book_name]['fg'])
         self.text_box.pack(fill="both", expand=True)
         self.text_box.config(border=0, highlightthickness=0, state=tk.DISABLED, padx=10, pady=10)
-        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(1400) + '+' + str(400))        
+        if self.book_name != 'none' or self.book_name != 'dark':
+            self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(1400) + '+' + str(400))
+        else: self.book.geometry(f'410x370+' + str(1400) + '+' + str(400))
         
     def create_book(self) -> None:
         """Creates and sets book.
         """
-        self.create_bg()
+        if self.book_name != 'none' or self.book_name != 'dark':
+            self.create_bg()
         self.book.config(highlightbackground='black', )
         self.book.overrideredirect(True)
         self.book.wm_attributes('-transparentcolor', 'black')
         self.book.wm_attributes('-topmost', 1)
-        try:
-            self.book_canvas.create_image(0, 0, anchor="nw", image=self.book_bg_photo)
-        except Exception as e:
-            tb_info = extract_tb(e.__traceback__)
-            row_number = tb_info[-1].lineno
-            print(f"Exception at {row_number}: {e}")
-        self.text_frame = tk.Frame(self.book_canvas, bg='black')
-        self.text_frame.place(relx=0.1, rely=0.1, relwidth=0.81, relheight=0.82)  # Adjust the position and size of the frame
+        if self.book_name != 'none' or self.book_name != 'dark':
+            try:
+                self.book_canvas.create_image(0, 0, anchor="nw", image=self.book_bg_photo)
+            except Exception as e:
+                tb_info = extract_tb(e.__traceback__)
+                row_number = tb_info[-1].lineno
+                print(f"Exception at {row_number}: {e}")
+            self.text_frame = tk.Frame(self.book_canvas, bg='black')
+            self.text_frame.place(relx=0.1, rely=0.1, relwidth=0.81, relheight=0.82)  # Adjust the position and size of the frame
         self.set_book()
 
     def pos_book(self, x: int, y: int) -> None:
@@ -53,7 +65,10 @@ class Workbook():
             x (int)
             y (int)
         """
-        self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(x-275) + '+' + str(y-505)) # ?!
+        if self.book_name != 'none' or self.book_name != 'dark':
+            self.book.geometry(f'{self.book_bg_image.width}x{self.book_bg_image.height}+' + str(x-304) + '+' + str(y-585))
+        else: self.book.geometry(f'410x370+' + str(x-304) + '+' + str(y-530))        
+        
         
     def write_text(self, text: str) -> None:
         """Add text to book.

@@ -17,7 +17,7 @@ class MessageBox():
         self.white: bool = True
         self.create_cp()
         
-    def open_close_messagebox(self, open_close: bool = None, esc=False, event=None) -> list:
+    def open_close_messagebox(self, open_close: bool = None, event=None) -> list:
         """Opens or hides message box. Returns a list of possible next animation cycles.
 
         Args:
@@ -39,8 +39,7 @@ class MessageBox():
                 self.cat.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
             self.cat.messagebox_vis = False
             self.cat.book.hide_book()
-            if esc:
-                self.cat.book_vis = False
+            self.cat.book_vis = False
             return [0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18]
 
     def create_cp(self) -> None:
@@ -60,7 +59,7 @@ class MessageBox():
         self.command_prompt.wm_attributes('-transparentcolor', 'black')
         self.command_prompt.wm_attributes('-topmost', 1)
         
-        self.command_prompt.bind('<Escape>', lambda event: self.open_close_messagebox(open_close=False, esc=True))
+        self.command_prompt.bind('<Escape>', lambda event: self.open_close_messagebox(open_close=False))
         # FONT = ("Minecraftia", 11)
         entry_width = 33  # Set the width of the command_entry widget
         entry_height = 1  # Set the height of the command_entry widget to 1-2 rows

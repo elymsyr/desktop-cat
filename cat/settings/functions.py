@@ -22,7 +22,7 @@ BACKUP_CONFIG = {
                 "default_font_size": 10
             },
             "backgrounds": {
-                "book_bg": "book_07"
+                "book_bg": "book_main"
             }
         }
     }
