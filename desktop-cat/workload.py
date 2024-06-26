@@ -7,6 +7,7 @@ import json
 from pygetwindow import getAllTitles, getWindowsWithTitle
 from pyautogui import hotkey
 from pyperclip import paste
+from time import sleep
 
 from set import *
 
@@ -250,7 +251,7 @@ class Workload():
             for browser in browsers:
                 print(browser)
                 browser.activate()
-                # sleep(.2)
+                sleep(.02)
                 hotkey('ctrl','tab')
                 check = 0
                 while True:
@@ -266,11 +267,11 @@ class Workload():
                         break
                     browser.activate()
                     hotkey('ctrl','tab')
-                    # sleep(.05)
+                    sleep(.05)
         # for tab in tab_urls:
         #     print(tab)
         return tab_urls
                 
 
 # new = Workload()
-# new.run_workload('exampleWorkload')
+# print(new.get_open_tabs_urls())

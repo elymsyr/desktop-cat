@@ -11,6 +11,7 @@ from zworkbook import Workbook
 from zmessagebox import MessageBox
 from zworkload import Workload
 from zparser import Parser
+from threading import Thread
 
 INITIAL_X = 1400
 INITIAL_Y = 922
@@ -392,7 +393,6 @@ class DesktopCat():
         self.insert_text('Hidded')
 
     def save_workload(self, workload_name: str):
-        url = ''
         vscode_urls = functions.find_key('workloads.workload_data.vscode')
         vscode_projects: dict = self.workload.find_vsc()
         for project, _ in vscode_projects.items():

@@ -64,18 +64,18 @@ class Workload():
         for title, url in visited_sites.items():
             chrome[title.replace(' - Google Chrome', '')] = url
         return chrome
-    
-    def activate_browser(self, browser:Win32Window) -> bool:
+        
+    def activate_chrome_window(self):
         try:
-            browser.activate()
+            windows: list[Win32Window] = getWindowsWithTitle('Chrome')
+            if windows:
+                chrome_window = windows[0]
+                if chrome_window.isMinimized:
+                    chrome_window.restore()
+                chrome_window.activate()
             return True
-        except Exception as exception:
-            exception_name = type(exception).__name__
-            exception_message = str(exception)
-            exception_traceback = format_exc()
-            print(f"Exception occurred: {exception_name}: {exception_message}")
-            print(f"Traceback:\n{exception_traceback}")            
-            return False
+        except:
+            return False   
 
     def current_sites(self) -> dict[str, str]:
         """Controls Chrome for a short time. Gets open tab titles and urls by switching between tabs.
@@ -88,24 +88,24 @@ class Workload():
         windows = self.get_open_windows(specify_name='Google Chrome')
         for window in windows:
             browsers:list[Win32Window] = getWindowsWithTitle(window)
-            print(browsers)
             for browser in browsers:
-                if not self.activate_browser(browser=browser):
-                    break
+                self.activate_chrome_window()
+                browser.activate()
                 hotkey('ctrl','tab')
                 check = 0
                 while True:
-                    # browser.activate()
+                    browser.activate()
                     hotkey('ctrl','l')
                     hotkey('ctrl','c')
                     tab_url = paste()
                     if tab_url not in tabs: 
                         tab_urls[getActiveWindowTitle()] = tab_url
                         tabs.append(tab_url)
-                    else: check+=1
-                    if check >= 2:
+                    elif len(tab_url) > 35: check+=2
+                    else: check += 1
+                    if check > 4:
                         break
-                    # browser.activate()
+                    browser.activate()
                     hotkey('ctrl','tab')
         return tab_urls
     
@@ -197,7 +197,7 @@ class Workload():
         data = functions.get_data('workloads')
         if not data:
             raise functions.CommandException(file_error = 'workloads')
-        data['workloads'][workload_name] = workload
+        data['workloads']['workloads'][workload_name] = workload
         functions.set_data(data, file='workloads')
 
     def help(self, list_functions: list = []) -> dict:

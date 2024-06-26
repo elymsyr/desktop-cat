@@ -29,10 +29,10 @@ class Parser:
             ('s', 'save'): {'help': 'Save workload', 'func': self.save_workload},
             ('r', 'run'): {'help': 'Run workload', 'func': self.workload.run_workload},
             ('e', 'edit'): {'help': 'Edit configuration', 'func': self.open_workloads_file},
-            ('d', 'delete'): {'help': 'Delete workload', 'func': self.workload_delete}
+            ('d', 'del', 'delete'): {'help': 'Delete workload', 'func': self.workload_delete}
         }
 
-        self.name_required_arguments: list = ["g", "workload", "w","save","r","run","d","delete"]        
+        self.name_required_arguments: list = ["g", "workload", "w", "s", "save","r","run","d","delete", "del"]        
         self.workload_help_string = "*workload|w\n   help|h\n   list|l\n   run|r [Workload Name]\n   save|s [Workload Name]\n   edit|e [Workload Name]\n   delete|d [Workload Name]]"
 
     def parser(self, message: list):
