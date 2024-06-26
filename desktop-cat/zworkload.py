@@ -5,6 +5,7 @@ from threading import Thread
 from pygetwindow import getAllTitles, getWindowsWithTitle, Win32Window
 from pyautogui import hotkey, getActiveWindowTitle
 from pyperclip import paste
+from traceback import format_exc
 from os.path import exists
 from settings import functions
 
@@ -64,11 +65,16 @@ class Workload():
             chrome[title.replace(' - Google Chrome', '')] = url
         return chrome
     
-    def activate_browser(self, browser:Win32Window):
+    def activate_browser(self, browser:Win32Window) -> bool:
         try:
             browser.activate()
             return True
-        except:
+        except Exception as exception:
+            exception_name = type(exception).__name__
+            exception_message = str(exception)
+            exception_traceback = format_exc()
+            print(f"Exception occurred: {exception_name}: {exception_message}")
+            print(f"Traceback:\n{exception_traceback}")            
             return False
 
     def current_sites(self) -> dict[str, str]:
