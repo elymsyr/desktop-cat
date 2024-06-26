@@ -11,6 +11,7 @@ from workbook import Workbook
 from messagebox import MessageBox
 from workload import Workload
 from custom_parser import Parser
+from notify import Notify
 
 INITIAL_X = 1400
 INITIAL_Y = 922
@@ -49,7 +50,6 @@ EVENTS = { # eventNumber: [[actionOrderToBeCompleted], [PossibleNextEventNumbers
 
 class DesktopCat():
     def __init__(self):
-        self.workload = Workload()
         self.animation_running = True
         self.falling = False
         self.introduction_text = f"Right-click to toggle messagebox. Enter {functions.find_key('config.prefix')}h or {functions.find_key('config.prefix')}help.\nDo not move the cat fast.\nThere is a bug :("
@@ -68,6 +68,9 @@ class DesktopCat():
         self.icon = None
         self.icon_created = False
         self.window = Tk()
+        self.workload = Workload()
+        self.notification = Notify(main_window=self.window)
+        self.notifications: dict[str, PhotoImage] = {}
         self.label = Label(self.window, bd=0, bg='black')
         self.command_parser = Parser()
         self.text_content = ""
@@ -94,6 +97,7 @@ class DesktopCat():
             self.book.write_text(self.introduction_text)
             self.messagebox = MessageBox(windows=self.window, cat=self)
             self.setup_window()
+            self.notification.notify(self.notifications['exc'])
             self.start_animation()
    
     def reset_cycle(self, events = [0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18], event_cycle=True):
@@ -107,10 +111,12 @@ class DesktopCat():
         try:
             gifs_path = functions.find_key("config.paths.gifs")
             falling_gif = functions.find_key("config.paths.falling_gif")
+            notifications_photos: str = functions.find_key("config.paths.notifications")
         except:
             functions.reset_file('config')
             gifs_path = functions.find_key("config.paths.gifs")
             falling_gif = functions.find_key("config.paths.falling_gif")
+            notifications_photos: str = functions.find_key("config.paths.notifications")
         self.images = listdir(gifs_path)
         i = 0
         for image in self.images:
@@ -129,6 +135,8 @@ class DesktopCat():
                 return False
         self.imageGif['falling'] = [PhotoImage(file=falling_gif, format=f'gif -index {i}') for i in range(4)]
         self.images.append('falling')
+        for notification in listdir(notifications_photos):
+            self.notifications[notification.replace('.png', '')] = [PhotoImage(file=join(notifications_photos, notification))]
         return True
     
     def on_drag_start(self, event):
@@ -410,6 +418,9 @@ class DesktopCat():
                  url.split('\\')[-1] == project_name or
                  url.split('\\\\')[-1] == project_name)
                 )
+        
+    def start_notification(self, notification: PhotoImage):
+        self.notification
     
 if "__main__" == __name__:
     cat = DesktopCat()

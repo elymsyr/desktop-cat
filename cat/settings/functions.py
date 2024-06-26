@@ -11,6 +11,7 @@ BACKUP_CONFIG = {
                 "gifs": "media\\gifs",
                 "falling_gif": "media\\gifs_others\\falling.gif",
                 "command_bg": "media\\messagebox.png",
+                "notifications": "cat\\media\\notify",
                 "tray_ico": "media\\tray-icon.png",
                 "font": "media\\pixelmix.ttf",
                 "books_bg": "media\\books",
