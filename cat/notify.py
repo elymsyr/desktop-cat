@@ -1,12 +1,10 @@
 from tkinter import Toplevel, Tk, Label, PhotoImage
-from threading import Thread
 
 class Notify():
     def __init__(self, main_window: Tk) -> None:
         self.show_notify: bool = False
         self.main_window = main_window
         self.notify_window = None
-        self.notification_thread: Thread = None
 
     def update_geometry(self, notify_counter: int = 0):
         if self.notify_window:
@@ -24,21 +22,6 @@ class Notify():
         
             if self.show_notify: 
                 self.notify_window.after(1, lambda: self.update_geometry(notify_counter + 1))
-
-    def notify(self, notification: PhotoImage):
-        if self.notification_thread and self.notification_thread.is_alive():
-            return  # Prevent multiple notifications at the same time
-        self.notification_thread = Thread(target=self.start_notify, args=(notification,))
-        self.notification_thread.start()
-        
-    def clear_notify(self):
-        self.show_notify = False
-        if self.notify_window:
-            self.notify_window.destroy()
-            self.notify_window = None
-        if self.notification_thread:
-            self.notification_thread.join()
-        return
     
     def start_notify(self, notification: PhotoImage):
         if not self.notify_window:

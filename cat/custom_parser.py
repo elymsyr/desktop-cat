@@ -20,7 +20,9 @@ class Parser:
             'config': {'help': 'Handle configuration', 'func': self.open_config_file},
             'exit': {'help': 'Exit application', 'func': self.exit_application},
             'g': {'help': 'Google search', 'func': self.google_search},
-            ('b', 'book'): {'help': 'Toggle book', 'func': self.open_close_book}
+            ('b', 'book'): {'help': 'Toggle book', 'func': self.open_close_book},
+            "dnd": {'help': 'Toggle do not disturb mode', 'func': self.dnd},
+            "silent": {'help': 'Silent notification', 'func': self.silent_notification},
         }
 
         self.workload_commands: dict = {
@@ -56,6 +58,9 @@ class Parser:
                     return self.get_command_func(command, self.commands)()
                 else: raise functions.CommandException("show_book", string_to_book="The number of argument is more than expected.")
         raise functions.CommandException("show_book", string_to_book="Command is not found.")
+
+    def dnd(self): raise functions.CommandException('dnd')
+    def silent_notification(self): raise functions.CommandException('silent_notification')
 
     def get_command_func(self, command_key: str, command_dict: dict):
         """Gets the dictionary and the key. Returns the correspounding function.

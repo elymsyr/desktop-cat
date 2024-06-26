@@ -10,6 +10,7 @@ from settings import functions
 from workbook import Workbook
 from messagebox import MessageBox
 from workload import Workload
+from threading import Thread
 from custom_parser import Parser
 from notify import Notify
 
@@ -59,6 +60,7 @@ class DesktopCat():
         self.x = 1400
         self.y = 922
         self.cycle = 0
+        self.dnd: bool = False
         self.current_event_cycle = choice([0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18])
         self.current_event_cycle_index = 0
         self.EVENTS = EVENTS
@@ -70,6 +72,7 @@ class DesktopCat():
         self.window = Tk()
         self.workload = Workload()
         self.notification = Notify(main_window=self.window)
+        self.notification_thread: Thread = None
         self.notifications: dict[str, PhotoImage] = {}
         self.label = Label(self.window, bd=0, bg='black')
         self.command_parser = Parser()
@@ -91,13 +94,15 @@ class DesktopCat():
                 "switch_messagebox_vis": self.switch_messagebox_vis,
                 "sleep": self.sleep,
                 "tray": self.tray,
-                "save_workload": self.save_workload
+                "save_workload": self.save_workload,
+                "dnd": self.dnd_mode,
+                "silent_notification": self.silent_notification
             }
             self.insert_text = self.book.write_text
             self.book.write_text(self.introduction_text)
             self.messagebox = MessageBox(windows=self.window, cat=self)
             self.setup_window()
-            self.notification.notify(self.notifications['exc'])
+            self.notify('exc')
             self.start_animation()
    
     def reset_cycle(self, events = [0, 8, 1, 9, 5, 13, 6, 7, 14, 15, 16, 17, 18], event_cycle=True):
@@ -221,13 +226,13 @@ class DesktopCat():
                 self.falling = True
                 self.long_sleep = False
                 self.reset_cycle([21])
-            if abs(self.y-INITIAL_Y) >= 20:
-                self.y += 20
+            if abs(self.y-INITIAL_Y) >= 40:
+                self.y += 40
             else: self.y += abs(self.y-INITIAL_Y)                
         elif self.y < INITIAL_Y:
             self.falling = True
-            if abs(self.y-INITIAL_Y) >= 20:
-                self.y += 20
+            if abs(self.y-INITIAL_Y) >= 40:
+                self.y += 40
             else: self.y += abs(self.y-INITIAL_Y)
         elif abs(self.y-INITIAL_Y) <= 20 and self.falling:
             if self.messagebox_vis:
@@ -419,8 +424,26 @@ class DesktopCat():
                  url.split('\\\\')[-1] == project_name)
                 )
         
-    def start_notification(self, notification: PhotoImage):
-        self.notification
+    def notify(self, notification_name: str):
+        if not self.dnd:
+            notification = self.notifications[notification_name]
+            if self.notification_thread and self.notification_thread.is_alive():
+                return
+            self.notification_thread = Thread(target=self.notification.start_notify, args=(notification,))
+            self.notification_thread.setDaemon(daemonic=True)
+            self.notification_thread.start()  
+        
+    def silent_notification(self):
+        self.notification.notify_window.destroy()
+        self.notification_thread.join()
+        
+    def dnd_mode(self):
+        self.dnd = not self.dnd
+        if self.dnd and self.notification.notify_window:
+            self.silent_notification()
+        self.insert_text(f"DND Mode {'On' if self.dnd else 'Off'}.")
+
+        
     
 if "__main__" == __name__:
     cat = DesktopCat()
