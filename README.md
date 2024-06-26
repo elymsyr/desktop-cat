@@ -13,7 +13,7 @@ The main function is the 'Workload'. It is a system that saves the applications 
 
 - [x]  A function will be created to select actions in some situations where the next event is chosen specifically
 - [x]  Quick search on Google with the preline *
-- [x]  Workload Saver (Main Function)
+- [x]  Workload Saver (Main Function) (Only on Windows and work with VSCode and Chrome for now.)
 - [ ]  A notification system will be added. 
 - [ ]  CPU/GPU usage warning
 - [ ]  Emotion detector
