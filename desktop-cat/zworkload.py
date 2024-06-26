@@ -131,17 +131,13 @@ class Workload():
             query_list (_type_): Url.
         """
         chrome_path = functions.find_key("config.paths.chrome")
-        for query in query_list:
-            get('chrome').open(query)
         register('chrome', None, BackgroundBrowser(chrome_path))
         if exists(chrome_path):
-            get('chrome').open(f"https://www.google.com/search?q={' '.join(query[:-1])}")
-            for query in query_list:
-                get('chrome').open(query)        
+            for query in query_list:        
+                get('chrome').open(query)
         else:
-            get(_tryorder[0]).open(f"https://www.google.com/search?q={' '.join(query[:-1])}")
             for query in query_list:
-                get('chrome').open(query)            
+                get(_tryorder[0]).open(query)
             raise functions.CommandException("check_chrome_path", "show_book")
             
     

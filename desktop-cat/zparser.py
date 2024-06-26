@@ -26,13 +26,13 @@ class Parser:
         self.workload_commands: dict = {
             ('h', 'help'): {'help': 'Show workload help', 'func': self.workload_help},
             ('l', 'list'): {'help': 'List workloads', 'func': self.workloads_list},
-            ('s', 'save'): {'help': 'Save workload', 'func': self.save_workload},
+            ('s', 'save', 'new'): {'help': 'Save workload', 'func': self.save_workload},
             ('r', 'run'): {'help': 'Run workload', 'func': self.workload.run_workload},
             ('e', 'edit'): {'help': 'Edit configuration', 'func': self.open_workloads_file},
             ('d', 'del', 'delete'): {'help': 'Delete workload', 'func': self.workload_delete}
         }
 
-        self.name_required_arguments: list = ["g", "workload", "w", "s", "save","r","run","d","delete", "del"]        
+        self.name_required_arguments: list = ["g", "workload", "w", "s", "save","r","run","d","delete", "del", "new"]        
         self.workload_help_string = "*workload|w\n   help|h\n   list|l\n   run|r [Workload Name]\n   save|s [Workload Name]\n   edit|e [Workload Name]\n   delete|d [Workload Name]]"
 
     def parser(self, message: list):
