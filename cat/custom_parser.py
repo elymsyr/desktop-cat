@@ -133,7 +133,7 @@ class Parser:
         Args:
             name (str): Workload name.
         """
-        functions.delete_key(f"workloads.{name}")
+        functions.delete_key(f"workloads.workloads.{name}")
 
     def open_config_file(self):
         """Opens config.json.

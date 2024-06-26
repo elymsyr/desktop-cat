@@ -79,8 +79,6 @@ class DesktopCat():
                 add_file(functions.find_key("config.paths.font"))
             self.book = Workbook(windows=self.window)
             self.parser_actions = {
-                "file_not_found": self.file_not_found,
-                "file_corrupted": self.file_corrupted,
                 "exit": self.exit,
                 "hide_book": self.book.hide_book,
                 "hide_messagebox": self.hide_messagebox,

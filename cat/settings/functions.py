@@ -1,8 +1,8 @@
 from json import load, dump
 from os.path import exists
 
-CONFIG_PATH = "config.json"
-WORKLOADS_PATH = 'workloads.json'
+CONFIG_PATH = r"data\config.json"
+WORKLOADS_PATH = r'data\workloads.json'
 BACKUP_CONFIG = {
         "config": {
             "prefix": "*",

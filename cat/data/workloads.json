@@ -1,0 +1,20 @@
+{
+    "workloads": {
+        "workload_data": {
+            "vscode": {
+                "desktop-cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\desktop-cat",
+                "cat": "C:\\Users\\orhun\\OneDrive\\Belgeler\\GitHub\\desktop-cat\\cat"
+            }
+        },
+        "workloads": {
+            "test": {
+                "vscode": {
+                    "desktop-cat": ""
+                },
+                "chrome": {
+                    "New Tab": ""
+                }
+            }
+        }
+    }
+}
