@@ -1,0 +1,22 @@
+{
+    "config": {
+        "prefix": "*",
+        "paths": {
+            "chrome": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+            "gifs": "media\\gifs",
+            "falling_gif": "media\\gifs_others\\falling.gif",
+            "command_bg": "media\\messagebox.png",
+            "tray_ico": "media\\tray-icon.png",
+            "font": "media\\pixelmix.ttf",
+            "books_bg": "media\\books",
+            "config-json": "data\\config.json"
+        },
+        "fonts": {
+            "current_font_name": "pixelmix",
+            "default_font_size": 10
+        },
+        "backgrounds": {
+            "book_bg": "book_07"
+        }
+    }
+}

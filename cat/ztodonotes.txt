@@ -1,0 +1,47 @@
+To d
+
+1 - DONE zparser.py - better exceptions and better parsing still needed !!
+
+2 - DONE control if json file is unspoilt and exist. ask the user if unspoilt, create a new one if not exist.
+
+3 - DONE? zanimations.py - parser is added. There must be functions to perform the actions such as hiding book etc.
+
+!? 3.5 - save_workload is not working. br0wser.activate problem? Writes 'exception' to chrome urls??
+
+4 - a better func&var naming may be required !!
+ 
+5 - docstrings still missing ??
+
+
+
+
+
+
+
+
+
+
+check every py for delete_key if it was used only for workloads.
+ 
+string_to_book="Message is not eligible."
+string_to_book="The number of argument is more than expected."
+string_to_book="Command is not found."
+string_to_book="Unknown argument error."
+string_to_book="Missing argument error."
+string_to_book="The number of argument is more than expected."
+string_to_book="The number of argument is more than expected."
+string_to_book="Unknown or missing workload command."
+ "show_book", string_to_book=self.generate_help_stringdict_to_str=self.workload_commands
+'unknown_file_error'
+'unknown_file_error'
+"exit"
+"hide_book", "hide_messagebox"
+"check_chrome_path", "show_book"
+"switch_book_vis"
+"switch_messagebox_vis"
+"help", string_to_book=self.generate_help_stringdict_to_str=self.commands
+"sleep", "hide_book", "hide_messagebox"
+"tray", "hide_book", "hide_messagebox"
+"unknown_file_error"        
+"show_book", string_to_book=string_to_book
+'save_workload'
