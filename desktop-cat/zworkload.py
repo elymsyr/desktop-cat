@@ -12,7 +12,7 @@ class Workload():
     def __init__(self):
         pass
 
-    def get_open_windows(self, specify_name: str = None) -> list:
+    def get_open_windows(self, specify_name: str = None) -> list[str]:
         """Finds currently open windows.
         
         Args:
@@ -35,7 +35,7 @@ class Workload():
             list: A list of open folders/workspaces/files on VSCode as names/titles.
         """
         vscode = {}
-        selected = self.get_open_windows(specify_name='Visual Studio Code')
+        selected: list[str] = self.get_open_windows(specify_name='Visual Studio Code')
         for window in selected:
             if window.endswith('Visual Studio Code'):
                 splitted = window.split(' - ')
@@ -183,7 +183,7 @@ class Workload():
         if not data:
             raise functions.CommandException(file_error = 'workloads')
         data['workloads'][workload_name] = workload
-        functions.set_data(data, functions.WORKLOADS_PATH)
+        functions.set_data(data, file='workloads')
 
     def help(self, list_functions: list = []) -> dict:
         """Returns a dictionary of lines about how to use workload class functions.

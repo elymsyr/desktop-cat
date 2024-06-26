@@ -63,14 +63,15 @@ def update_key(path: str, value: str | int | list | dict) -> None:
     If the path doesn't exist, it will be created.
     """
     keys = path.split('.')
-    new_dict = get_data([keys[0]]).copy()
+    new_dict = get_data(keys[0]).copy()
     current = new_dict
     for key in keys[:-1]:
         if key not in current:
             current[key] = {}
         current = current[key]
     current[keys[-1]] = value
-    set_data(data=new_dict)
+    set_data(data=new_dict, file=keys[0])
+    
     
 def delete_key(path: str) -> None:
     """
@@ -84,7 +85,7 @@ def delete_key(path: str) -> None:
             current[key] = {}
         current = current[key]
     del current[keys[-1]]
-    set_data(data=new_dict)
+    set_data(data=new_dict, file=keys[0])
 
 def format_string(string: str, size: int=30) -> str:
     """Formats string to a better visualization.
@@ -118,14 +119,14 @@ def get_data(file: str = None) -> None | dict:
         except Exception:
             return None
 
-def set_data(data: dict, path:str=CONFIG_PATH) -> None:
+def set_data(data: dict, file:str='config') -> None:
     """Write data to config.json
 
     Args:
         data (dict): Data
     """
-    with open(path, 'w') as file:
-        dump(data, file, indent=4)
+    with open(BACKUPS[file]['path'], 'w') as dict_data:
+        dump(data, dict_data, indent=4)
         
 def has_all_keys(current_config: dict, main_config: dict, file: str = 'config') -> bool:
     """
@@ -150,5 +151,3 @@ def safe_get_data():
 def reset_file(file: str):
     with open(BACKUPS[file]['path'], 'w+') as dict_data:
         dump(BACKUPS[file]['backup'], dict_data, indent=4)
-        
-reset_file('config')

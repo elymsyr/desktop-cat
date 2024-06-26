@@ -1,5 +1,5 @@
 from os import listdir
-from os.path import join
+from os.path import join, exists
 from pyglet.font import add_file
 from random import choice
 from tkinter import Tk, Label, StringVar, PhotoImage, TclError
@@ -309,6 +309,7 @@ class DesktopCat():
                 print(f"\nparser from CommandException:\n")
                 string_to_book = exception.string_to_book 
                 args = list(exception.args)
+                workload_name = exception.workload_name
                 file_error = exception.file_error
                 print(f"  {string_to_book=}\n  {file_error=}\n  {args=}")
             else:
@@ -392,13 +393,35 @@ class DesktopCat():
         self.insert_text('Hidded')
 
     def save_workload(self, workload_name: str):
+        url = ''
         vscode_urls = functions.find_key('workloads.workload_data.vscode')
-        print(vscode_urls)
-
-    def vscode_path_error(self, workload_name: str):
-        print('error vscode path', workload_name)
-        get_from_workload_data = functions.find_key('workloads.workload_data.vscode')
-        print(get_from_workload_data)
-
+        vscode_projects: dict = self.workload.find_vsc()
+        for project, _ in vscode_projects.items():
+            if project in vscode_urls and (self.check_proper_vscode_url(url=vscode_urls[project], project_name=project)):
+                vscode_projects[project] = vscode_urls[project]
+            else:
+                vscode_projects[project] = self.get_project_url(project)
+                functions.update_key(path=f'workloads.workload_data.vscode.{project}', value=vscode_projects[project])
+        self.workload.save_workload(workload_name=workload_name, vscode=vscode_projects)
+        
+    def get_project_url(self, project:str) -> str | None:
+        url = None
+        new_url = self.wait_input(message=f'Enter path to your vscode project {project} (Leave empty to continue.):')
+        if new_url == '': return None
+        while url == None:
+            if self.check_proper_vscode_url(url=new_url, project_name=project):
+                return new_url
+            url_answer = self.wait_input(message=f'Please check url for your project {project}: {new_url}\nLeave it empty to continue or enter a new url...')
+            if url_answer == '': url = new_url
+            else: new_url = url_answer
+        return url
+    
+    def check_proper_vscode_url(self, url:str, project_name:str):
+        return (exists(url) and 
+                (url.split('/')[-1] == project_name or 
+                 url.split('\\')[-1] == project_name or
+                 url.split('\\\\')[-1] == project_name)
+                )
+    
 if "__main__" == __name__:
     cat = DesktopCat()
