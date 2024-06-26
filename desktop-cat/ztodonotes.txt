@@ -6,6 +6,8 @@ To d
 
 3 - DONE? zanimations.py - parser is added. There must be functions to perform the actions such as hiding book etc.
 
+!? 3.5 - save_workload is not working. br0wser.activate problem? Writes 'exception' to chrome urls??
+
 4 - a better func&var naming may be required !!
  
 5 - docstrings still missing ??
