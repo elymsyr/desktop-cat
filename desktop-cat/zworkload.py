@@ -63,6 +63,13 @@ class Workload():
         for title, url in visited_sites.items():
             chrome[title.replace(' - Google Chrome', '')] = url
         return chrome
+    
+    def activate_browser(self, browser:Win32Window):
+        try:
+            browser.activate()
+            return True
+        except:
+            return False
 
     def current_sites(self) -> dict[str, str]:
         """Controls Chrome for a short time. Gets open tab titles and urls by switching between tabs.
@@ -75,12 +82,14 @@ class Workload():
         windows = self.get_open_windows(specify_name='Google Chrome')
         for window in windows:
             browsers:list[Win32Window] = getWindowsWithTitle(window)
+            print(browsers)
             for browser in browsers:
-                browser.activate()
+                if not self.activate_browser(browser=browser):
+                    break
                 hotkey('ctrl','tab')
                 check = 0
                 while True:
-                    browser.activate()
+                    # browser.activate()
                     hotkey('ctrl','l')
                     hotkey('ctrl','c')
                     tab_url = paste()
@@ -90,7 +99,7 @@ class Workload():
                     else: check+=1
                     if check >= 2:
                         break
-                    browser.activate()
+                    # browser.activate()
                     hotkey('ctrl','tab')
         return tab_urls
     
