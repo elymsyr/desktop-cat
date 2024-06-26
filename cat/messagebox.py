@@ -1,6 +1,5 @@
 from traceback import extract_tb
 import tkinter as tk
-from threading import Thread
 from PIL import Image, ImageTk
 
 from settings import functions

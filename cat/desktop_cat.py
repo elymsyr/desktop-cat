@@ -2,16 +2,15 @@ from os import listdir
 from os.path import join, exists
 from pyglet.font import add_file
 from random import choice
-from tkinter import Tk, Label, StringVar, PhotoImage, TclError
+from tkinter import Tk, Label, PhotoImage, TclError
 from PIL import Image
 from traceback import format_exc
 from pystray import MenuItem as item, Icon
 from settings import functions
-from zworkbook import Workbook
-from zmessagebox import MessageBox
-from zworkload import Workload
-from zparser import Parser
-from threading import Thread
+from workbook import Workbook
+from messagebox import MessageBox
+from workload import Workload
+from custom_parser import Parser
 
 INITIAL_X = 1400
 INITIAL_Y = 922

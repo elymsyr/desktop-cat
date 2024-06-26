@@ -1,6 +1,6 @@
 import webbrowser
 from settings import functions
-from zworkload import Workload
+from workload import Workload
 from subprocess import run
 from os.path import exists
 

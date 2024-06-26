@@ -1,9 +1,8 @@
 from json import load, dump
 from os.path import exists
-from json.decoder import JSONDecodeError
-from threading import Thread, current_thread
 
-CONFIG_PATH = "zconfig.json"
+CONFIG_PATH = "config.json"
+WORKLOADS_PATH = 'workloads.json'
 BACKUP_CONFIG = {
         "config": {
             "prefix": "*",
@@ -27,7 +26,6 @@ BACKUP_CONFIG = {
         }
     }
 BACKUP_WORKLOADS = {"workloads":{"workload_data": {},"workloads": {}}}
-WORKLOADS_PATH = 'zworkloads.json'
 
 BACKUPS:dict = {
     'config': {'path': CONFIG_PATH, 'backup':BACKUP_CONFIG},

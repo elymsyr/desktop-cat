@@ -13,8 +13,8 @@ The main function is the 'Workload'. It is a system that saves the applications 
 
 - [x]  A function will be created to select actions in some situations where the next event is chosen specifically
 - [x]  Quick search on Google with the preline *
+- [x]  Workload Saver (Main Function)
 - [ ]  A notification system will be added. 
-- [ ]  Workload Saver (Main Function)
 - [ ]  CPU/GPU usage warning
 - [ ]  Emotion detector
 - [ ]  App drawer (can be cancelled in the future)

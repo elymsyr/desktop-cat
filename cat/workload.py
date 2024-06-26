@@ -5,7 +5,6 @@ from threading import Thread
 from pygetwindow import getAllTitles, getWindowsWithTitle, Win32Window
 from pyautogui import hotkey, getActiveWindowTitle
 from pyperclip import paste
-from traceback import format_exc
 from os.path import exists
 from settings import functions
 
