@@ -1,6 +1,6 @@
 pillow==10.3.0
 pyglet==2.0.15
 pystray==0.19.5
-setuptools==69.5.1
+setuptools==70.0.0
 six==1.16.0
 wheel==0.43.0
