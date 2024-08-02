@@ -17,7 +17,7 @@ class MessageBox():
         self.white: bool = True
         self.create_cp()
         
-    def open_close_messagebox(self, open_close: bool = None, event=None) -> list:
+    def open_close_messagebox(self, open_close: bool = None, event=None):
         """Opens or hides message box. Returns a list of possible next animation cycles.
 
         Args:
@@ -28,19 +28,17 @@ class MessageBox():
         """
         if open_close:
             self.command_prompt.deiconify()
-            if not self.cat.long_sleep:
-                self.cat.reset_cycle([22,23,24])
+            # if not self.cat.long_sleep:
+            #     self.cat.reset_cycle([22,23,24])
             self.cat.messagebox_vis = True
             self.command_entry.focus_set()
-            return [22,23,24]
         else:
             self.command_prompt.withdraw()
-            if not self.cat.long_sleep:
-                self.cat.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
+            # if not self.cat.long_sleep:
+            #     self.cat.reset_cycle([0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18])
             self.cat.messagebox_vis = False
             self.cat.book.hide_book()
             self.cat.book_vis = False
-            return [0, 8, 1, 9, 5, 13, 7, 15, 16, 17, 18]
 
     def create_cp(self) -> None:
         """Creates message box tkinter window.

@@ -277,12 +277,14 @@ class DesktopCat():
             self.icon_created = False
             self.icon.stop()
         if self.book_vis: self.book.show_book()
-        if self.messagebox_vis: self.reset_cycle(self.messagebox.open_close_messagebox(open_close=self.messagebox_vis))
+        # if self.messagebox_vis: self.reset_cycle(self.messagebox.open_close_messagebox(open_close=self.messagebox_vis))
+        self.messagebox.open_close_messagebox(open_close=self.messagebox_vis)
 
     def hide_window(self, event=None):
         self.window.withdraw()
         self.book.hide_book()
-        self.reset_cycle(self.messagebox.open_close_messagebox(open_close=False))
+        # self.reset_cycle(self.messagebox.open_close_messagebox(open_close=False))
+        self.messagebox.open_close_messagebox(open_close=False)
         self.create_tray_icon()
 
     def exit_application(self):

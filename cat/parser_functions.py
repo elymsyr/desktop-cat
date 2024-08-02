@@ -93,9 +93,9 @@ class ParserFunctions():
         
     def toggle_messagebox(self, event=None):
         if self.cat.messagebox_vis:
-            self.cat.reset_cycle(self.cat.messagebox.open_close_messagebox(open_close=False))
+            self.cat.messagebox.open_close_messagebox(open_close=False)
             self.cat.book.hide_book()
         else: 
-            self.cat.reset_cycle(self.cat.messagebox.open_close_messagebox(open_close=True))
+            self.cat.messagebox.open_close_messagebox(open_close=True)
             if self.cat.book_vis:
-                self.cat.book.show_book()        
+                self.cat.book.show_book()
