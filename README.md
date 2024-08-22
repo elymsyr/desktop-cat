@@ -5,14 +5,14 @@
   <img height="200" src="desktop-cat\media\gifs\L_licking.gif"  />
 </div>
 
-The project is giving a little cat I called Non-Toothless which sits on your taskbar many functionalities. Currently It can only sits and can done some simple actions without any real function. You can check the [Roadmap](#roadmap) for the planned future of Non-Toothless. 
+The project gives a little cat that sits on your taskbar many functionalities. Currently, it can only sit and perform some simple actions without any real function. You can check the [Roadmap](#roadmap) for the planned future of Non-Toothless. 
 
-The main function is the 'Workload'. It is a system that saves the applications you are currently using and their status (For example, the VSCode and your projects and files currently open in it, the sites open in the web browser, etc.) and allows you to quickly restore them whenever you want.
+The main function is the 'Workload'. It is a system that saves the applications you are currently using and their status (For example, the VSCode and your projects and files currently open in it, the sites open in the web browser, etc.) and allows you to restore them whenever you want quickly.
 
 ## Roadmap
 
 - [x]  A function will be created to select actions in some situations where the next event is chosen specifically
-- [x]  Quick search on Google with the preline *
+- [x]  Quick search on Google with the prefix "*"
 - [x]  Workload Saver (Main Function) (Only on Windows and work with VSCode and Chrome for now.)
 - [ ]  A notification system will be added. 
 - [ ]  CPU/GPU usage warning
