@@ -95,7 +95,8 @@ def _flat_line(buf, stride, height, cols, masks, vdiff, cont_frac, flat_range):
 class CatWindow(QWidget):
     def __init__(self, font_family):
         super().__init__()
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool
+                            | Qt.X11BypassWindowManagerHint)  # let cat cover panel/taskbar area
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setFixedSize(CAT_SIZE, CAT_SIZE)
 
@@ -124,10 +125,10 @@ class CatWindow(QWidget):
         self.setMask(QRegion(QRect(minx, miny, maxx - minx + 1, maxy - miny + 1)))
 
         # screen-relative bounds (replace legacy hardcoded 1400/922/500/1700)
-        geo = QGuiApplication.primaryScreen().availableGeometry()
+        geo = QGuiApplication.primaryScreen().geometry()  # full screen, not taskbar-excluded
         self.left = geo.left()
         self.right_x = geo.right() - CAT_SIZE            # max cat x
-        self.floor_y = geo.bottom() - CAT_SIZE           # legacy INITIAL_Y
+        self.floor_y = geo.bottom() - self.paw_row       # paws on the screen edge
         self.top_y = geo.top()
         w = geo.width()
         self.near_left = self.left + 0.26 * w            # legacy x < 500
