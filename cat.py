@@ -276,6 +276,7 @@ class CatWindow(QWidget):
             self.y += 40
         elif self.y < ground_y:
             self.falling = True
+            self.long_sleep = False
             self.y = ground_y
         elif self.falling and abs(self.y - ground_y) <= 20:
             if self.prompt_vis:
@@ -324,6 +325,10 @@ class CatWindow(QWidget):
         self.timer.start(delay)
 
     def choose_event_change(self):
+        if self.falling:                      # falling overrides x-bias and long_sleep
+            self.current_event_cycle = 21
+            self.current_event_cycle_index = 0
+            return EVENTS[21][0][0]
         if self.current_event_cycle_index < len(EVENTS[self.current_event_cycle][0]) - 1:
             self.current_event_cycle_index += 1
         elif self.long_sleep:
