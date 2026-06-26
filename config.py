@@ -30,6 +30,7 @@ def load():
 
 
 def save():
+    os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)  # frozen dir may not exist yet
     with open(CONFIG_PATH, "w") as f:
         json.dump(_config, f, indent=2)
 
@@ -49,7 +50,8 @@ reload = load  # re-reading from disk *is* live reload
 if __name__ == "__main__":
     import tempfile
 
-    CONFIG_PATH = os.path.join(tempfile.mkdtemp(), "config.json")
+    # nested, non-existent dir -> save() must makedirs it (the frozen-path case)
+    CONFIG_PATH = os.path.join(tempfile.mkdtemp(), "catyhoo", "config.json")
     assert load() == DEFAULTS, "no file -> defaults"
     assert get("prefix") == "/"
     _config["prefix"] = "*"

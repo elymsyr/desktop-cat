@@ -60,9 +60,23 @@ Gemini (Groq as a fast fallback), validate native-client behaviour with Claude.
   Done — `e2e_llm.py`: a free Gemini, given plain English, discovers the tools and
   calls `workspace_save`/`workspace_list` itself (`GEMINI_API_KEY=... python e2e_llm.py`).
 
-### Phase 6 — Cross-platform & packaging (later)
+### Phase 6 — Cross-platform & packaging
 - [ ] macOS / Windows provider variants behind the same contract.
-- [ ] Packaging.
+      *Deferred — untestable on Linux; the `providers.py` contract
+      (`name`/`detect()`/`restore()` + `PROVIDERS`) is the ready seam, implement
+      per-OS when building on that OS.*
+- [x] Packaging — `catyhoo.spec` (PyInstaller, one-file). See **Build** below.
+
+## Build
+
+```bash
+pip install pyinstaller      # build-only, not in requirements.txt
+pyinstaller catyhoo.spec     # -> dist/catyhoo (single binary)
+```
+
+`media/` is bundled inside the binary. When frozen, config lives at
+`~/.config/catyhoo/config.json` (the repo-local `config.json` is dev-only). The
+Chrome `extension/` is loaded into Chrome by hand (see Phase 4), not bundled.
 
 ## Principles
 - No speculative abstraction: `Protocol` + list, stdlib `json` / `urllib` / `asyncio`,
