@@ -47,14 +47,15 @@ Gemini (Groq as a fast fallback), validate native-client behaviour with Claude.
 ### Phase 4 — Workspace providers
 - [ ] Provider contract: `name`, `detect() -> state | None`, `restore(state)`
       (plain `Protocol` + a list, no registry).
-- [ ] `ChromeProvider`: detect tabs via CDP `GET localhost:9222/json` (`urllib`);
-      restore by launching Chrome with saved URLs.
-- [ ] `VSCodeProvider`: detect open folders from workspace storage; restore `code <path>`.
-- [ ] Commands `/workspace save|list|run <name>`.
-- **Verify:** Chrome with `--remote-debugging-port=9222`, `save`, close, `run` → tabs reopen.
+- [x] `ChromeProvider`: detect tabs via a one-time MV3 extension that pushes
+      `chrome.tabs.query` to a local `http.server` receiver (CDP `--remote-debugging-port`
+      is ignored by Chrome ≥136 on the real profile); restore launches Chrome with saved URLs.
+- [x] `VSCodeProvider`: detect open folders from `storage.json` workspace state; restore `code <path>`.
+- [x] Commands `/workspace save|list|run <name>`.
+- **Verify:** load `extension/` once, `save`, close Chrome, `run` → tabs reopen.
 
 ### Phase 5 — Workspace over MCP
-- [ ] Register the workspace operations as MCP tools too.
+- [x] Register the workspace operations as MCP tools too.
 - **Verify:** an external client (Inspector/Gemini/Claude) saves & restores a workspace.
 
 ### Phase 6 — Cross-platform & packaging (later)

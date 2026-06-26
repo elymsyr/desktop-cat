@@ -75,11 +75,15 @@ one more provider. (Plain Protocol + list, not a plugin/registry framework.)
 
 Two providers ship first:
 
-- **ChromeProvider (Linux-first).** Detect open tabs via the **Chrome DevTools
-  Protocol**: Chrome runs with `--remote-debugging-port=9222`, then a single
-  `GET http://localhost:9222/json` (stdlib `urllib`) returns every open tab's
-  title + URL. Restore launches Chrome with the saved URLs. No clipboard
-  tab-walking and no reading the on-disk `History` sqlite DB.
+- **ChromeProvider (Linux-first).** Detect open tabs via a tiny **MV3 extension**
+  (`extension/`) the user loads once: it pushes the live `chrome.tabs.query`
+  result to catyhoo's local receiver (`http://localhost:8766/tabs`, stdlib
+  `http.server`), which `detect()` reads. Restore launches Chrome with the saved
+  URLs. *(The Chrome DevTools Protocol path — `--remote-debugging-port=9222` —
+  was the original plan but Chrome ≥136 ignores that flag on the real profile, a
+  security mitigation; it only works against a throwaway `--user-data-dir`, which
+  has none of your tabs.)* No clipboard tab-walking and no reading the on-disk
+  `History` sqlite DB.
 - **VSCodeProvider (Linux-first).** Detect open folders by reading VS Code's
   workspace storage / running-instance info — *not* fragile, X11-only window
   title scraping. Restore runs `code <path>` per saved folder.

@@ -3,7 +3,7 @@ import json
 import os
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
-DEFAULTS = {"prefix": "/", "reminders": []}  # new keys land here as later phases need them
+DEFAULTS = {"prefix": "/", "reminders": [], "workspaces": {}}  # new keys land here as later phases need them
 
 _config = dict(DEFAULTS)
 

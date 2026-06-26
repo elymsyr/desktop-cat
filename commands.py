@@ -48,6 +48,19 @@ def cmd_reminder(arg, ctx):
     return f"reminder set for {when}"
 
 
+def cmd_workspace(arg, ctx):
+    """save/list/run open apps: workspace <save|list|run> <name>"""
+    sub, _, name = arg.partition(" ")
+    name = name.strip()
+    if sub == "list":
+        return tools.workspace_list(ctx)
+    if sub in ("save", "run"):
+        if not name:
+            return f"usage: workspace {sub} <name>"
+        return getattr(tools, f"workspace_{sub}")(ctx, name)
+    return "usage: workspace <save|list|run> <name>"
+
+
 def cmd_reload(arg, ctx):
     """re-read config.json from disk"""
     config.reload()
@@ -59,6 +72,7 @@ COMMANDS = {  # alias -> function; extended each phase
     "notify": cmd_notify,
     "time-event": cmd_time_event,
     "reminder": cmd_reminder,
+    "workspace": cmd_workspace,
     "reload": cmd_reload,
 }
 

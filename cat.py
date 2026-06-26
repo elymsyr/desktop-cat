@@ -15,6 +15,7 @@ from book import BookWindow
 import config
 import commands
 import mcp_server
+import providers
 import tools
 
 INTRO = ("Right-click the cat to toggle the prompt & book.\n"
@@ -166,6 +167,7 @@ class CatWindow(QWidget):
         self._make_tray()
         tools.arm_reminders(self)  # re-arm reminders persisted from a previous run
         mcp_server.start(self)  # serves notify/time_event/reminder over MCP on a bg thread
+        providers.start_receiver()  # listens for the Chrome extension's tab pushes
 
         # one reusable single-shot timer drives the loop. Restarting the *same*
         # timer cancels any pending fire, so a fast drag can never stack a second
