@@ -12,6 +12,10 @@ from PySide6.QtWidgets import QWidget, QLabel, QSystemTrayIcon, QMenu
 from animation import EVENTS, CAT_SIZE, MEDIA, load_frames
 from prompt import PromptWindow
 from book import BookWindow
+import config
+import commands
+import mcp_server
+import tools
 
 INTRO = ("Right-click the cat to toggle the prompt & book.\n"
          "Drag to move. Double-click to hide to the tray.\n"
@@ -95,6 +99,7 @@ def _flat_line(buf, stride, height, cols, masks, vdiff, cont_frac, flat_range):
 class CatWindow(QWidget):
     def __init__(self, font_family):
         super().__init__()
+        config.load()
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool
                             | Qt.X11BypassWindowManagerHint)  # let cat cover panel/taskbar area
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -155,10 +160,12 @@ class CatWindow(QWidget):
 
         # companion windows + tray
         self.prompt = PromptWindow(os.path.join(MEDIA, "messagebox.png"),
-                                   font_family, self.book_append)
+                                   font_family, self._on_submit)
         self.book = BookWindow(os.path.join(MEDIA, "books", "book_main.png"), font_family)
         self.book.append_text(INTRO)
         self._make_tray()
+        tools.arm_reminders(self)  # re-arm reminders persisted from a previous run
+        mcp_server.start(self)  # serves notify/time_event/reminder over MCP on a bg thread
 
         # one reusable single-shot timer drives the loop. Restarting the *same*
         # timer cancels any pending fire, so a fast drag can never stack a second
@@ -196,6 +203,11 @@ class CatWindow(QWidget):
 
     def book_append(self, text):
         self.book.append_text(text)
+
+    def _on_submit(self, text):
+        out = commands.dispatch(text, self)
+        if out:
+            self.book.append_text(out)
 
     # ---- show / hide -------------------------------------------------------
     def show_all(self):
