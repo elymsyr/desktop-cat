@@ -1,8 +1,17 @@
 """Single JSON config file: load / save / live reload (stdlib json only)."""
 import json
 import os
+import sys
 
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+if getattr(sys, "frozen", False):
+    # Frozen (PyInstaller): __file__ is the read-only temp extraction dir, wiped
+    # each launch — config written there would never persist. Use a writable
+    # per-user dir instead.
+    # ponytail: ~/.config for the Linux build; add an os.name branch for Windows
+    # %APPDATA% when a Windows build is actually built (Phase-6 OS variant).
+    CONFIG_PATH = os.path.join(os.path.expanduser("~/.config/catyhoo"), "config.json")
+else:
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
 DEFAULTS = {"prefix": "/", "reminders": [], "workspaces": {}}  # new keys land here as later phases need them
 
 _config = dict(DEFAULTS)

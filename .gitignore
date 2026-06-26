@@ -1,5 +1,6 @@
 # OldFolders/
 # desktop-cat/
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

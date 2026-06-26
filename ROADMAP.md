@@ -57,6 +57,8 @@ Gemini (Groq as a fast fallback), validate native-client behaviour with Claude.
 ### Phase 5 — Workspace over MCP
 - [x] Register the workspace operations as MCP tools too.
 - **Verify:** an external client (Inspector/Gemini/Claude) saves & restores a workspace.
+  Done — `e2e_llm.py`: a free Gemini, given plain English, discovers the tools and
+  calls `workspace_save`/`workspace_list` itself (`GEMINI_API_KEY=... python e2e_llm.py`).
 
 ### Phase 6 — Cross-platform & packaging (later)
 - [ ] macOS / Windows provider variants behind the same contract.
