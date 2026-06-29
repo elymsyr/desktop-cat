@@ -22,30 +22,30 @@ Gemini (Groq as a fast fallback), validate native-client behaviour with Claude.
 ## Phases
 
 ### Phase 0 — Foundation
-- [ ] `config.py`: single JSON file (`json`), `load` / `save` / live `reload`.
-- [ ] Replace the echo in `prompt.py` with an `alias -> function` dispatch map.
+- [x] `config.py`: single JSON file (`json`), `load` / `save` / live `reload`.
+- [x] Replace the echo in `prompt.py` with an `alias -> function` dispatch map.
 - **Verify:** `/help` prints into the book; unknown command is reported.
 
 ### Phase 1 — Local tools (prompt only, no MCP yet)
-- [ ] `tools.py`: `notify(msg)` via tray `QSystemTrayIcon.showMessage`.
-- [ ] `time_event(when, msg)`: one-shot/relative `QTimer` that fires `notify`.
+- [x] `tools.py`: `notify(msg)` via tray `QSystemTrayIcon.showMessage`.
+- [x] `time_event(when, msg)`: one-shot/relative `QTimer` that fires `notify`.
 - **Verify:** `/notify hi` shows a desktop notification; `/time-event 5s hi` fires.
 
 ### Phase 2 — MCP server
-- [ ] Add `mcp` (FastMCP) to `requirements.txt`.
-- [ ] `mcp_server.py`: asyncio server on one background thread, Streamable-HTTP/SSE
+- [x] Add `mcp` (FastMCP) to `requirements.txt`.
+- [x] `mcp_server.py`: asyncio server on one background thread, Streamable-HTTP/SSE
       on a local port; GUI-touching calls marshalled to the Qt main thread via a
       queued signal.
-- [ ] Register `notify` / `time_event` as MCP tools (same functions as Phase 1).
+- [x] Register `notify` / `time_event` as MCP tools (same functions as Phase 1).
 - **Verify:** MCP Inspector lists & calls the tools; then one Gemini tool-call round-trip.
 
 ### Phase 3 — Persistence
-- [ ] `reminder(when, msg)`: like `time_event` but persisted, survives restart.
-- [ ] Live config reload wired in.
+- [x] `reminder(when, msg)`: like `time_event` but persisted, survives restart.
+- [x] Live config reload wired in.
 - **Verify:** set a reminder, restart the cat, reminder still fires.
 
 ### Phase 4 — Workspace providers
-- [ ] Provider contract: `name`, `detect() -> state | None`, `restore(state)`
+- [x] Provider contract: `name`, `detect() -> state | None`, `restore(state)`
       (plain `Protocol` + a list, no registry).
 - [x] `ChromeProvider`: detect tabs via a one-time MV3 extension that pushes
       `chrome.tabs.query` to a local `http.server` receiver (CDP `--remote-debugging-port`
