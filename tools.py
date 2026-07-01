@@ -1,9 +1,12 @@
 """Local actions the cat can perform. Phase 1: desktop notifications and a
 relative one-shot timer. These same functions get registered as MCP tools in
 Phase 2 — keep them plain (ctx, *args). Phase 3 adds persisted reminders."""
+import json
+import threading
 import time
+import urllib.request
 
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QObject, QTimer, Signal
 
 import config
 import providers
@@ -56,6 +59,71 @@ def _arm(ctx, fire_at, msg):
 def _fire(ctx, fire_at, msg):
     notify(ctx, msg)
     _save_reminders([r for r in _pending() if r["at"] != fire_at])
+
+
+# ---- LLM chat (Open WebUI, OpenAI-compatible) ------------------------------
+# The blocking HTTP call runs on a worker thread; the answer is marshalled back
+# to the Qt main thread via a signal, the same pattern _Bridge uses in
+# mcp_server.py. GUI-only, single-turn (ponytail: no history/streaming yet).
+
+class _Reply(QObject):
+    done = Signal(str)
+
+
+_replies = set()  # keep reply objects alive until their answer lands
+
+
+def _api(path, payload=None):
+    """GET (payload=None) or POST JSON to Open WebUI; returns parsed JSON. Blocking."""
+    url = config.get("openwebui_url").rstrip("/") + path
+    data = json.dumps(payload).encode() if payload is not None else None
+    headers = {"Authorization": "Bearer " + config.get("openwebui_key")}
+    if data is not None:
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data, headers)
+    with urllib.request.urlopen(req, timeout=120) as r:
+        return json.loads(r.read())
+
+
+def ask(ctx, prompt):
+    """Send `prompt` to the current model on a worker thread; the answer is
+    appended to the book when it arrives (does not block the GUI). Returns None."""
+    reply = _Reply()
+    _replies.add(reply)
+
+    def finish(answer):
+        ctx.book_append(answer)
+        _replies.discard(reply)
+
+    reply.done.connect(finish)  # created on main thread -> queued delivery
+
+    def worker():
+        try:
+            r = _api("/api/chat/completions", {
+                "model": config.get("model"),
+                "messages": [{"role": "user", "content": prompt}],
+                "stream": False})
+            answer = r["choices"][0]["message"]["content"].strip()
+        except Exception as e:  # network down, auth, bad JSON, timeout
+            answer = f"llm error: {e}"
+        reply.done.emit(answer)
+
+    threading.Thread(target=worker, daemon=True, name="openwebui").start()
+    return None
+
+
+def list_models(ctx):
+    """Return the available model ids, marking the current one with '*'."""
+    ids = [m["id"] for m in _api("/api/models")["data"]]
+    cur = config.get("model")
+    return "\n".join(("* " if i == cur else "  ") + i for i in ids)
+
+
+def set_model(ctx, name):
+    """Switch the active model and persist it."""
+    config.set("model", name)
+    config.save()
+    return f"model -> {name}"
 
 
 # ---- workspaces (Phase 4) --------------------------------------------------
@@ -156,4 +224,35 @@ if __name__ == "__main__":
     workspace_run(None, "work")
     assert restored == [["https://a", "https://b"]], restored
     assert workspace_run(None, "missing").startswith("no such")
-    print("OK: duration parsing + reminder persistence + workspace save/list/run")
+
+    # LLM: stub _api so nothing hits the network. ask() delivers via a queued
+    # signal, so drive one Qt event-loop pass to let it land in the fake book.
+    from PySide6.QtWidgets import QApplication
+    _app = QApplication.instance() or QApplication([])
+
+    _api = lambda path, payload=None: {  # noqa: E731
+        "choices": [{"message": {"content": " hi there "}}],
+        "data": [{"id": "llama3.1:8b"}, {"id": "other"}],
+    }
+
+    class _Book:
+        seen = []
+        def book_append(self, t):
+            _Book.seen.append(t)
+
+    book = _Book()
+    ask(book, "yo")
+    for _ in range(100):  # let the worker emit, then deliver the queued signal
+        _app.processEvents()
+        if book.seen:
+            break
+        time.sleep(0.01)
+    assert book.seen == ["hi there"], book.seen  # stripped answer
+
+    models = list_models(None)
+    assert "* llama3.1:8b" in models and "  other" in models, models
+
+    assert set_model(None, "other") == "model -> other"
+    assert config.reload()["model"] == "other", "model switch persists"
+
+    print("OK: duration parsing + reminder persistence + workspace save/list/run + llm chat")

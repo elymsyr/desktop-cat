@@ -12,7 +12,10 @@ if getattr(sys, "frozen", False):
     CONFIG_PATH = os.path.join(os.path.expanduser("~/.config/catyhoo"), "config.json")
 else:
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
-DEFAULTS = {"prefix": "/", "reminders": [], "workspaces": {}}  # new keys land here as later phases need them
+DEFAULTS = {"prefix": "/", "reminders": [], "workspaces": {},
+            "openwebui_url": "http://192.168.1.12:8501",
+            "openwebui_key": "sk-b1e04c6858fa47bcad324689ad76ca8b",
+            "model": "llama3.1:8b"}  # new keys land here as later phases need them
 
 _config = dict(DEFAULTS)
 

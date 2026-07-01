@@ -61,6 +61,13 @@ def cmd_workspace(arg, ctx):
     return "usage: workspace <save|list|run> <name>"
 
 
+def cmd_model(arg, ctx):
+    """list or switch the chat model: model [<id>]"""
+    if not arg:
+        return tools.list_models(ctx)
+    return tools.set_model(ctx, arg)
+
+
 def cmd_reload(arg, ctx):
     """re-read config.json from disk"""
     config.reload()
@@ -73,6 +80,7 @@ COMMANDS = {  # alias -> function; extended each phase
     "time-event": cmd_time_event,
     "reminder": cmd_reminder,
     "workspace": cmd_workspace,
+    "model": cmd_model,
     "reload": cmd_reload,
 }
 

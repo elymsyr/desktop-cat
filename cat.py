@@ -207,9 +207,13 @@ class CatWindow(QWidget):
         self.book.append_text(text)
 
     def _on_submit(self, text):
-        out = commands.dispatch(text, self)
-        if out:
-            self.book.append_text(out)
+        if text.startswith(config.get("prefix")):
+            out = commands.dispatch(text, self)
+            if out:
+                self.book_append(out)
+        else:  # plain text -> chat with the LLM (answer arrives async)
+            self.book_append(f"you: {text}")
+            tools.ask(self, text)
 
     # ---- show / hide -------------------------------------------------------
     def show_all(self):
