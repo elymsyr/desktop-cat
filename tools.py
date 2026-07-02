@@ -175,14 +175,52 @@ async def _ask_async(prompt):
             })
 
 
+_DOT_FRAMES = [". ", ". .", ". . ."]  # cycling thinking indicator
+
+
 def ask(ctx, prompt):
     """Send `prompt` to the current model on a worker thread; the answer is
-    appended to the book when it arrives (does not block the GUI). Returns None."""
+    appended to the book when it arrives (does not block the GUI). Returns None.
+    While waiting, a '. .. ...' animation cycles in the book every 500 ms."""
     reply = _Reply()
     _replies.add(reply)
 
+    # --- animated placeholder ------------------------------------------------
+    _dot_state = [0]          # mutable cell for the closure
+    _done = [False]
+
+    def _has_replace():
+        return ctx and hasattr(ctx, "book") and hasattr(ctx.book, "replace_last_block")
+
+    # insert the first frame
+    if _has_replace():
+        ctx.book.append_text(_DOT_FRAMES[0])
+    else:
+        ctx.book_append(_DOT_FRAMES[0])
+
+    dot_timer = QTimer()
+    dot_timer.setInterval(500)
+
+    def _tick():
+        if _done[0]:
+            dot_timer.stop()
+            return
+        _dot_state[0] = (_dot_state[0] + 1) % len(_DOT_FRAMES)
+        frame = _DOT_FRAMES[_dot_state[0]]
+        if _has_replace():
+            ctx.book.replace_last_block(frame)
+
+    dot_timer.timeout.connect(_tick)
+    dot_timer.start()
+    # -------------------------------------------------------------------------
+
     def finish(answer):
-        ctx.book_append(answer)
+        _done[0] = True
+        dot_timer.stop()
+        if _has_replace():
+            ctx.book.replace_last_block(answer)
+        else:
+            ctx.book_append(answer)
         _replies.discard(reply)
 
     reply.done.connect(finish)
@@ -251,6 +289,25 @@ def workspace_run(ctx, name):
     return f"restoring '{name}': {_summary(state)}"
 
 
+def workspace_remove(ctx, name):
+    """Remove a saved workspace by name."""
+    config.reload()  # always read fresh state before mutating
+    ws = dict(config.get("workspaces") or {})
+    if name not in ws:
+        return f"no such workspace: {name}"
+    del ws[name]
+    config.set("workspaces", ws)
+    config.save()
+    return f"removed '{name}'"
+
+
+def clear_book(ctx):
+    """Clear all text from the help book window."""
+    if ctx and hasattr(ctx, "book_clear"):
+        ctx.book_clear()
+    return None
+
+
 def _summary(state):
     # state values are lists (urls / folder paths); name them per provider.
     label = {"chrome": "chrome tabs", "vscode": "vscode folders"}
@@ -310,6 +367,9 @@ if __name__ == "__main__":
     workspace_run(None, "work")
     assert restored == [["https://a", "https://b"]], restored
     assert workspace_run(None, "missing").startswith("no such")
+    assert workspace_remove(None, "work") == "removed 'work'"
+    assert "work" not in config.reload().get("workspaces", {})
+    assert workspace_remove(None, "missing").startswith("no such")
 
     # LLM: stub _api so nothing hits the network. ask() delivers via a queued
     # signal, so drive one Qt event-loop pass to let it land in the fake book.

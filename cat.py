@@ -22,6 +22,7 @@ INTRO = ("Right-click the cat to toggle the prompt & book.\n"
          "Drag to move. Double-click to hide to the tray.\n"
          "This is the visual-only rewrite (catyhoo).")
 
+
 # Surface detection (cat lands on flat horizontal edges while falling).
 # These are calibration knobs against real pixels — tune if behavior is off.
 LOOKAHEAD = 200          # ponytail: max px scanned below the paws (covers a probe gap)
@@ -215,6 +216,9 @@ class CatWindow(QWidget):
     def book_append(self, text):
         self.book.append_text(text)
 
+    def book_clear(self):
+        self.book.clear()
+
     def set_font_family(self, font_family):
         self.current_font_family = font_family
         self.prompt.set_font_family(font_family)
@@ -249,6 +253,9 @@ class CatWindow(QWidget):
         self.book.setVisible(self.book_vis)
         if self.prompt_vis:
             self._reposition()
+            self.prompt.raise_()
+            self.prompt.activateWindow()
+            self.prompt.entry.setFocus(Qt.ShortcutFocusReason)
 
     def _reposition(self):
         self.prompt.move(self.x - 295, self.y - 110)

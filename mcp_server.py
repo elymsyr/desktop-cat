@@ -90,6 +90,20 @@ def workspace_run(name: str) -> str:
     return _call(lambda ctx: tools.workspace_run(ctx, name))
 
 
+@mcp.tool()
+def workspace_remove(name: str) -> str:
+    """Permanently delete a saved workspace by name. You MUST call this tool to
+    actually remove the workspace — do NOT just say it was removed without calling it."""
+    return _call(lambda ctx: tools.workspace_remove(ctx, name))
+
+
+@mcp.tool()
+def clear_book() -> str:
+    """Clear all text from the cat's book window."""
+    _bridge.run.emit(lambda ctx: tools.clear_book(ctx))
+    return "book cleared"
+
+
 def start(ctx, port=8765):
     """Bind the tools to `ctx` (the CatWindow) and serve over Streamable-HTTP on a
     background daemon thread. Returns the thread."""
@@ -169,4 +183,7 @@ if __name__ == "__main__":
     assert "work" in workspace_list(), "list returns the real saved names"
     assert "restoring 'work'" in workspace_run("work")
     assert workspace_run("missing").startswith("no such")
+    assert workspace_remove("work") == "removed 'work'"
+    assert "work" not in workspace_list()
+    assert workspace_remove("missing").startswith("no such")
     print("OK: mcp tool marshalling + workspace round-trip via _call")

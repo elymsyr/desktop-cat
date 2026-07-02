@@ -49,16 +49,16 @@ def cmd_reminder(arg, ctx):
 
 
 def cmd_workspace(arg, ctx):
-    """save/list/run open apps: workspace <save|list|run> <name>"""
+    """save/list/run/remove open apps: workspace <save|list|run|remove> <name>"""
     sub, _, name = arg.partition(" ")
     name = name.strip()
     if sub == "list":
         return tools.workspace_list(ctx)
-    if sub in ("save", "run"):
+    if sub in ("save", "run", "remove"):
         if not name:
             return f"usage: workspace {sub} <name>"
         return getattr(tools, f"workspace_{sub}")(ctx, name)
-    return "usage: workspace <save|list|run> <name>"
+    return "usage: workspace <save|list|run|remove> <name>"
 
 
 def cmd_model(arg, ctx):
@@ -118,6 +118,12 @@ def cmd_font(arg, ctx):
     return f"font -> {selected}"
 
 
+def cmd_clear(arg, ctx):
+    """clear the book window"""
+    tools.clear_book(ctx)
+    return None
+
+
 COMMANDS = {  # alias -> function; extended each phase
     "help": cmd_help,
     "notify": cmd_notify,
@@ -127,6 +133,7 @@ COMMANDS = {  # alias -> function; extended each phase
     "model": cmd_model,
     "reload": cmd_reload,
     "font": cmd_font,
+    "clear": cmd_clear,
 }
 
 

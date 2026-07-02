@@ -2,16 +2,6 @@
   "prefix": "/",
   "reminders": [],
   "workspaces": {
-    "work": {
-      "chrome": [
-        "https://www.udemy.com/course/mastering-gpu-parallel-programming-with-cuda/learn/lecture/42255560#overview",
-        "https://claude.ai/chat/8794137b-430f-406e-b19b-c090d68698e1",
-        "https://www.netflix.com/browse"
-      ],
-      "vscode": [
-        "/home/eren/GitHub/desktop-cat"
-      ]
-    },
     "Default Workspace": {
       "vscode": [
         "/home/eren/GitHub/desktop-cat"
@@ -30,5 +20,5 @@
   "openwebui_url": "http://192.168.1.12:8501",
   "openwebui_key": "sk-b1e04c6858fa47bcad324689ad76ca8b",
   "model": "llama3.1:8b",
-  "font": "Courier New"
+  "font": "Arial"
 }

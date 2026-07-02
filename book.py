@@ -1,6 +1,6 @@
 """The help "book" window above the cat: a read-only text page."""
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QTextCursor
 from PySide6.QtWidgets import QWidget, QLabel, QTextEdit
 
 from animation import colorkey_pixmap
@@ -33,6 +33,31 @@ class BookWindow(QWidget):
 
     def append_text(self, text):
         self.text.append(f"\n{text}")
+
+    def replace_last_block(self, new_text):
+        """Replace the last paragraph (appended block) with new_text in-place.
+        Used to swap the 'thinking…' placeholder with the real answer."""
+        doc = self.text.document()
+        cur = QTextCursor(doc)
+        cur.movePosition(QTextCursor.End)
+        block = cur.block()
+        # walk backwards past trailing empty blocks
+        while block.isValid() and not block.text().strip():
+            block = block.previous()
+        if not block.isValid():
+            self.append_text(new_text)
+            return
+        # Select only the text inside the block (no block separators) and
+        # replace it — this avoids any extra newline insertion.
+        cur.setPosition(block.position())
+        cur.movePosition(QTextCursor.EndOfBlock, QTextCursor.KeepAnchor)
+        cur.insertText(new_text)
+        # keep the view scrolled to the bottom
+        sb = self.text.verticalScrollBar()
+        sb.setValue(sb.maximum())
+
+    def clear(self):
+        self.text.clear()
 
     def set_font_family(self, font_family):
         self.text.setFont(QFont(font_family, 11))
