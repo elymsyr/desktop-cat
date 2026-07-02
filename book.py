@@ -33,3 +33,6 @@ class BookWindow(QWidget):
 
     def append_text(self, text):
         self.text.append(f"\n{text}")
+
+    def set_font_family(self, font_family):
+        self.text.setFont(QFont(font_family, 11))

@@ -11,6 +11,24 @@
       "vscode": [
         "/home/eren/GitHub/desktop-cat"
       ]
+    },
+    "Default Workspace": {
+      "vscode": [
+        "/home/eren/GitHub/desktop-cat"
+      ]
+    },
+    "save workspce": {
+      "chrome": [
+        "https://gemini.google.com/app/d9faf9c1b5c5b986",
+        "https://www.youtube.com/watch?v=xoiaIwIMOu0"
+      ],
+      "vscode": [
+        "/home/eren/GitHub/desktop-cat"
+      ]
     }
-  }
+  },
+  "openwebui_url": "http://192.168.1.12:8501",
+  "openwebui_key": "sk-b1e04c6858fa47bcad324689ad76ca8b",
+  "model": "llama3.1:8b",
+  "font": "Courier New"
 }

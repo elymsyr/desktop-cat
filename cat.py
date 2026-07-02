@@ -160,9 +160,18 @@ class CatWindow(QWidget):
         self._cur_frame = self.imageGif[self.images[self.event_number]][0]  # displayed pixmap
 
         # companion windows + tray
+        config_font = config.get("font")
+        self.default_font_family = font_family
+        if config_font == "Pixelmix":
+            self.current_font_family = self.default_font_family
+        elif config_font:
+            self.current_font_family = config_font
+        else:
+            self.current_font_family = self.default_font_family
+
         self.prompt = PromptWindow(os.path.join(MEDIA, "messagebox.png"),
-                                   font_family, self._on_submit)
-        self.book = BookWindow(os.path.join(MEDIA, "books", "book_main.png"), font_family)
+                                   self.current_font_family, self._on_submit)
+        self.book = BookWindow(os.path.join(MEDIA, "books", "book_main.png"), self.current_font_family)
         self.book.append_text(INTRO)
         self._make_tray()
         tools.arm_reminders(self)  # re-arm reminders persisted from a previous run
@@ -205,6 +214,11 @@ class CatWindow(QWidget):
 
     def book_append(self, text):
         self.book.append_text(text)
+
+    def set_font_family(self, font_family):
+        self.current_font_family = font_family
+        self.prompt.set_font_family(font_family)
+        self.book.set_font_family(font_family)
 
     def _on_submit(self, text):
         if text.startswith(config.get("prefix")):

@@ -1,6 +1,7 @@
 """Local actions the cat can perform. Phase 1: desktop notifications and a
 relative one-shot timer. These same functions get registered as MCP tools in
 Phase 2 — keep them plain (ctx, *args). Phase 3 adds persisted reminders."""
+import asyncio
 import json
 import threading
 import time
@@ -27,6 +28,13 @@ def parse_duration(when):
 def notify(ctx, msg, title="catyhoo"):
     """Desktop notification via the tray icon."""
     ctx.tray.showMessage(title, msg)
+    if ctx and hasattr(ctx, "book_append"):
+        formatted_msg = (
+            f'<div style="background-color: #ffd6cc; color: #4a150c; '
+            f'padding: 8px; border-radius: 6px; margin: 5px 0; border: 1px solid #ffb3a1;">'
+            f'<b>🔔 REMINDER:</b> {msg}</div>'
+        )
+        ctx.book_append(formatted_msg)
 
 
 def time_event(ctx, when, msg):
@@ -85,6 +93,88 @@ def _api(path, payload=None):
         return json.loads(r.read())
 
 
+async def _ask_async(prompt):
+    messages = [{"role": "user", "content": prompt}]
+    try:
+        from mcp.client.streamable_http import streamablehttp_client
+        from mcp import ClientSession
+        async with streamablehttp_client("http://localhost:8765/mcp") as (read, write, _):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                mcp_tools = (await session.list_tools()).tools
+                openai_tools = []
+                for t in mcp_tools:
+                    openai_tools.append({
+                        "type": "function",
+                        "function": {
+                            "name": t.name,
+                            "description": t.description,
+                            "parameters": t.inputSchema
+                        }
+                    })
+
+                while True:
+                    payload = {
+                        "model": config.get("model"),
+                        "messages": messages,
+                        "stream": False
+                    }
+                    if openai_tools:
+                        payload["tools"] = openai_tools
+
+                    response = await asyncio.to_thread(_api, "/api/chat/completions", payload)
+                    message = response["choices"][0]["message"]
+                    tool_calls = message.get("tool_calls")
+
+                    if not tool_calls:
+                        return message.get("content", "").strip()
+
+                    messages.append(message)
+
+                    for tc in tool_calls:
+                        tool_name = tc["function"]["name"]
+                        tc_args = tc["function"].get("arguments", "{}")
+                        if isinstance(tc_args, str):
+                            tool_args = json.loads(tc_args)
+                        else:
+                            tool_args = tc_args
+
+                        out = await session.call_tool(tool_name, tool_args)
+                        result_text = out.content[0].text if out.content else ""
+
+                        messages.append({
+                            "role": "tool",
+                            "tool_call_id": tc.get("id"),
+                            "name": tool_name,
+                            "content": result_text
+                        })
+    except Exception:
+        pass
+
+    # Fallback loop when MCP is not connected or connection is lost
+    while True:
+        payload = {
+            "model": config.get("model"),
+            "messages": messages,
+            "stream": False
+        }
+        response = await asyncio.to_thread(_api, "/api/chat/completions", payload)
+        message = response["choices"][0]["message"]
+        tool_calls = message.get("tool_calls")
+
+        if not tool_calls:
+            return message.get("content", "").strip()
+
+        messages.append(message)
+        for tc in tool_calls:
+            messages.append({
+                "role": "tool",
+                "tool_call_id": tc.get("id"),
+                "name": tc["function"]["name"],
+                "content": "error: MCP connection not available"
+            })
+
+
 def ask(ctx, prompt):
     """Send `prompt` to the current model on a worker thread; the answer is
     appended to the book when it arrives (does not block the GUI). Returns None."""
@@ -95,16 +185,12 @@ def ask(ctx, prompt):
         ctx.book_append(answer)
         _replies.discard(reply)
 
-    reply.done.connect(finish)  # created on main thread -> queued delivery
+    reply.done.connect(finish)
 
     def worker():
         try:
-            r = _api("/api/chat/completions", {
-                "model": config.get("model"),
-                "messages": [{"role": "user", "content": prompt}],
-                "stream": False})
-            answer = r["choices"][0]["message"]["content"].strip()
-        except Exception as e:  # network down, auth, bad JSON, timeout
+            answer = asyncio.run(_ask_async(prompt))
+        except Exception as e:
             answer = f"llm error: {e}"
         reply.done.emit(answer)
 

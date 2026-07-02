@@ -74,6 +74,50 @@ def cmd_reload(arg, ctx):
     return "config reloaded"
 
 
+def cmd_font(arg, ctx):
+    """list or switch the font: font [<order-id>]"""
+    fonts = [
+        "Pixelmix",
+        "Arial",
+        "Times New Roman",
+        "Courier New",
+        "Comic Sans MS",
+        "Georgia",
+        "Impact",
+        "Verdana",
+        "Trebuchet MS",
+        "Monospace"
+    ]
+    if not arg:
+        current = config.get("font") or "Pixelmix"
+        lines = ["Available fonts:"]
+        for idx, f in enumerate(fonts, 1):
+            marker = "*" if f.lower() == current.lower() else " "
+            lines.append(f"{idx}. {f} {marker}")
+        lines.append("\nUse /font <order-id> to switch.")
+        return "\n".join(lines)
+
+    try:
+        order_id = int(arg)
+        if order_id < 1 or order_id > len(fonts):
+            return f"Invalid font order-id: {arg}. Please choose 1-{len(fonts)}."
+        selected = fonts[order_id - 1]
+    except ValueError:
+        return "Invalid format. Usage: font <order-id>"
+
+    config.set("font", selected)
+    config.save()
+
+    if ctx and hasattr(ctx, "set_font_family"):
+        if selected == "Pixelmix":
+            font_to_apply = ctx.default_font_family
+        else:
+            font_to_apply = selected
+        ctx.set_font_family(font_to_apply)
+
+    return f"font -> {selected}"
+
+
 COMMANDS = {  # alias -> function; extended each phase
     "help": cmd_help,
     "notify": cmd_notify,
@@ -82,6 +126,7 @@ COMMANDS = {  # alias -> function; extended each phase
     "workspace": cmd_workspace,
     "model": cmd_model,
     "reload": cmd_reload,
+    "font": cmd_font,
 }
 
 

@@ -39,6 +39,9 @@ class PromptWindow(QWidget):
         if text and self.on_submit:
             self.on_submit(text)
 
+    def set_font_family(self, font_family):
+        self.entry.setFont(QFont(font_family, 11))
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.hide()
