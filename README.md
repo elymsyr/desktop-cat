@@ -2,7 +2,7 @@
 # Desktop Cat
 
 <div align="center">
-  <img height="200" src="desktop-cat\media\gifs\L_licking.gif"  />
+  <img height="200" src="media\gifs\L_licking.gif"  />
 </div>
 
 The project gives a little cat that sits on your taskbar many functionalities. Currently, it can only sit and perform some simple actions without any real function. You can check the [Roadmap](#roadmap) for the planned future of Non-Toothless. 
@@ -25,7 +25,7 @@ The main function is the 'Workload'. It is a system that saves the applications 
 ## Demo
 
 <div align="center">
-  <img height="200" src="desktop-cat\media\gifs_others\falling.gif"  />
+  <img height="200" src="media\gifs_others\falling.gif"  />
 </div>
 
 A demo but without any functionalities can be used now. Download [demo0](https://github.com/elymsyr/desktop-cat/releases/tag/demo0) release and see the [Run Locally](#run-locally) section.
@@ -34,11 +34,11 @@ A demo but without any functionalities can be used now. Download [demo0](https:/
 
 python>3.11 works. python<=3.11 is not tested.
 
-See the requirements for [conda](desktop-cat\conda_requirements.txt) and [pip](desktop-cat\requirements.txt).
+See the requirements for [conda](conda_requirements.txt) and [pip](requirements.txt).
 
 You can download [demo0](https://github.com/elymsyr/desktop-cat/releases/tag/demo0) release or current repo.
 
-Run [main.py](desktop-cat\main.py) file.
+Run [main.py](main.py) file.
 
 ## Documentation
 
@@ -51,5 +51,5 @@ For support, email orhun868@gmail.com.
 Contributions are always welcome.
 
 <div align="center">
-  <img height="200" src="desktop-cat\media\gifs\L_sleep.gif"  />
+  <img height="200" src="media\gifs\L_sleep.gif"  />
 </div>
