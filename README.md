@@ -9,19 +9,6 @@ The project gives a little cat that sits on your taskbar many functionalities. C
 
 The main function is the 'Workload'. It is a system that saves the applications you are currently using and their status (For example, the VSCode and your projects and files currently open in it, the sites open in the web browser, etc.) and allows you to restore them whenever you want quickly.
 
-## Roadmap
-
-- [x]  A function will be created to select actions in some situations where the next event is chosen specifically
-- [x]  Quick search on Google with the prefix "*"
-- [x]  Workload Saver (Main Function) (Only on Windows and work with VSCode and Chrome for now.)
-- [ ]  A notification system will be added. 
-- [ ]  CPU/GPU usage warning
-- [ ]  Emotion detector
-- [ ]  App drawer (can be cancelled in the future)
-- [ ]  Graph analyzer (can be cancelled in the future)
-- [ ]  Notebook (can be cancelled in the future)
-- [ ]  Calculator (can be cancelled in the future)
-
 ## Demo
 
 <div align="center">
@@ -32,12 +19,7 @@ A demo but without any functionalities can be used now. Download [demo0](https:/
 
 ## Run Locally
 
-python>3.11 works. python<=3.11 is not tested.
-
-See the requirements for [conda](conda_requirements.txt) and [pip](requirements.txt).
-
-You can download [demo0](https://github.com/elymsyr/desktop-cat/releases/tag/demo0) release or current repo.
-
+See the [requirements](requirements.txt).
 Run [main.py](main.py) file.
 
 ## Documentation
